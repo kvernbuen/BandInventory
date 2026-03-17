@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="no" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Korpsinventar</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f9f9f8; --surface: #ffffff; --surface2: #f0efe8;
+      --border: rgba(0,0,0,0.09); --border-md: rgba(0,0,0,0.16);
+      --text: #1a1a18; --text-muted: #666662; --text-faint: #bbb;
+      --nav-active-bg: #1a1a18; --nav-active-fg: #fff;
+      --input-bg: #f9f9f8; --metric-bg: #f0efe8;
+      --radius: 8px; --radius-lg: 12px;
+    }
+    [data-theme="dark"] {
+      --bg: #141413; --surface: #1e1e1c; --surface2: #282826;
+      --border: rgba(255,255,255,0.08); --border-md: rgba(255,255,255,0.14);
+      --text: #e8e8e4; --text-muted: #999994; --text-faint: #555;
+      --nav-active-bg: #e8e8e4; --nav-active-fg: #1a1a18;
+      --input-bg: #141413; --metric-bg: #282826;
+    }
+    [data-theme="dark"] .badge-ok   { background:#1a2e10; color:#7ec254; }
+    [data-theme="dark"] .badge-warn { background:#2e1f08; color:#e0a040; }
+    [data-theme="dark"] .badge-bad  { background:#2e1010; color:#e07070; }
+    [data-theme="dark"] .badge-info { background:#0e1e34; color:#6aabee; }
+    [data-theme="dark"] .alert-box  { background:#2e1f08; border-color:#6b4910; color:#e0a040; }
+    [data-theme="dark"] .idbadge   { background:#1a2540; color:#7aaeee; border-color:#2a4060; }
+    [data-theme="dark"] .btn-danger { color:#e07070; border-color:#7a3030; }
+    [data-theme="dark"] .qr-scan-area { background:#0a0a0a; border-color:#333; }
+
+    body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; transition: background 0.2s, color 0.2s; }
+    .app { max-width: 1150px; margin: 0 auto; padding: 1.5rem 1rem; }
+    header { display: flex; align-items: center; gap: 10px; margin-bottom: 1.5rem; }
+    header h1 { font-size: 20px; font-weight: 600; flex: 1; }
+    .theme-toggle { background: var(--surface2); border: 0.5px solid var(--border-md); border-radius: 20px; padding: 5px 14px; cursor: pointer; font-size: 12px; color: var(--text-muted); font-family: inherit; white-space: nowrap; }
+    .theme-toggle:hover { background: var(--surface); }
+    nav { display: flex; gap: 6px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    nav button { font-size: 13px; padding: 6px 14px; border-radius: var(--radius); border: 0.5px solid var(--border-md); background: var(--surface); color: var(--text-muted); cursor: pointer; font-family: inherit; }
+    nav button.active { background: var(--nav-active-bg); color: var(--nav-active-fg); border-color: var(--nav-active-bg); }
+    .section { display: none; }
+    .section.active { display: block; }
+    .card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 1rem 1.25rem; margin-bottom: 12px; }
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 8px; }
+    .section-header h2 { font-size: 16px; font-weight: 600; }
+    .section-header-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .btn { font-family: inherit; font-size: 13px; padding: 7px 16px; border-radius: var(--radius); cursor: pointer; border: 0.5px solid var(--border-md); background: var(--surface); color: var(--text); }
+    .btn:hover { background: var(--surface2); }
+    .btn-primary { background: var(--nav-active-bg); color: var(--nav-active-fg); border-color: var(--nav-active-bg); }
+    .btn-primary:hover { opacity: 0.85; }
+    .btn-sm { font-size: 12px; padding: 4px 10px; border-radius: var(--radius); border: 0.5px solid var(--border); background: transparent; cursor: pointer; color: var(--text-muted); font-family: inherit; }
+    .btn-sm:hover { background: var(--surface2); }
+    .btn-export { font-size: 12px; padding: 5px 12px; border-radius: var(--radius); border: 0.5px solid var(--border-md); background: var(--surface2); color: var(--text-muted); cursor: pointer; font-family: inherit; }
+    .btn-export:hover { background: var(--surface); color: var(--text); }
+    .btn-danger { color: #a32d2d; border-color: #e09090; }
+    .badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
+    .badge-ok   { background: #eaf3de; color: #3b6d11; }
+    .badge-warn { background: #faeeda; color: #854f0b; }
+    .badge-bad  { background: #fcebeb; color: #a32d2d; }
+    .badge-info { background: #e6f1fb; color: #185fa5; }
+    .badge-gray { background: var(--surface2); color: var(--text-muted); }
+    .idbadge { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 5px; background: #e8f0fb; color: #1a4a8a; border: 0.5px solid #b8d0f0; font-family: monospace; letter-spacing: 0.03em; white-space: nowrap; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { text-align: left; font-weight: 500; font-size: 12px; color: var(--text-muted); padding: 6px 10px; border-bottom: 0.5px solid var(--border); }
+    td { padding: 8px 10px; border-bottom: 0.5px solid var(--border); vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+    .table-wrap { overflow-x: auto; }
+    .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 1.5rem; }
+    .metric { background: var(--metric-bg); border-radius: var(--radius); padding: 1rem; }
+    .metric .label { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+    .metric .value { font-size: 24px; font-weight: 600; }
+    .alert-box { background: #faeeda; border: 0.5px solid #fac775; border-radius: var(--radius); padding: 10px 14px; font-size: 13px; color: #633806; margin-bottom: 10px; }
+    .empty { color: var(--text-faint); font-size: 13px; padding: 2rem; text-align: center; }
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; align-items: flex-start; justify-content: center; padding: 50px 12px 20px; overflow-y: auto; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: var(--surface); border-radius: var(--radius-lg); border: 0.5px solid var(--border-md); padding: 1.5rem; width: 100%; max-width: 520px; align-self: flex-start; }
+    .modal h3 { font-size: 16px; font-weight: 600; margin-bottom: 1.25rem; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .form-grid .full { grid-column: 1 / -1; }
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field label { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+    input, select, textarea { font-family: inherit; font-size: 14px; padding: 7px 10px; border: 0.5px solid var(--border-md); border-radius: var(--radius); background: var(--input-bg); color: var(--text); width: 100%; }
+    input:focus, select:focus, textarea:focus { outline: 2px solid var(--nav-active-bg); outline-offset: 1px; }
+    textarea { resize: vertical; min-height: 70px; }
+    .modal-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 1.25rem; }
+    .id-preview { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+    .id-preview .kid { font-family: monospace; font-weight: 600; color: #185fa5; }
+    [data-theme="dark"] .id-preview .kid { color: #6aabee; }
+    .inst-picker-item { display: grid; grid-template-columns: 20px 1fr auto; align-items: center; gap: 8px; padding: 7px 8px; border-bottom: 0.5px solid var(--border); cursor: pointer; }
+    .inst-picker-item:last-child { border-bottom: none; }
+    .inst-picker-item:hover { background: var(--surface2); }
+    .inst-picker-item input[type="checkbox"] { width: 15px; height: 15px; cursor: pointer; }
+    .inst-picker-name { font-size: 13px; color: var(--text); }
+    .inst-picker-meta { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+
+    /* QR modal */
+    .qr-center { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 8px 0; }
+    .qr-canvas-wrap { background: #fff; padding: 16px; border-radius: var(--radius); border: 0.5px solid var(--border-md); }
+    .qr-inst-name { font-size: 16px; font-weight: 600; text-align: center; }
+    .qr-inst-id { font-family: monospace; font-size: 18px; font-weight: 700; color: #1a4a8a; letter-spacing: 0.05em; }
+    [data-theme="dark"] .qr-inst-id { color: #7aaeee; }
+
+    /* QR scanner */
+    .qr-scan-area { position: relative; width: 100%; max-width: 360px; border-radius: var(--radius); overflow: hidden; background: #000; border: 0.5px solid var(--border-md); margin: 0 auto; }
+    .qr-scan-area video { display: block; width: 100%; }
+    .qr-scan-line { position: absolute; left: 10%; right: 10%; height: 2px; background: #ef4444; opacity: 0.85; animation: scanline 2s ease-in-out infinite; top: 50%; }
+    @keyframes scanline { 0%,100%{top:20%} 50%{top:80%} }
+    .qr-scan-result { margin-top: 10px; font-size: 13px; min-height: 24px; text-align: center; color: var(--text-muted); }
+    .qr-scan-result.found { color: #3b6d11; font-weight: 600; }
+    .qr-scan-result.notfound { color: #a32d2d; }
+    .scanner-hint { font-size: 12px; color: var(--text-muted); text-align: center; margin-top: 6px; }
+
+    /* Print styles */
+    @media print {
+      body * { visibility: hidden; }
+      #qr-print-area, #qr-print-area * { visibility: visible; }
+      #qr-print-area { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: white; }
+    }
+    #qr-print-area { display: none; }
+
+    #toast { position: fixed; bottom: 1.5rem; right: 1.5rem; background: var(--nav-active-bg); color: var(--nav-active-fg); padding: 10px 18px; border-radius: var(--radius); font-size: 13px; opacity: 0; transition: opacity 0.2s; z-index: 200; pointer-events: none; }
+    #toast.show { opacity: 1; }
+    @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } .form-grid .full { grid-column: 1; } }
+  </style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <circle cx="14" cy="14" r="13" stroke="currentColor" stroke-width="1" opacity="0.35"/>
+      <path d="M8 17 Q11 11 14 11 Q17 11 20 17" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <circle cx="8" cy="17" r="2" fill="currentColor"/><circle cx="20" cy="17" r="2" fill="currentColor"/>
+    </svg>
+    <h1>Korpsinventar</h1>
+    <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">🌙 Mørk modus</button>
+  </header>
+
+  <nav>
+    <button class="active" data-section="dashboard">Oversikt</button>
+    <button data-section="instrumenter">Instrumenter</button>
+    <button data-section="musikanter">Musikanter</button>
+    <button data-section="service">Servicelogg</button>
+    <button data-section="tilbehor">Tilbehør</button>
+  </nav>
+
+  <div id="dashboard" class="section active">
+    <div class="metric-grid" id="metrics"></div>
+    <div id="alerts-area"></div>
+    <div class="card">
+      <p style="font-size:13px;font-weight:600;margin-bottom:10px;">Siste serviceoppføringer</p>
+      <div id="dash-service"></div>
+    </div>
+  </div>
+
+  <div id="instrumenter" class="section">
+    <div class="section-header">
+      <h2>Instrumenter</h2>
+      <div class="section-header-actions">
+        <button class="btn-export" onclick="exportData('instruments','csv')">Eksporter CSV</button>
+        <button class="btn-export" onclick="exportData('instruments','excel')">Eksporter Excel</button>
+        <button class="btn btn-primary" onclick="openInstModal()">+ Legg til instrument</button>
+      </div>
+    </div>
+    <div class="table-wrap card">
+      <table><thead><tr><th>Instrument-ID</th><th>Navn</th><th>Kategori</th><th>Stand</th><th>Tildelt</th><th>Handlinger</th></tr></thead>
+      <tbody id="inst-table"></tbody></table>
+    </div>
+  </div>
+
+  <div id="musikanter" class="section">
+    <div class="section-header">
+      <h2>Musikanter</h2>
+      <div class="section-header-actions">
+        <button class="btn-export" onclick="exportData('players','csv')">Eksporter CSV</button>
+        <button class="btn-export" onclick="exportData('players','excel')">Eksporter Excel</button>
+        <button class="btn btn-primary" onclick="openPlayerModal()">+ Legg til musiker</button>
+      </div>
+    </div>
+    <div class="table-wrap card">
+      <table><thead><tr><th>Navn</th><th>Seksjon</th><th>Kontakt</th><th>Tildelte instrumenter</th><th>Handlinger</th></tr></thead>
+      <tbody id="player-table"></tbody></table>
+    </div>
+  </div>
+
+  <div id="service" class="section">
+    <div class="section-header">
+      <h2>Servicelogg</h2>
+      <div class="section-header-actions">
+        <button class="btn-export" onclick="exportData('service','csv')">Eksporter CSV</button>
+        <button class="btn-export" onclick="exportData('service','excel')">Eksporter Excel</button>
+        <button class="btn btn-primary" onclick="openServiceModal()">+ Logg service</button>
+      </div>
+    </div>
+    <div class="table-wrap card">
+      <table><thead><tr><th>Dato</th><th>Instrument</th><th>Type</th><th>Beskrivelse</th><th>Utført av</th><th>Kostnad</th><th>Neste frist</th><th>Handlinger</th></tr></thead>
+      <tbody id="service-table"></tbody></table>
+    </div>
+  </div>
+
+  <div id="tilbehor" class="section">
+    <div class="section-header">
+      <h2>Tilbehør og lager</h2>
+      <div class="section-header-actions">
+        <button class="btn-export" onclick="exportData('accessories','csv')">Eksporter CSV</button>
+        <button class="btn-export" onclick="exportData('accessories','excel')">Eksporter Excel</button>
+        <button class="btn btn-primary" onclick="openAccModal()">+ Legg til vare</button>
+      </div>
+    </div>
+    <div id="acc-alerts"></div>
+    <div class="table-wrap card">
+      <table><thead><tr><th>Vare</th><th>Kategori</th><th>På lager</th><th>Minimum</th><th>Status</th><th>Handlinger</th></tr></thead>
+      <tbody id="acc-table"></tbody></table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Instrument -->
+<div id="inst-modal" class="modal-overlay">
+  <div class="modal">
+    <h3 id="inst-modal-title">Legg til instrument</h3>
+    <div class="form-grid">
+      <div class="field full">
+        <label>Navn *</label>
+        <input id="inst-name" placeholder="f.eks. Trompet i Bb" oninput="updateIdPreview()">
+        <div class="id-preview" id="id-preview-wrap" style="display:none">Instrument-ID blir: <span class="kid" id="id-preview"></span></div>
+      </div>
+      <div class="field"><label>Kategori</label>
+        <select id="inst-cat" onchange="updateIdPreview()">
+          <option>Messingblåser</option><option>Treblåser</option><option>Slagverk</option><option>Annet</option>
+        </select>
+      </div>
+      <div class="field"><label>Stand</label>
+        <select id="inst-cond"><option>God</option><option>Akseptabel</option><option>Trenger service</option></select>
+      </div>
+      <div class="field"><label>Serienummer (valgfritt)</label><input id="inst-serial" placeholder="Produsentens serienr."></div>
+      <div class="field"><label>Kjøpsdato</label><input type="date" id="inst-purchase"></div>
+      <div class="field full"><label>Merknader</label><textarea id="inst-notes" placeholder="Oppbevaringssted, leverandør, osv."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('inst-modal')">Avbryt</button>
+      <button class="btn btn-primary" onclick="saveInstrument()">Lagre</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: QR-kode visning -->
+<div id="qr-modal" class="modal-overlay">
+  <div class="modal" style="max-width:380px;">
+    <h3>QR-kode</h3>
+    <div class="qr-center">
+      <div class="qr-canvas-wrap"><canvas id="qr-canvas"></canvas></div>
+      <div class="qr-inst-name" id="qr-inst-name"></div>
+      <div class="qr-inst-id" id="qr-inst-id-label"></div>
+    </div>
+    <div class="modal-footer" style="justify-content:space-between;margin-top:1rem;">
+      <button class="btn" onclick="closeModal('qr-modal')">Lukk</button>
+      <div style="display:flex;gap:8px;">
+        <button class="btn" onclick="downloadQr()">Last ned</button>
+        <button class="btn btn-primary" onclick="printQr()">Skriv ut</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Musiker -->
+<div id="player-modal" class="modal-overlay">
+  <div class="modal">
+    <h3 id="player-modal-title">Legg til musiker</h3>
+    <div class="form-grid">
+      <div class="field full"><label>Fullt navn *</label><input id="player-name"></div>
+      <div class="field"><label>Seksjon</label>
+        <select id="player-section"><option>Messingblåsere</option><option>Treblåsere</option><option>Slagverk</option><option>Fanfare</option><option>Annet</option></select>
+      </div>
+      <div class="field"><label>Kontakt</label><input id="player-contact" placeholder="Telefon eller e-post"></div>
+    </div>
+    <div class="field" style="margin-top:12px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+        <label style="font-size:12px;color:var(--text-muted);font-weight:500;">Tildel instrument(er)</label>
+        <button class="btn-sm" onclick="toggleScanner()" id="scanner-toggle-btn" style="font-size:11px;padding:3px 10px;">📷 Skann QR</button>
+      </div>
+      <!-- QR Scanner -->
+      <div id="scanner-wrap" style="display:none;margin-bottom:8px;">
+        <div class="qr-scan-area">
+          <video id="scanner-video" autoplay playsinline muted></video>
+          <div class="qr-scan-line"></div>
+        </div>
+        <div class="qr-scan-result" id="scan-result">Pek kameraet mot en QR-kode...</div>
+        <p class="scanner-hint">Skanner automatisk — ingen knapp å trykke</p>
+      </div>
+      <div id="inst-checkboxes" style="max-height:220px;overflow-y:auto;border:0.5px solid var(--border-md);border-radius:var(--radius);"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closePlayerModal()">Avbryt</button>
+      <button class="btn btn-primary" onclick="savePlayer()">Lagre</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Service -->
+<div id="service-modal" class="modal-overlay">
+  <div class="modal">
+    <h3 id="service-modal-title">Logg service</h3>
+    <div class="form-grid">
+      <div class="field"><label>Dato *</label><input type="date" id="svc-date"></div>
+      <div class="field"><label>Instrument *</label><select id="svc-inst"></select></div>
+      <div class="field"><label>Type</label>
+        <select id="svc-type"><option>Rutinemessig vedlikehold</option><option>Reparasjon</option><option>Dybderens</option><option>Pute-/filtbytte</option><option>Ventilservice</option><option>Annet</option></select>
+      </div>
+      <div class="field"><label>Kostnad (kr)</label><input type="number" id="svc-cost" placeholder="0" min="0"></div>
+      <div class="field"><label>Utført av</label><input id="svc-by" placeholder="Verksted, navn, osv."></div>
+      <div class="field"><label>Neste service (valgfritt)</label><input type="date" id="svc-next"></div>
+      <div class="field full"><label>Beskrivelse</label><textarea id="svc-desc" placeholder="Hva ble gjort?"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('service-modal')">Avbryt</button>
+      <button class="btn btn-primary" onclick="saveService()">Lagre</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Tilbehør -->
+<div id="acc-modal" class="modal-overlay">
+  <div class="modal">
+    <h3 id="acc-modal-title">Legg til vare</h3>
+    <div class="form-grid">
+      <div class="field full"><label>Varenavn *</label><input id="acc-name" placeholder="f.eks. Rørblad str. 2,5, Ventilolje"></div>
+      <div class="field"><label>Kategori</label>
+        <select id="acc-cat"><option>Rørblad</option><option>Oljer og fett</option><option>Munnstykker</option><option>Stropper og etuier</option><option>Rengjøring</option><option>Notemateriell</option><option>Annet</option></select>
+      </div>
+      <div class="field"><label>Antall på lager</label><input type="number" id="acc-stock" min="0" value="0"></div>
+      <div class="field"><label>Minimumsgrense (varsel)</label><input type="number" id="acc-min" min="0" value="2"></div>
+      <div class="field full"><label>Merknader</label><textarea id="acc-notes" placeholder="Leverandør, størrelse, osv."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('acc-modal')">Avbryt</button>
+      <button class="btn btn-primary" onclick="saveAccessory()">Lagre</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Juster lager -->
+<div id="acc-adjust-modal" class="modal-overlay">
+  <div class="modal" style="max-width:320px;">
+    <h3 id="adj-title">Juster lager</h3>
+    <div class="field"><label>Antall på lager</label><input type="number" id="adj-stock" min="0"></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('acc-adjust-modal')">Avbryt</button>
+      <button class="btn btn-primary" onclick="adjustStock()">Oppdater</button>
+    </div>
+  </div>
+</div>
+
+<!-- Hidden print area -->
+<div id="qr-print-area">
+  <div style="text-align:center;">
+    <canvas id="qr-print-canvas"></canvas>
+    <div style="font-size:20px;font-weight:700;margin-top:12px;" id="qr-print-name"></div>
+    <div style="font-family:monospace;font-size:24px;font-weight:800;letter-spacing:0.08em;margin-top:6px;" id="qr-print-id"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<!-- QR code library -->
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<!-- QR code scanner (ZXing) -->
+<script src="https://cdn.jsdelivr.net/npm/@zxing/browser@0.1.4/umd/index.min.js"></script>
+
+<script>
+// --- THEME ---
+function applyTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  document.getElementById('theme-btn').textContent = t === 'dark' ? '☀️ Lys modus' : '🌙 Mørk modus';
+  localStorage.setItem('korps-theme', t);
+}
+function toggleTheme() { applyTheme(localStorage.getItem('korps-theme') === 'dark' ? 'light' : 'dark'); }
+applyTheme(localStorage.getItem('korps-theme') || 'light');
+
+// --- STATE ---
+let state = { instruments: [], players: [], service: [], accessories: [] };
+let editingId = { inst: null, player: null, service: null, acc: null };
+let scannerActive = false;
+let scannerReader = null;
+let currentQrInst = null;
+
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2200);
+}
+
+async function api(method, path, body) {
+  const res = await fetch(path, {
+    method,
+    headers: body ? { 'Content-Type': 'application/json' } : {},
+    body: body ? JSON.stringify(body) : undefined
+  });
+  return res.json();
+}
+
+async function loadAll() {
+  const [instruments, players, service, accessories] = await Promise.all([
+    api('GET', '/api/instruments'), api('GET', '/api/players'),
+    api('GET', '/api/service'), api('GET', '/api/accessories')
+  ]);
+  state = { instruments, players, service, accessories };
+  render();
+}
+
+document.querySelectorAll('nav button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.section).classList.add('active');
+  });
+});
+
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(o => {
+  o.addEventListener('click', e => { if (e.target === o) { stopScanner(); o.classList.remove('open'); } });
+});
+
+// --- QR CODE ---
+function drawQr(canvas, text, size) {
+  return QRCode.toCanvas(canvas, text, { width: size, margin: 1, color: { dark: '#000000', light: '#ffffff' } });
+}
+
+function openQrModal(instId) {
+  const inst = state.instruments.find(i => i.id === instId);
+  if (!inst || !inst.korps_id) return;
+  currentQrInst = inst;
+  document.getElementById('qr-inst-name').textContent = inst.name;
+  document.getElementById('qr-inst-id-label').textContent = inst.korps_id;
+  const canvas = document.getElementById('qr-canvas');
+  drawQr(canvas, inst.korps_id, 200).then(() => openModal('qr-modal'));
+}
+
+function downloadQr() {
+  if (!currentQrInst) return;
+  const canvas = document.getElementById('qr-canvas');
+  const a = document.createElement('a');
+  a.download = `qr_${currentQrInst.korps_id}.png`;
+  a.href = canvas.toDataURL('image/png');
+  a.click();
+  toast('QR-kode lastet ned');
+}
+
+function printQr() {
+  if (!currentQrInst) return;
+  const printCanvas = document.getElementById('qr-print-canvas');
+  document.getElementById('qr-print-name').textContent = currentQrInst.name;
+  document.getElementById('qr-print-id').textContent = currentQrInst.korps_id;
+  drawQr(printCanvas, currentQrInst.korps_id, 280).then(() => window.print());
+}
+
+// --- QR SCANNER ---
+function toggleScanner() {
+  if (scannerActive) {
+    stopScanner();
+  } else {
+    startScanner();
+  }
+}
+
+async function startScanner() {
+  const wrap = document.getElementById('scanner-wrap');
+  const video = document.getElementById('scanner-video');
+  const resultEl = document.getElementById('scan-result');
+  const btn = document.getElementById('scanner-toggle-btn');
+
+  wrap.style.display = 'block';
+  btn.textContent = '⏹ Stopp skanner';
+  resultEl.className = 'qr-scan-result';
+  resultEl.textContent = 'Pek kameraet mot en QR-kode...';
+  scannerActive = true;
+
+  try {
+    const ZXing = window.ZXingBrowser;
+    scannerReader = new ZXing.BrowserQRCodeReader();
+    const devices = await ZXing.BrowserQRCodeReader.listVideoInputDevices();
+    const deviceId = devices.length > 1 ? devices[devices.length - 1].deviceId : (devices[0]?.deviceId);
+
+    scannerReader.decodeFromVideoDevice(deviceId, video, (result, err) => {
+      if (result) {
+        const scannedId = result.getText().trim();
+        const inst = state.instruments.find(i => i.korps_id === scannedId);
+        if (inst) {
+          resultEl.className = 'qr-scan-result found';
+          resultEl.textContent = `Funnet: ${inst.name} (${inst.korps_id})`;
+          // Check the checkbox for this instrument
+          const checkbox = document.querySelector(`#inst-checkboxes input[value="${inst.id}"]`);
+          if (checkbox && !checkbox.checked) {
+            checkbox.checked = true;
+            // Highlight the row briefly
+            const row = checkbox.closest('.inst-picker-item');
+            if (row) { row.style.background = '#eaf3de'; setTimeout(() => row.style.background = '', 1200); }
+          }
+          // Short pause then reset message
+          setTimeout(() => {
+            if (scannerActive) {
+              resultEl.className = 'qr-scan-result';
+              resultEl.textContent = 'Klar for neste skann...';
+            }
+          }, 1500);
+        } else {
+          resultEl.className = 'qr-scan-result notfound';
+          resultEl.textContent = `Ukjent ID: ${scannedId}`;
+          setTimeout(() => {
+            if (scannerActive) {
+              resultEl.className = 'qr-scan-result';
+              resultEl.textContent = 'Pek kameraet mot en QR-kode...';
+            }
+          }, 1500);
+        }
+      }
+    });
+  } catch(e) {
+    resultEl.className = 'qr-scan-result notfound';
+    resultEl.textContent = 'Kunne ikke starte kamera. Sjekk tillatelser.';
+    stopScanner();
+  }
+}
+
+function stopScanner() {
+  if (scannerReader) {
+    try { scannerReader.reset(); } catch(e) {}
+    scannerReader = null;
+  }
+  scannerActive = false;
+  document.getElementById('scanner-wrap').style.display = 'none';
+  const btn = document.getElementById('scanner-toggle-btn');
+  if (btn) btn.textContent = '📷 Skann QR';
+}
+
+// --- INSTRUMENT-ID GENERATION ---
+const nameMap = [
+  [/TROMPET/,'TRMP'],[/KORNETT/,'KORN'],[/TROMBONE/,'TRBN'],[/TUBA/,'TUBA'],
+  [/BARYTON/,'BARY'],[/EUFONIUM/,'EUFO'],[/FLYGELHORN/,'FLYG'],[/HORN/,'HORN'],
+  [/KLARINETT/,'KLAR'],[/FLØYTE|FLOYTE/,'FLØY'],[/SAXOFON|SAX/,'SAX'],
+  [/OBO/,'OBO'],[/FAGOTT/,'FAGO'],[/SKARPTROMME|SNARE/,'SNAR'],
+  [/BASSTROMME/,'BDRM'],[/CYMBAL/,'CYMB'],[/MARIMBA/,'MRMB'],
+  [/XYLOFON/,'XYLO'],[/PAUKER/,'PAUK']
+];
+function nameToPrefix(name) {
+  const n = (name||'').toUpperCase();
+  for (const [re, code] of nameMap) if (re.test(n)) return code;
+  return n.replace(/[^A-ZÆØÅ]/g,'').slice(0,4) || 'INST';
+}
+function generateInstrumentId(name) {
+  const prefix = nameToPrefix(name);
+  const taken = state.instruments
+    .filter(i => !(editingId.inst && i.id === editingId.inst))
+    .filter(i => (i.korps_id||'').startsWith(prefix+'-'))
+    .map(i => parseInt((i.korps_id||'').split('-')[1])||0);
+  const next = (taken.length ? Math.max(...taken) : 0) + 1;
+  return `${prefix}-${String(next).padStart(3,'0')}`;
+}
+function updateIdPreview() {
+  if (editingId.inst) { document.getElementById('id-preview-wrap').style.display='none'; return; }
+  const name = document.getElementById('inst-name').value.trim();
+  if (!name) { document.getElementById('id-preview-wrap').style.display='none'; return; }
+  document.getElementById('id-preview').textContent = generateInstrumentId(name);
+  document.getElementById('id-preview-wrap').style.display = 'block';
+}
+
+function condBadge(c) {
+  return c==='God' ? '<span class="badge badge-ok">God</span>'
+    : c==='Akseptabel' ? '<span class="badge badge-warn">Akseptabel</span>'
+    : '<span class="badge badge-bad">Trenger service</span>';
+}
+function idbadge(kid) { return kid ? `<span class="idbadge">${kid}</span>` : ''; }
+
+// --- EXPORT ---
+function escCsv(v) {
+  if (v === null || v === undefined) return '';
+  const s = String(v);
+  return s.includes(',') || s.includes('"') || s.includes('\n') ? `"${s.replace(/"/g,'""')}"` : s;
+}
+function downloadFile(content, filename, mimeType) {
+  const blob = new Blob([content], { type: mimeType });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+function toCsv(rows) { return rows.map(r => r.map(escCsv).join(',')).join('\r\n'); }
+function toXlsx(rows) {
+  const esc = v => String(v===null||v===undefined?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const cells = rows.map((row,ri) => row.map((val,ci) => {
+    const addr = String.fromCharCode(65+ci)+(ri+1);
+    const isNum = ri>0 && val!=='' && !isNaN(val) && val!==null;
+    return isNum ? `<c r="${addr}"><v>${esc(val)}</v></c>` : `<c r="${addr}" t="inlineStr"><is><t>${esc(val)}</t></is></c>`;
+  }).join('')).map((r,ri) => `<row r="${ri+1}">${r}</row>`).join('');
+  const sheet = `<?xml version="1.0" encoding="UTF-8"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>${cells}</sheetData></worksheet>`;
+  const wb = `<?xml version="1.0" encoding="UTF-8"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="Data" sheetId="1" r:id="rId1"/></sheets></workbook>`;
+  const rels = `<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/></Relationships>`;
+  const ctype = `<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/></Types>`;
+  function strToBytes(s){const b=[];for(let i=0;i<s.length;i++){const c=s.charCodeAt(i);if(c<0x80)b.push(c);else if(c<0x800){b.push(0xC0|(c>>6));b.push(0x80|(c&0x3F));}else{b.push(0xE0|(c>>12));b.push(0x80|((c>>6)&0x3F));b.push(0x80|(c&0x3F));}}return new Uint8Array(b);}
+  function crc32(data){let c=0xFFFFFFFF;const t=[];for(let i=0;i<256;i++){let n=i;for(let j=0;j<8;j++)n=n&1?(n>>>1)^0xEDB88320:n>>>1;t[i]=n;}for(let i=0;i<data.length;i++)c=(c>>>8)^t[(c^data[i])&0xFF];return(c^0xFFFFFFFF)>>>0;}
+  function u16le(n){return[n&0xFF,(n>>8)&0xFF];}
+  function u32le(n){return[n&0xFF,(n>>8)&0xFF,(n>>16)&0xFF,(n>>24)&0xFF];}
+  const files=[['[Content_Types].xml',ctype],['_rels/.rels',`<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>`],['xl/workbook.xml',wb],['xl/_rels/workbook.xml.rels',rels],['xl/worksheets/sheet1.xml',sheet]];
+  const localHeaders=[],centralHeaders=[];let offset=0;
+  for(const[name,content]of files){const nameBytes=strToBytes(name);const dataBytes=strToBytes(content);const crc=crc32(dataBytes);const size=dataBytes.length;const lh=[0x50,0x4B,0x03,0x04,...u16le(20),...u16le(0),...u16le(0),...u16le(0),...u16le(0),...u32le(crc),...u32le(size),...u32le(size),...u16le(nameBytes.length),...u16le(0),...nameBytes,...dataBytes];const ch=[0x50,0x4B,0x01,0x02,...u16le(20),...u16le(20),...u16le(0),...u16le(0),...u16le(0),...u16le(0),...u16le(0),...u32le(crc),...u32le(size),...u32le(size),...u16le(nameBytes.length),...u16le(0),...u16le(0),...u16le(0),...u16le(0),...u32le(0),...u32le(offset),...nameBytes];localHeaders.push(lh);centralHeaders.push(ch);offset+=lh.length;}
+  const centralStart=offset;const centralSize=centralHeaders.reduce((s,h)=>s+h.length,0);const eocd=[0x50,0x4B,0x05,0x06,...u16le(0),...u16le(0),...u16le(files.length),...u16le(files.length),...u32le(centralSize),...u32le(centralStart),...u16le(0)];
+  return new Uint8Array([...localHeaders.flat(),...centralHeaders.flat(),...eocd]);
+}
+function exportData(type, format) {
+  let rows = [];
+  const date = new Date().toISOString().slice(0,10);
+  if (type==='instruments') {
+    rows.push(['Instrument-ID','Navn','Kategori','Stand','Serienummer','Kjøpsdato','Tildelt musiker','Merknader']);
+    state.instruments.forEach(i => { const p=state.players.find(p=>(p.instruments||[]).includes(i.id)); rows.push([i.korps_id||'',i.name,i.category,i.condition,i.serial||'',i.purchase||'',p?.name||'',i.notes||'']); });
+  } else if (type==='players') {
+    rows.push(['Navn','Seksjon','Kontakt','Tildelte instrumenter (ID)','Tildelte instrumenter (navn)']);
+    state.players.forEach(p => { const insts=(p.instruments||[]).map(iid=>state.instruments.find(x=>x.id===iid)).filter(Boolean); rows.push([p.name,p.section,p.contact||'',insts.map(i=>i.korps_id||i.name).join('; '),insts.map(i=>i.name).join('; ')]); });
+  } else if (type==='service') {
+    rows.push(['Dato','Instrument-ID','Instrument','Type','Beskrivelse','Utført av','Kostnad (kr)','Neste servicefrist']);
+    state.service.forEach(s => { const i=state.instruments.find(x=>x.id===s.inst_id); rows.push([s.date,i?.korps_id||'',i?.name||'',s.type,s.desc||'',s.by_whom||'',s.cost||0,s.next_due||'']); });
+  } else if (type==='accessories') {
+    rows.push(['Varenavn','Kategori','På lager','Minimum','Status','Merknader']);
+    state.accessories.forEach(a => { const s=a.stock===0?'Tomt':a.stock<=a.min_level?'Lavt':'OK'; rows.push([a.name,a.category,a.stock,a.min_level,s,a.notes||'']); });
+  }
+  const labels={instruments:'instrumenter',players:'musikanter',service:'servicelogg',accessories:'tilbehor'};
+  const base=`korpsinventar_${labels[type]}_${date}`;
+  if (format==='csv') { downloadFile('\uFEFF'+toCsv(rows), base+'.csv','text/csv;charset=utf-8;'); toast('CSV lastet ned'); }
+  else { downloadFile(toXlsx(rows), base+'.xlsx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'); toast('Excel-fil lastet ned'); }
+}
+
+// --- INSTRUMENTS ---
+function openInstModal(id) {
+  editingId.inst = id || null;
+  const inst = id ? state.instruments.find(i => i.id === id) : null;
+  document.getElementById('inst-modal-title').textContent = inst ? 'Rediger instrument' : 'Legg til instrument';
+  document.getElementById('inst-name').value = inst?.name || '';
+  document.getElementById('inst-cat').value = inst?.category || 'Messingblåser';
+  document.getElementById('inst-cond').value = inst?.condition || 'God';
+  document.getElementById('inst-serial').value = inst?.serial || '';
+  document.getElementById('inst-purchase').value = inst?.purchase || '';
+  document.getElementById('inst-notes').value = inst?.notes || '';
+  document.getElementById('id-preview-wrap').style.display = 'none';
+  openModal('inst-modal');
+}
+async function saveInstrument() {
+  const name = document.getElementById('inst-name').value.trim();
+  const category = document.getElementById('inst-cat').value;
+  if (!name) return;
+  const korps_id = editingId.inst
+    ? state.instruments.find(i => i.id === editingId.inst)?.korps_id
+    : generateInstrumentId(name);
+  const body = { name, category, korps_id, condition: document.getElementById('inst-cond').value,
+    serial: document.getElementById('inst-serial').value.trim(),
+    purchase: document.getElementById('inst-purchase').value,
+    notes: document.getElementById('inst-notes').value.trim() };
+  if (editingId.inst) await api('PUT', '/api/instruments/'+editingId.inst, body);
+  else await api('POST', '/api/instruments', body);
+  closeModal('inst-modal'); toast('Lagret!'); await loadAll();
+}
+async function deleteInstrument(id) {
+  if (!confirm('Slette dette instrumentet?')) return;
+  await api('DELETE', '/api/instruments/'+id); toast('Slettet'); await loadAll();
+}
+function renderInstTable() {
+  const tb = document.getElementById('inst-table');
+  if (!state.instruments.length) { tb.innerHTML='<tr><td colspan="6" class="empty">Ingen instrumenter registrert ennå</td></tr>'; return; }
+  tb.innerHTML = state.instruments.map(inst => {
+    const player = state.players.find(p => (p.instruments||[]).includes(inst.id));
+    return `<tr>
+      <td>${idbadge(inst.korps_id)}${inst.serial?`<br><span style="font-size:11px;color:var(--text-faint)">Ser: ${inst.serial}</span>`:''}</td>
+      <td><strong style="font-weight:600">${inst.name}</strong>${inst.purchase?`<br><span style="font-size:11px;color:var(--text-faint)">Kjøpt: ${inst.purchase}</span>`:''}</td>
+      <td><span class="badge badge-gray">${inst.category}</span></td>
+      <td>${condBadge(inst.condition)}</td>
+      <td style="color:${player?'var(--text)':'var(--text-faint)'};">${player?player.name:'Ikke tildelt'}</td>
+      <td><div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <button class="btn-sm" onclick="openQrModal('${inst.id}')" title="Vis QR-kode">QR</button>
+        <button class="btn-sm" onclick="openInstModal('${inst.id}')">Rediger</button>
+        <button class="btn-sm btn-danger" onclick="deleteInstrument('${inst.id}')">Slett</button>
+      </div></td></tr>`;
+  }).join('');
+}
+
+// --- PLAYERS ---
+function openPlayerModal(id) {
+  editingId.player = id || null;
+  const p = id ? state.players.find(x => x.id === id) : null;
+  document.getElementById('player-modal-title').textContent = p ? 'Rediger musiker' : 'Legg til musiker';
+  document.getElementById('player-name').value = p?.name || '';
+  document.getElementById('player-section').value = p?.section || 'Messingblåsere';
+  document.getElementById('player-contact').value = p?.contact || '';
+  const assigned = p?.instruments || [];
+  const wrap = document.getElementById('inst-checkboxes');
+  if (!state.instruments.length) {
+    wrap.innerHTML = '<p style="color:var(--text-faint);font-size:13px;padding:12px;">Ingen instrumenter registrert ennå</p>';
+  } else {
+    wrap.innerHTML = state.instruments.map(i => `
+      <label class="inst-picker-item">
+        <input type="checkbox" value="${i.id}" ${assigned.includes(i.id)?'checked':''}>
+        <div>
+          <div class="inst-picker-name">${i.name}</div>
+          <div class="inst-picker-meta">${i.category}${i.serial?' · Ser: '+i.serial:''}</div>
+        </div>
+        ${idbadge(i.korps_id)}
+      </label>`).join('');
+  }
+  openModal('player-modal');
+}
+function closePlayerModal() {
+  stopScanner();
+  closeModal('player-modal');
+}
+async function savePlayer() {
+  stopScanner();
+  const body = { name: document.getElementById('player-name').value.trim(),
+    section: document.getElementById('player-section').value,
+    contact: document.getElementById('player-contact').value.trim(),
+    instruments: [...document.querySelectorAll('#inst-checkboxes input:checked')].map(c => c.value) };
+  if (!body.name) return;
+  if (editingId.player) await api('PUT', '/api/players/'+editingId.player, body);
+  else await api('POST', '/api/players', body);
+  closeModal('player-modal'); toast('Lagret!'); await loadAll();
+}
+async function deletePlayer(id) {
+  if (!confirm('Slette denne musikanten?')) return;
+  await api('DELETE', '/api/players/'+id); toast('Slettet'); await loadAll();
+}
+function renderPlayerTable() {
+  const tb = document.getElementById('player-table');
+  if (!state.players.length) { tb.innerHTML='<tr><td colspan="5" class="empty">Ingen musikanter registrert ennå</td></tr>'; return; }
+  tb.innerHTML = state.players.map(p => {
+    const insts = (p.instruments||[]).map(iid => {
+      const i = state.instruments.find(x => x.id === iid);
+      return i ? `<span style="display:inline-flex;align-items:center;gap:4px;margin:2px;background:var(--surface2);border:0.5px solid var(--border);border-radius:6px;padding:2px 8px;font-size:12px;">${i.name} ${idbadge(i.korps_id)}</span>` : '';
+    }).join('');
+    return `<tr>
+      <td><strong style="font-weight:600">${p.name}</strong></td>
+      <td><span class="badge badge-info">${p.section}</span></td>
+      <td style="font-size:12px;color:var(--text-muted);">${p.contact||'—'}</td>
+      <td>${insts||'<span style="color:var(--text-faint);font-size:12px;">Ingen</span>'}</td>
+      <td><div style="display:flex;gap:6px;">
+        <button class="btn-sm" onclick="openPlayerModal('${p.id}')">Rediger</button>
+        <button class="btn-sm btn-danger" onclick="deletePlayer('${p.id}')">Slett</button>
+      </div></td></tr>`;
+  }).join('');
+}
+
+// --- SERVICE ---
+function openServiceModal(id) {
+  editingId.service = id || null;
+  const s = id ? state.service.find(x => x.id === id) : null;
+  document.getElementById('service-modal-title').textContent = s ? 'Rediger serviceoppføring' : 'Logg service';
+  document.getElementById('svc-date').value = s?.date || new Date().toISOString().split('T')[0];
+  document.getElementById('svc-type').value = s?.type || 'Rutinemessig vedlikehold';
+  document.getElementById('svc-cost').value = s?.cost || '';
+  document.getElementById('svc-by').value = s?.by_whom || '';
+  document.getElementById('svc-next').value = s?.next_due || '';
+  document.getElementById('svc-desc').value = s?.desc || '';
+  document.getElementById('svc-inst').innerHTML = state.instruments.map(i =>
+    `<option value="${i.id}"${s&&s.inst_id===i.id?' selected':''}>${i.korps_id?i.korps_id+' — ':''}${i.name}</option>`
+  ).join('');
+  openModal('service-modal');
+}
+async function saveService() {
+  const body = { date: document.getElementById('svc-date').value, inst_id: document.getElementById('svc-inst').value,
+    type: document.getElementById('svc-type').value, cost: parseFloat(document.getElementById('svc-cost').value)||0,
+    by_whom: document.getElementById('svc-by').value.trim(), desc: document.getElementById('svc-desc').value.trim(),
+    next_due: document.getElementById('svc-next').value };
+  if (!body.inst_id || !body.date) return;
+  if (editingId.service) await api('PUT', '/api/service/'+editingId.service, body);
+  else await api('POST', '/api/service', body);
+  closeModal('service-modal'); toast('Lagret!'); await loadAll();
+}
+async function deleteService(id) {
+  if (!confirm('Slette denne oppføringen?')) return;
+  await api('DELETE', '/api/service/'+id); toast('Slettet'); await loadAll();
+}
+function renderServiceTable() {
+  const tb = document.getElementById('service-table');
+  if (!state.service.length) { tb.innerHTML='<tr><td colspan="8" class="empty">Ingen serviceoppføringer ennå</td></tr>'; return; }
+  const today = new Date().toISOString().split('T')[0];
+  tb.innerHTML = state.service.map(s => {
+    const inst = state.instruments.find(i => i.id === s.inst_id);
+    const nextBadge = !s.next_due ? '—'
+      : s.next_due < today ? `<span class="badge badge-bad">${s.next_due} — forfalt</span>`
+      : `<span class="badge badge-ok">${s.next_due}</span>`;
+    return `<tr>
+      <td style="white-space:nowrap;font-size:12px;">${s.date}</td>
+      <td>${inst?`${inst.name} ${idbadge(inst.korps_id)}`:'<span style="color:var(--text-faint)">Ukjent</span>'}</td>
+      <td><span class="badge badge-gray">${s.type}</span></td>
+      <td style="font-size:13px;">${s.desc||'—'}</td>
+      <td style="font-size:12px;color:var(--text-muted);">${s.by_whom||'—'}</td>
+      <td style="white-space:nowrap;">${s.cost?s.cost.toLocaleString('nb-NO')+' kr':'—'}</td>
+      <td>${nextBadge}</td>
+      <td><div style="display:flex;gap:6px;">
+        <button class="btn-sm" onclick="openServiceModal('${s.id}')">Rediger</button>
+        <button class="btn-sm btn-danger" onclick="deleteService('${s.id}')">Slett</button>
+      </div></td></tr>`;
+  }).join('');
+}
+
+// --- ACCESSORIES ---
+function openAccModal(id) {
+  editingId.acc = id || null;
+  const a = id ? state.accessories.find(x => x.id === id) : null;
+  document.getElementById('acc-modal-title').textContent = a ? 'Rediger vare' : 'Legg til vare';
+  document.getElementById('acc-name').value = a?.name || '';
+  document.getElementById('acc-cat').value = a?.category || 'Rørblad';
+  document.getElementById('acc-stock').value = a?.stock ?? 0;
+  document.getElementById('acc-min').value = a?.min_level ?? 2;
+  document.getElementById('acc-notes').value = a?.notes || '';
+  openModal('acc-modal');
+}
+async function saveAccessory() {
+  const body = { name: document.getElementById('acc-name').value.trim(), category: document.getElementById('acc-cat').value,
+    stock: parseInt(document.getElementById('acc-stock').value)||0, min_level: parseInt(document.getElementById('acc-min').value)||0,
+    notes: document.getElementById('acc-notes').value.trim() };
+  if (!body.name) return;
+  if (editingId.acc) await api('PUT', '/api/accessories/'+editingId.acc, body);
+  else await api('POST', '/api/accessories', body);
+  closeModal('acc-modal'); toast('Lagret!'); await loadAll();
+}
+async function deleteAccessory(id) {
+  if (!confirm('Slette denne varen?')) return;
+  await api('DELETE', '/api/accessories/'+id); toast('Slettet'); await loadAll();
+}
+function openAdjust(id) {
+  editingId.acc = id;
+  const a = state.accessories.find(x => x.id === id);
+  document.getElementById('adj-title').textContent = 'Juster lager — ' + a.name;
+  document.getElementById('adj-stock').value = a.stock;
+  openModal('acc-adjust-modal');
+}
+async function adjustStock() {
+  const id = editingId.acc;
+  const a = state.accessories.find(x => x.id === id);
+  await api('PUT', '/api/accessories/'+id, {...a, stock: parseInt(document.getElementById('adj-stock').value)||0});
+  closeModal('acc-adjust-modal'); toast('Lagerbeholdning oppdatert'); await loadAll();
+}
+function renderAccessories() {
+  const tb = document.getElementById('acc-table');
+  const alerts = document.getElementById('acc-alerts');
+  const low = state.accessories.filter(a => a.stock <= a.min_level);
+  alerts.innerHTML = low.map(a => `<div class="alert-box">Lavt lager: <strong>${a.name}</strong> — ${a.stock} stk igjen (minimum: ${a.min_level})</div>`).join('');
+  if (!state.accessories.length) { tb.innerHTML='<tr><td colspan="6" class="empty">Ingen varer registrert ennå</td></tr>'; return; }
+  tb.innerHTML = state.accessories.map(a => {
+    const s = a.stock===0?'<span class="badge badge-bad">Tomt</span>':a.stock<=a.min_level?'<span class="badge badge-warn">Lavt</span>':'<span class="badge badge-ok">OK</span>';
+    return `<tr>
+      <td><strong style="font-weight:600">${a.name}</strong>${a.notes?`<br><span style="font-size:12px;color:var(--text-muted)">${a.notes}</span>`:''}</td>
+      <td><span class="badge badge-gray">${a.category}</span></td>
+      <td style="font-weight:600">${a.stock}</td>
+      <td style="color:var(--text-muted)">${a.min_level}</td>
+      <td>${s}</td>
+      <td><div style="display:flex;gap:6px;">
+        <button class="btn-sm" onclick="openAdjust('${a.id}')">Lager</button>
+        <button class="btn-sm" onclick="openAccModal('${a.id}')">Rediger</button>
+        <button class="btn-sm btn-danger" onclick="deleteAccessory('${a.id}')">Slett</button>
+      </div></td></tr>`;
+  }).join('');
+}
+
+function renderDashboard() {
+  const needsService = state.instruments.filter(i => i.condition==='Trenger service').length;
+  const assigned = state.instruments.filter(i => state.players.some(p => (p.instruments||[]).includes(i.id))).length;
+  const lowAcc = state.accessories.filter(a => a.stock <= a.min_level).length;
+  document.getElementById('metrics').innerHTML = `
+    <div class="metric"><div class="label">Instrumenter totalt</div><div class="value">${state.instruments.length}</div></div>
+    <div class="metric"><div class="label">Musikanter</div><div class="value">${state.players.length}</div></div>
+    <div class="metric"><div class="label">Tildelte</div><div class="value">${assigned}</div></div>
+    <div class="metric"><div class="label">Trenger service</div><div class="value" style="color:${needsService>0?'#c0392b':'inherit'}">${needsService}</div></div>
+    <div class="metric"><div class="label">Lavt lager</div><div class="value" style="color:${lowAcc>0?'#b8740a':'inherit'}">${lowAcc}</div></div>`;
+  const today = new Date().toISOString().split('T')[0];
+  const overdue = state.service.filter(s => s.next_due && s.next_due < today);
+  const lowAccItems = state.accessories.filter(a => a.stock <= a.min_level);
+  document.getElementById('alerts-area').innerHTML = [
+    ...overdue.map(s => { const i=state.instruments.find(x=>x.id===s.inst_id);
+      return `<div class="alert-box">Service forfalt for <strong>${i?.name||'ukjent'}${i?.korps_id?' ('+i.korps_id+')':''}</strong> — frist var ${s.next_due}</div>`; }),
+    ...lowAccItems.map(a=>`<div class="alert-box">Lavt lager: <strong>${a.name}</strong> — ${a.stock} stk igjen (minimum: ${a.min_level})</div>`)
+  ].join('');
+  const recent = state.service.slice(0,5);
+  document.getElementById('dash-service').innerHTML = recent.length
+    ? recent.map(s => { const i=state.instruments.find(x=>x.id===s.inst_id);
+        return `<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:0.5px solid var(--border);font-size:13px;">
+          <span>${i?.name||'?'} ${idbadge(i?.korps_id)} — ${s.type}</span>
+          <span style="color:var(--text-muted);font-size:12px;">${s.date}</span></div>`; }).join('')
+    : '<p class="empty">Ingen serviceoppføringer ennå</p>';
+}
+
+function render() { renderDashboard(); renderInstTable(); renderPlayerTable(); renderServiceTable(); renderAccessories(); }
+loadAll();
+</script>
+</body>
+</html>
