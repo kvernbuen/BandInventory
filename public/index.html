@@ -286,7 +286,15 @@
           <div class="qr-scan-line"></div>
         </div>
         <div class="qr-scan-result" id="scan-result">Pek kameraet mot en QR-kode...</div>
-        <p class="scanner-hint">Skanner automatisk — ingen knapp å trykke</p>
+        <p class="scanner-hint">Automatisk skanning — ingen knapp å trykke</p>
+        <p class="scanner-hint" style="color:var(--text-faint);margin-top:2px;">Merk: QR-skanning krever at appen kjøres over HTTPS eller på localhost</p>
+      </div>
+      <!-- Manual fallback -->
+      <div id="scanner-manual-wrap" style="display:none;margin-bottom:8px;">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <input id="manual-scan-input" placeholder="Skriv inn Instrument-ID manuelt (f.eks. TRMP-001)" style="flex:1;" onkeydown="if(event.key==='Enter')manualScanSubmit()">
+          <button class="btn-sm" onclick="manualScanSubmit()">Legg til</button>
+        </div>
       </div>
       <div id="inst-checkboxes" style="max-height:220px;overflow-y:auto;border:0.5px solid var(--border-md);border-radius:var(--radius);"></div>
     </div>
@@ -362,10 +370,7 @@
 
 <div id="toast"></div>
 
-<!-- QR code library -->
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-<!-- QR code scanner (ZXing) -->
-<script src="https://cdn.jsdelivr.net/npm/@zxing/browser@0.1.4/umd/index.min.js"></script>
+<!-- QR: self-contained, no CDN -->
 
 <script>
 // --- THEME ---
@@ -424,46 +429,143 @@ document.querySelectorAll('.modal-overlay').forEach(o => {
   o.addEventListener('click', e => { if (e.target === o) { stopScanner(); o.classList.remove('open'); } });
 });
 
-// --- QR CODE ---
-function drawQr(canvas, text, size) {
-  return QRCode.toCanvas(canvas, text, { width: size, margin: 1, color: { dark: '#000000', light: '#ffffff' } });
-}
+// --- QR CODE GENERATOR (self-contained, no CDN) ---
+const QRGen = (() => {
+  // GF(256) arithmetic
+  const EXP = new Uint8Array(512), LOG = new Uint8Array(256);
+  { let x=1; for(let i=0;i<255;i++){EXP[i]=x;LOG[x]=i;x=x<128?x*2:(x*2)^285;} for(let i=255;i<512;i++) EXP[i]=EXP[i-255]; }
+  const mul=(a,b)=>(!a||!b)?0:EXP[LOG[a]+LOG[b]];
+  function rsEncode(data, n) {
+    let g=[1];
+    for(let i=0;i<n;i++){const ng=[0,...g];for(let j=0;j<g.length;j++){ng[j]^=mul(g[j],EXP[i]);ng[j+1]^=mul(g[j],EXP[i+1]||0);}g=ng;}
+    const msg=[...data,...new Uint8Array(n)];
+    for(let i=0;i<data.length;i++){const c=msg[i];if(c)for(let j=0;j<g.length;j++)msg[i+j]^=mul(g[j],c);}
+    return msg.slice(data.length);
+  }
 
+  function encode(text) {
+    // Byte mode, version 2M (28 data codewords, 16 EC codewords)
+    const bytes=[...text].map(c=>c.charCodeAt(0));
+    const bits=[];
+    const push=(v,n)=>{for(let i=n-1;i>=0;i--)bits.push((v>>i)&1);};
+    push(4,4); push(bytes.length,8); bytes.forEach(b=>push(b,8));
+    for(let i=0;i<4&&bits.length<224;i++) bits.push(0);
+    while(bits.length%8) bits.push(0);
+    let pi=0; while(bits.length<224){push(pi%2?0b00010001:0b11101100,8);pi++;}
+    const cw=[]; for(let i=0;i<bits.length;i+=8){let b=0;for(let j=0;j<8;j++)b=(b<<1)|bits[i+j];cw.push(b);}
+    return [...cw,...rsEncode(cw,16)];
+  }
+
+  function build(text) {
+    const S=25;
+    const mod=Array.from({length:S},()=>new Int8Array(S).fill(-1));
+    const fn=Array.from({length:S},()=>new Uint8Array(S));
+    const sf=(r,c,v)=>{if(r>=0&&r<S&&c>=0&&c<S){mod[r][c]=v;fn[r][c]=1;}};
+
+    // Finders
+    const finder=(tr,tc)=>{
+      for(let dr=0;dr<=6;dr++)for(let dc=0;dc<=6;dc++)
+        sf(tr+dr,tc+dc,(dr===0||dr===6||dc===0||dc===6||(dr>=2&&dr<=4&&dc>=2&&dc<=4))?1:0);
+      for(let i=-1;i<=7;i++){sf(tr+7,tc+i,0);sf(tr+i,tc+7,0);}
+    };
+    finder(0,0);finder(0,S-7);finder(S-7,0);
+
+    // Alignment at (18,18)
+    for(let dr=-2;dr<=2;dr++)for(let dc=-2;dc<=2;dc++)
+      sf(18+dr,18+dc,(Math.abs(dr)===2||Math.abs(dc)===2||(dr===0&&dc===0))?1:0);
+
+    // Timing
+    for(let i=8;i<S-8;i++){sf(6,i,i%2===0?1:0);sf(i,6,i%2===0?1:0);}
+
+    // Dark module + format placeholders
+    sf(S-8,8,1);
+    for(let i=0;i<=8;i++){if(!fn[8][i])sf(8,i,0);if(!fn[i][8])sf(i,8,0);}
+    for(let i=0;i<=7;i++){sf(8,S-1-i,0);sf(S-1-i,8,0);}
+
+    // Place data bits
+    const allBits=encode(text).flatMap(b=>[7,6,5,4,3,2,1,0].map(i=>(b>>i)&1));
+    let bi=0,up=true;
+    for(let right=S-1;right>=1;right-=2){
+      if(right===6)right=5;
+      for(let vi=0;vi<S;vi++){
+        const r=up?S-1-vi:vi;
+        for(let dc=0;dc<2;dc++){const c=right-dc;if(!fn[r][c])mod[r][c]=allBits[bi++]??0;}
+      }
+      up=!up;
+    }
+
+    // Mask 2: col%3===0
+    for(let r=0;r<S;r++)for(let c=0;c<S;c++)
+      if(!fn[r][c]&&mod[r][c]>=0) mod[r][c]^=(c%3===0?1:0);
+
+    // Format info (EC=M=01, mask=2 → fmtData=0b01010=10)
+    const fd=0b01010; let rem=fd<<10;
+    for(let i=14;i>=10;i--)if((rem>>i)&1)rem^=0b10100110111<<(i-10);
+    const fmt=((fd<<10)|rem)^0b101010000010010;
+    const fb=i=>(fmt>>(14-i))&1;
+    for(let i=0;i<=5;i++)mod[8][i]=fb(i);
+    mod[8][7]=fb(6);mod[8][8]=fb(7);mod[7][8]=fb(8);
+    for(let i=5;i>=0;i--)mod[i][8]=fb(14-i);
+    for(let i=0;i<=7;i++)mod[S-1-i][8]=fb(i);
+    for(let i=8;i<=14;i++)mod[8][S-15+i]=fb(i);
+
+    return mod;
+  }
+
+  function draw(canvas, text, px) {
+    const mod=build(text), S=mod.length;
+    const margin=2, scale=Math.max(2,Math.floor(px/S));
+    const dim=S*scale+margin*2*scale;
+    canvas.width=canvas.height=dim;
+    const ctx=canvas.getContext('2d');
+    ctx.fillStyle='#fff'; ctx.fillRect(0,0,dim,dim);
+    ctx.fillStyle='#000';
+    for(let r=0;r<S;r++)for(let c=0;c<S;c++)
+      if(mod[r][c]===1) ctx.fillRect((margin+c)*scale,(margin+r)*scale,scale,scale);
+  }
+  return {draw};
+})();
+
+// --- QR CODE UI ---
 function openQrModal(instId) {
   const inst = state.instruments.find(i => i.id === instId);
-  if (!inst || !inst.korps_id) return;
+  if (!inst || !inst.korps_id) { toast('Instrument mangler ID'); return; }
   currentQrInst = inst;
   document.getElementById('qr-inst-name').textContent = inst.name;
   document.getElementById('qr-inst-id-label').textContent = inst.korps_id;
-  const canvas = document.getElementById('qr-canvas');
-  drawQr(canvas, inst.korps_id, 200).then(() => openModal('qr-modal'));
+  try {
+    QRGen.draw(document.getElementById('qr-canvas'), inst.korps_id, 200);
+    openModal('qr-modal');
+  } catch(e) { toast('Feil ved generering av QR: ' + e.message); }
 }
 
 function downloadQr() {
   if (!currentQrInst) return;
-  const canvas = document.getElementById('qr-canvas');
   const a = document.createElement('a');
   a.download = `qr_${currentQrInst.korps_id}.png`;
-  a.href = canvas.toDataURL('image/png');
+  a.href = document.getElementById('qr-canvas').toDataURL('image/png');
   a.click();
   toast('QR-kode lastet ned');
 }
 
 function printQr() {
   if (!currentQrInst) return;
-  const printCanvas = document.getElementById('qr-print-canvas');
+  const pc = document.getElementById('qr-print-canvas');
   document.getElementById('qr-print-name').textContent = currentQrInst.name;
   document.getElementById('qr-print-id').textContent = currentQrInst.korps_id;
-  drawQr(printCanvas, currentQrInst.korps_id, 280).then(() => window.print());
+  QRGen.draw(pc, currentQrInst.korps_id, 280);
+  window.print();
 }
 
 // --- QR SCANNER ---
+// Strategy: use BarcodeDetector if available (Chrome/Edge/Android Chrome).
+// On Firefox/older browsers: show manual input fallback.
+// The camera itself uses standard getUserMedia which works over HTTP on localhost.
+let _scanStream = null;
+let _scanFrame = null;
+
 function toggleScanner() {
-  if (scannerActive) {
-    stopScanner();
-  } else {
-    startScanner();
-  }
+  scannerActive ? stopScanner() : startScanner();
 }
 
 async function startScanner() {
@@ -471,67 +573,129 @@ async function startScanner() {
   const video = document.getElementById('scanner-video');
   const resultEl = document.getElementById('scan-result');
   const btn = document.getElementById('scanner-toggle-btn');
+  const manualWrap = document.getElementById('scanner-manual-wrap');
 
   wrap.style.display = 'block';
   btn.textContent = '⏹ Stopp skanner';
   resultEl.className = 'qr-scan-result';
-  resultEl.textContent = 'Pek kameraet mot en QR-kode...';
+  resultEl.textContent = 'Starter kamera...';
   scannerActive = true;
 
-  try {
-    const ZXing = window.ZXingBrowser;
-    scannerReader = new ZXing.BrowserQRCodeReader();
-    const devices = await ZXing.BrowserQRCodeReader.listVideoInputDevices();
-    const deviceId = devices.length > 1 ? devices[devices.length - 1].deviceId : (devices[0]?.deviceId);
+  // Check camera support
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    showScannerFallback('Kameraet er ikke tilgjengelig i denne nettleseren.');
+    return;
+  }
 
-    scannerReader.decodeFromVideoDevice(deviceId, video, (result, err) => {
-      if (result) {
-        const scannedId = result.getText().trim();
-        const inst = state.instruments.find(i => i.korps_id === scannedId);
-        if (inst) {
-          resultEl.className = 'qr-scan-result found';
-          resultEl.textContent = `Funnet: ${inst.name} (${inst.korps_id})`;
-          // Check the checkbox for this instrument
-          const checkbox = document.querySelector(`#inst-checkboxes input[value="${inst.id}"]`);
-          if (checkbox && !checkbox.checked) {
-            checkbox.checked = true;
-            // Highlight the row briefly
-            const row = checkbox.closest('.inst-picker-item');
-            if (row) { row.style.background = '#eaf3de'; setTimeout(() => row.style.background = '', 1200); }
-          }
-          // Short pause then reset message
-          setTimeout(() => {
-            if (scannerActive) {
-              resultEl.className = 'qr-scan-result';
-              resultEl.textContent = 'Klar for neste skann...';
-            }
-          }, 1500);
-        } else {
-          resultEl.className = 'qr-scan-result notfound';
-          resultEl.textContent = `Ukjent ID: ${scannedId}`;
-          setTimeout(() => {
-            if (scannerActive) {
-              resultEl.className = 'qr-scan-result';
-              resultEl.textContent = 'Pek kameraet mot en QR-kode...';
-            }
-          }, 1500);
-        }
-      }
-    });
+  // Try to get camera
+  let stream;
+  try {
+    // Try back camera first (mobile), fall back to any camera
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' } } });
+    } catch(e) {
+      stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    }
   } catch(e) {
-    resultEl.className = 'qr-scan-result notfound';
-    resultEl.textContent = 'Kunne ikke starte kamera. Sjekk tillatelser.';
-    stopScanner();
+    let msg = 'Kunne ikke starte kamera.';
+    if (e.name === 'NotAllowedError') msg = 'Kameratillatelse ble avvist. Tillat kameratilgang i nettleseren og prøv igjen.';
+    else if (e.name === 'NotFoundError') msg = 'Ingen kamera funnet på denne enheten.';
+    else if (e.name === 'NotReadableError') msg = 'Kameraet er i bruk av en annen app.';
+    showScannerFallback(msg);
+    return;
+  }
+
+  _scanStream = stream;
+  video.srcObject = stream;
+  try { await video.play(); } catch(e) {}
+  resultEl.textContent = 'Pek kameraet mot en QR-kode...';
+
+  // Use BarcodeDetector if available
+  if ('BarcodeDetector' in window) {
+    let detector;
+    try { detector = new BarcodeDetector({ formats: ['qr_code'] }); }
+    catch(e) { detector = new BarcodeDetector(); }
+
+    const offscreen = document.createElement('canvas');
+    const ctx = offscreen.getContext('2d');
+    let lastVal = '', lastTime = 0;
+
+    async function tick() {
+      if (!scannerActive) return;
+      _scanFrame = requestAnimationFrame(tick);
+      const now = Date.now();
+      if (now - lastTime < 400 || video.readyState < 2 || !video.videoWidth) return;
+      lastTime = now;
+      offscreen.width = video.videoWidth;
+      offscreen.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0);
+      try {
+        const codes = await detector.detect(offscreen);
+        if (!codes.length) return;
+        const val = codes[0].rawValue.trim();
+        if (val === lastVal) return;
+        lastVal = val;
+        setTimeout(() => { lastVal = ''; }, 2000);
+        handleScanResult(val, resultEl);
+      } catch(e) {}
+    }
+    tick();
+  } else {
+    // BarcodeDetector not available — show manual input alongside live video
+    resultEl.textContent = 'Kamera aktivt. Skriv inn ID manuelt under (QR-skanning krever Chrome/Edge).';
+    if (manualWrap) manualWrap.style.display = 'block';
   }
 }
 
-function stopScanner() {
-  if (scannerReader) {
-    try { scannerReader.reset(); } catch(e) {}
-    scannerReader = null;
+function handleScanResult(val, resultEl) {
+  const inst = state.instruments.find(i => i.korps_id === val);
+  if (inst) {
+    resultEl.className = 'qr-scan-result found';
+    resultEl.textContent = `Funnet: ${inst.name} (${inst.korps_id})`;
+    const cb = document.querySelector(`#inst-checkboxes input[value="${inst.id}"]`);
+    if (cb && !cb.checked) {
+      cb.checked = true;
+      const row = cb.closest('.inst-picker-item');
+      if (row) { row.style.background = '#eaf3de'; setTimeout(() => row.style.background = '', 1400); }
+    }
+    setTimeout(() => {
+      if (scannerActive) { resultEl.className = 'qr-scan-result'; resultEl.textContent = 'Klar for neste skann...'; }
+    }, 1600);
+  } else {
+    resultEl.className = 'qr-scan-result notfound';
+    resultEl.textContent = `Ukjent ID: "${val}"`;
+    setTimeout(() => {
+      if (scannerActive) { resultEl.className = 'qr-scan-result'; resultEl.textContent = 'Pek kameraet mot en QR-kode...'; }
+    }, 1600);
   }
+}
+
+function manualScanSubmit() {
+  const input = document.getElementById('manual-scan-input');
+  const val = (input.value || '').trim().toUpperCase();
+  if (!val) return;
+  input.value = '';
+  handleScanResult(val, document.getElementById('scan-result'));
+}
+
+function showScannerFallback(msg) {
+  const resultEl = document.getElementById('scan-result');
+  const manualWrap = document.getElementById('scanner-manual-wrap');
+  resultEl.className = 'qr-scan-result notfound';
+  resultEl.textContent = msg;
+  if (manualWrap) manualWrap.style.display = 'block';
+  scannerActive = false;
+  const btn = document.getElementById('scanner-toggle-btn');
+  if (btn) btn.textContent = '📷 Skann QR';
+}
+
+function stopScanner() {
+  if (_scanFrame) { cancelAnimationFrame(_scanFrame); _scanFrame = null; }
+  if (_scanStream) { _scanStream.getTracks().forEach(t => t.stop()); _scanStream = null; }
   scannerActive = false;
   document.getElementById('scanner-wrap').style.display = 'none';
+  const mw = document.getElementById('scanner-manual-wrap');
+  if (mw) mw.style.display = 'none';
   const btn = document.getElementById('scanner-toggle-btn');
   if (btn) btn.textContent = '📷 Skann QR';
 }

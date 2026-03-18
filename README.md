@@ -6,18 +6,36 @@ Inventarsystem for korps — self-hosted med Docker.
 
 ### Krav
 - [Docker](https://docs.docker.com/get-docker/) og [Docker Compose](https://docs.docker.com/compose/)
+- `openssl` (følger med macOS og Linux; Windows: Git Bash eller WSL)
 
-### Start med Docker Compose (anbefalt)
+### Start med HTTPS (nødvendig for kameraskanning)
+
+QR-kode-skanneren krever HTTPS. Kjør disse kommandoene én gang:
 
 ```bash
-# Klon / kopier filene til en mappe, gå inn i mappen
 cd korpsinventar
 
-# Bygg og start
+# Steg 1: Generer selvsignert SSL-sertifikat
+bash generate-cert.sh
+
+# Steg 2: Bygg og start
 docker compose up -d
 
 # Appen er nå tilgjengelig på:
-# http://localhost:3000
+# https://localhost
+```
+
+Første gang vil nettleseren advare om sertifikatet (selvsignert). Klikk "Avansert" → "Fortsett til localhost" for å godta det. Dette er normalt for lokale self-hosted apper.
+
+### Uten HTTPS (enklere, men ingen kameraskanning)
+
+Hvis du ikke trenger QR-skanning med kamera, kan du bruke den enkle oppsettingen:
+
+```bash
+# Bytt ut docker-compose.yml med docker-compose.simple.yml
+docker compose -f docker-compose.simple.yml up -d
+
+# Tilgjengelig på: http://localhost:3000
 ```
 
 ### Stopp appen
