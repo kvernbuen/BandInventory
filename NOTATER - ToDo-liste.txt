@@ -1,0 +1,9 @@
+Endringer til utføring:
+
+Varer:
+* Mulighet til å legge til custom vare kategorier
+* Mulighet for å scanne inn strekkode på varer
+* Mulighet til å regisrere leverandører
+
+Servicelogg:
+* Mulighet til å legge til verksted og registrere hvilket verksted som utfører service på hver enkelt service
