@@ -7,6 +7,7 @@ Varer:
 
 Servicelogg:
 * Mulighet til å legge til verksted og registrere hvilket verksted som utfører service på hver enkelt service
+* Dato for innlevert til service og dator for service ferdig, samt satt i status "Under service" dersom ferdig dato ikke. Dersom ekstern service er brukt, legg til status "Til henting" og knapp for å kvittere ut "Hentet". Lage også en knapp for å vise alle servicer "Til Henting" med mulighet for å skrive den ut til Excel eller CSV.
 
 
 FEIL:
