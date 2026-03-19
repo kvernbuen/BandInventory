@@ -25,13 +25,15 @@
     [data-theme="dark"] .badge-warn { background:#2e1f08; color:#e0a040; }
     [data-theme="dark"] .badge-bad  { background:#2e1010; color:#e07070; }
     [data-theme="dark"] .badge-info { background:#0e1e34; color:#6aabee; }
+    [data-theme="dark"] .badge-purple { background:#1e1030; color:#b07aee; }
     [data-theme="dark"] .alert-box  { background:#2e1f08; border-color:#6b4910; color:#e0a040; }
+    [data-theme="dark"] .alert-box-purple { background:#1e1030; border-color:#6b30b0; color:#c09aee; }
     [data-theme="dark"] .idbadge   { background:#1a2540; color:#7aaeee; border-color:#2a4060; }
     [data-theme="dark"] .btn-danger { color:#e07070; border-color:#7a3030; }
     [data-theme="dark"] .qr-scan-area { background:#0a0a0a; border-color:#333; }
 
     body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; transition: background 0.2s, color 0.2s; }
-    .app { max-width: 1150px; margin: 0 auto; padding: 1.5rem 1rem; }
+    .app { max-width: 1200px; margin: 0 auto; padding: 1.5rem 1rem; }
     header { display: flex; align-items: center; gap: 10px; margin-bottom: 1.5rem; }
     header h1 { font-size: 20px; font-weight: 600; flex: 1; }
     .theme-toggle { background: var(--surface2); border: 0.5px solid var(--border-md); border-radius: 20px; padding: 5px 14px; cursor: pointer; font-size: 12px; color: var(--text-muted); font-family: inherit; white-space: nowrap; }
@@ -54,12 +56,17 @@
     .btn-export { font-size: 12px; padding: 5px 12px; border-radius: var(--radius); border: 0.5px solid var(--border-md); background: var(--surface2); color: var(--text-muted); cursor: pointer; font-family: inherit; }
     .btn-export:hover { background: var(--surface); color: var(--text); }
     .btn-danger { color: #a32d2d; border-color: #e09090; }
+    .btn-pickup { font-size: 12px; padding: 4px 10px; border-radius: var(--radius); border: 0.5px solid #9060c0; background: transparent; cursor: pointer; color: #7040a0; font-family: inherit; }
+    .btn-pickup:hover { background: #f0e8f8; }
+    [data-theme="dark"] .btn-pickup { color:#c090ee; border-color:#7050a0; }
+    [data-theme="dark"] .btn-pickup:hover { background:#1e1030; }
     .badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
-    .badge-ok   { background: #eaf3de; color: #3b6d11; }
-    .badge-warn { background: #faeeda; color: #854f0b; }
-    .badge-bad  { background: #fcebeb; color: #a32d2d; }
-    .badge-info { background: #e6f1fb; color: #185fa5; }
-    .badge-gray { background: var(--surface2); color: var(--text-muted); }
+    .badge-ok     { background: #eaf3de; color: #3b6d11; }
+    .badge-warn   { background: #faeeda; color: #854f0b; }
+    .badge-bad    { background: #fcebeb; color: #a32d2d; }
+    .badge-info   { background: #e6f1fb; color: #185fa5; }
+    .badge-gray   { background: var(--surface2); color: var(--text-muted); }
+    .badge-purple { background: #f0e8f8; color: #7040a0; }
     .idbadge { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 5px; background: #e8f0fb; color: #1a4a8a; border: 0.5px solid #b8d0f0; font-family: monospace; letter-spacing: 0.03em; white-space: nowrap; }
     table { width: 100%; border-collapse: collapse; font-size: 13px; }
     th { text-align: left; font-weight: 500; font-size: 12px; color: var(--text-muted); padding: 6px 10px; border-bottom: 0.5px solid var(--border); }
@@ -71,11 +78,13 @@
     .metric .label { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
     .metric .value { font-size: 24px; font-weight: 600; }
     .alert-box { background: #faeeda; border: 0.5px solid #fac775; border-radius: var(--radius); padding: 10px 14px; font-size: 13px; color: #633806; margin-bottom: 10px; }
+    .alert-box-purple { background: #f0e8f8; border: 0.5px solid #c090e0; border-radius: var(--radius); padding: 10px 14px; font-size: 13px; color: #5020a0; margin-bottom: 10px; }
     .empty { color: var(--text-faint); font-size: 13px; padding: 2rem; text-align: center; }
     .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; align-items: flex-start; justify-content: center; padding: 50px 12px 20px; overflow-y: auto; }
     .modal-overlay.open { display: flex; }
-    .modal { background: var(--surface); border-radius: var(--radius-lg); border: 0.5px solid var(--border-md); padding: 1.5rem; width: 100%; max-width: 520px; align-self: flex-start; }
+    .modal { background: var(--surface); border-radius: var(--radius-lg); border: 0.5px solid var(--border-md); padding: 1.5rem; width: 100%; max-width: 540px; align-self: flex-start; }
     .modal h3 { font-size: 16px; font-weight: 600; margin-bottom: 1.25rem; }
+    .modal-wide { max-width: 720px; }
     .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .form-grid .full { grid-column: 1 / -1; }
     .field { display: flex; flex-direction: column; gap: 5px; }
@@ -94,6 +103,13 @@
     .inst-picker-name { font-size: 13px; color: var(--text); }
     .inst-picker-meta { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
 
+    /* Workshop list in modal */
+    .ws-item { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 0.5px solid var(--border); }
+    .ws-item:last-child { border-bottom: none; }
+    .ws-item-info { flex: 1; }
+    .ws-item-name { font-size: 13px; font-weight: 500; }
+    .ws-item-meta { font-size: 12px; color: var(--text-muted); }
+
     /* QR modal */
     .qr-center { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 8px 0; }
     .qr-canvas-wrap { background: #fff; padding: 16px; border-radius: var(--radius); border: 0.5px solid var(--border-md); }
@@ -101,7 +117,7 @@
     .qr-inst-id { font-family: monospace; font-size: 18px; font-weight: 700; color: #1a4a8a; letter-spacing: 0.05em; }
     [data-theme="dark"] .qr-inst-id { color: #7aaeee; }
 
-    /* QR scanner */
+    /* QR/barcode scanner */
     .qr-scan-area { position: relative; width: 100%; max-width: 360px; border-radius: var(--radius); overflow: hidden; background: #000; border: 0.5px solid var(--border-md); margin: 0 auto; }
     .qr-scan-area video { display: block; width: 100%; }
     .qr-scan-line { position: absolute; left: 10%; right: 10%; height: 2px; background: #ef4444; opacity: 0.85; animation: scanline 2s ease-in-out infinite; top: 50%; }
@@ -110,6 +126,12 @@
     .qr-scan-result.found { color: #3b6d11; font-weight: 600; }
     .qr-scan-result.notfound { color: #a32d2d; }
     .scanner-hint { font-size: 12px; color: var(--text-muted); text-align: center; margin-top: 6px; }
+
+    /* Til henting list */
+    .th-list-item { padding: 10px 0; border-bottom: 0.5px solid var(--border); }
+    .th-list-item:last-child { border-bottom: none; }
+    .th-list-item-title { font-weight: 600; font-size: 13px; }
+    .th-list-item-meta { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
 
     /* Print styles */
     @media print {
@@ -144,6 +166,7 @@
     <button data-section="tilbehor">Tilbehør</button>
   </nav>
 
+  <!-- OVERSIKT -->
   <div id="dashboard" class="section active">
     <div class="metric-grid" id="metrics"></div>
     <div id="alerts-area"></div>
@@ -153,6 +176,7 @@
     </div>
   </div>
 
+  <!-- INSTRUMENTER -->
   <div id="instrumenter" class="section">
     <div class="section-header">
       <h2>Instrumenter</h2>
@@ -168,6 +192,7 @@
     </div>
   </div>
 
+  <!-- MUSIKANTER -->
   <div id="musikanter" class="section">
     <div class="section-header">
       <h2>Musikanter</h2>
@@ -183,21 +208,25 @@
     </div>
   </div>
 
+  <!-- SERVICELOGG -->
   <div id="service" class="section">
     <div class="section-header">
       <h2>Servicelogg</h2>
       <div class="section-header-actions">
         <button class="btn-export" onclick="exportData('service','csv')">Eksporter CSV</button>
         <button class="btn-export" onclick="exportData('service','xlsx')">Eksporter Excel</button>
+        <button class="btn" onclick="openTilHentingModal()">📦 Til henting</button>
+        <button class="btn" onclick="openWorkshopsModal()">🔧 Verksteder</button>
         <button class="btn btn-primary" onclick="openServiceModal()">+ Logg service</button>
       </div>
     </div>
     <div class="table-wrap card">
-      <table><thead><tr><th>Dato</th><th>Instrument</th><th>Type</th><th>Beskrivelse</th><th>Utført av</th><th>Kostnad</th><th>Neste frist</th><th>Handlinger</th></tr></thead>
+      <table><thead><tr><th>Innlevert</th><th>Instrument</th><th>Type</th><th>Status</th><th>Verksted</th><th>Beskrivelse</th><th>Kostnad</th><th>Neste frist</th><th>Handlinger</th></tr></thead>
       <tbody id="service-table"></tbody></table>
     </div>
   </div>
 
+  <!-- TILBEHØR -->
   <div id="tilbehor" class="section">
     <div class="section-header">
       <h2>Tilbehør og lager</h2>
@@ -209,11 +238,13 @@
     </div>
     <div id="acc-alerts"></div>
     <div class="table-wrap card">
-      <table><thead><tr><th>Vare</th><th>Kategori</th><th>På lager</th><th>Minimum</th><th>Status</th><th>Handlinger</th></tr></thead>
+      <table><thead><tr><th>Vare</th><th>Kategori</th><th>Leverandør</th><th>På lager</th><th>Minimum</th><th>Status</th><th>Handlinger</th></tr></thead>
       <tbody id="acc-table"></tbody></table>
     </div>
   </div>
 </div>
+
+<!-- ===== MODALER ===== -->
 
 <!-- Modal: Instrument -->
 <div id="inst-modal" class="modal-overlay">
@@ -279,7 +310,6 @@
         <label style="font-size:12px;color:var(--text-muted);font-weight:500;">Tildel instrument(er)</label>
         <button class="btn-sm" onclick="toggleScanner()" id="scanner-toggle-btn" style="font-size:11px;padding:3px 10px;">📷 Skann QR</button>
       </div>
-      <!-- QR Scanner -->
       <div id="scanner-wrap" style="display:none;margin-bottom:8px;">
         <div class="qr-scan-area">
           <video id="scanner-video" autoplay playsinline muted></video>
@@ -289,7 +319,6 @@
         <p class="scanner-hint">Automatisk skanning — ingen knapp å trykke</p>
         <p class="scanner-hint" style="color:var(--text-faint);margin-top:2px;">Merk: QR-skanning krever at appen kjøres over HTTPS eller på localhost</p>
       </div>
-      <!-- Manual fallback -->
       <div id="scanner-manual-wrap" style="display:none;margin-bottom:8px;">
         <div style="display:flex;gap:6px;align-items:center;">
           <input id="manual-scan-input" placeholder="Skriv inn Instrument-ID manuelt (f.eks. TRMP-001)" style="flex:1;" onkeydown="if(event.key==='Enter')manualScanSubmit()">
@@ -310,13 +339,19 @@
   <div class="modal">
     <h3 id="service-modal-title">Logg service</h3>
     <div class="form-grid">
-      <div class="field"><label>Dato *</label><input type="date" id="svc-date"></div>
+      <div class="field"><label>Innlevert dato *</label><input type="date" id="svc-date"></div>
       <div class="field"><label>Instrument *</label><select id="svc-inst"></select></div>
+      <div class="field"><label>Verksted (ekstern service)</label>
+        <select id="svc-workshop">
+          <option value="">— Intern / ingen verksted —</option>
+        </select>
+      </div>
       <div class="field"><label>Type</label>
         <select id="svc-type"><option>Rutinemessig vedlikehold</option><option>Reparasjon</option><option>Dybderens</option><option>Pute-/filtbytte</option><option>Ventilservice</option><option>Annet</option></select>
       </div>
+      <div class="field"><label>Ferdig dato</label><input type="date" id="svc-date-finished" placeholder="La stå tom om ikke ferdig"></div>
       <div class="field"><label>Kostnad (kr)</label><input type="number" id="svc-cost" placeholder="0" min="0"></div>
-      <div class="field"><label>Utført av</label><input id="svc-by" placeholder="Verksted, navn, osv."></div>
+      <div class="field"><label>Utført av</label><input id="svc-by" placeholder="Navn, verksted, osv."></div>
       <div class="field"><label>Neste service (valgfritt)</label><input type="date" id="svc-next"></div>
       <div class="field full"><label>Beskrivelse</label><textarea id="svc-desc" placeholder="Hva ble gjort?"></textarea></div>
     </div>
@@ -333,15 +368,36 @@
     <h3 id="acc-modal-title">Legg til vare</h3>
     <div class="form-grid">
       <div class="field full"><label>Varenavn *</label><input id="acc-name" placeholder="f.eks. Rørblad str. 2,5, Ventilolje"></div>
-      <div class="field"><label>Kategori</label>
-        <select id="acc-cat"><option>Rørblad</option><option>Oljer og fett</option><option>Munnstykker</option><option>Stropper og etuier</option><option>Rengjøring</option><option>Notemateriell</option><option>Annet</option></select>
+      <div class="field">
+        <label>Kategori</label>
+        <input id="acc-cat" list="acc-category-list" placeholder="Velg eller skriv ny kategori">
+        <datalist id="acc-category-list"></datalist>
       </div>
+      <div class="field"><label>Leverandør</label><input id="acc-supplier" placeholder="f.eks. Norges Musikk AS"></div>
       <div class="field"><label>Antall på lager</label><input type="number" id="acc-stock" min="0" value="0"></div>
       <div class="field"><label>Minimumsgrense (varsel)</label><input type="number" id="acc-min" min="0" value="2"></div>
-      <div class="field full"><label>Merknader</label><textarea id="acc-notes" placeholder="Leverandør, størrelse, osv."></textarea></div>
+      <div class="field full">
+        <label>Strekkode</label>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <input id="acc-barcode" placeholder="Skann eller skriv inn strekkode" style="flex:1;" onkeydown="if(event.key==='Enter')event.preventDefault()">
+          <button class="btn-sm" onclick="toggleBarcodeScanner()" id="barcode-toggle-btn" style="font-size:11px;padding:3px 10px;white-space:nowrap;">📷 Skann</button>
+        </div>
+      </div>
+      <div class="field full" id="barcode-scanner-wrap" style="display:none;">
+        <div class="qr-scan-area">
+          <video id="barcode-video" autoplay playsinline muted></video>
+          <div class="qr-scan-line"></div>
+        </div>
+        <div class="qr-scan-result" id="barcode-scan-result">Pek kameraet mot strekkoden...</div>
+        <p class="scanner-hint">Støtter EAN-13, EAN-8, UPC, Code 128, QR m.fl.</p>
+      </div>
+      <div class="field full" id="barcode-manual-wrap" style="display:none;">
+        <p style="font-size:12px;color:var(--text-muted);">Skriv strekkoden direkte i feltet over.</p>
+      </div>
+      <div class="field full"><label>Merknader</label><textarea id="acc-notes" placeholder="Størrelse, spesifikasjoner, osv."></textarea></div>
     </div>
     <div class="modal-footer">
-      <button class="btn" onclick="closeModal('acc-modal')">Avbryt</button>
+      <button class="btn" onclick="closeAccModal()">Avbryt</button>
       <button class="btn btn-primary" onclick="saveAccessory()">Lagre</button>
     </div>
   </div>
@@ -359,6 +415,60 @@
   </div>
 </div>
 
+<!-- Modal: Verksteder -->
+<div id="workshops-modal" class="modal-overlay">
+  <div class="modal modal-wide">
+    <h3>Verksteder</h3>
+    <div id="workshops-list" style="margin-bottom:1rem;max-height:300px;overflow-y:auto;"></div>
+    <div style="border-top:0.5px solid var(--border);padding-top:1rem;">
+      <p style="font-size:12px;font-weight:500;color:var(--text-muted);margin-bottom:8px;" id="ws-form-title">Legg til verksted</p>
+      <div class="form-grid">
+        <div class="field full"><label>Navn *</label><input id="ws-name" placeholder="f.eks. Musikk & Service AS"></div>
+        <div class="field"><label>Kontakt</label><input id="ws-contact" placeholder="Telefon eller e-post"></div>
+        <div class="field"><label>Adresse</label><input id="ws-address" placeholder="Gateadresse"></div>
+        <div class="field full"><label>Merknader</label><input id="ws-notes" placeholder="Åpningstider, spesialiteter, osv."></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeWorkshopsModal()">Lukk</button>
+      <button class="btn btn-primary" onclick="saveWorkshop()">Lagre verksted</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Til henting -->
+<div id="til-henting-modal" class="modal-overlay">
+  <div class="modal modal-wide">
+    <h3>Instrumenter til henting</h3>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:1rem;">Instrumenter som er ferdig servicet eksternt og venter på henting.</p>
+    <div id="til-henting-list"></div>
+    <div class="modal-footer" style="justify-content:space-between;margin-top:1rem;">
+      <button class="btn" onclick="closeModal('til-henting-modal')">Lukk</button>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-export" onclick="exportData('til-henting','csv')">Eksporter CSV</button>
+        <button class="btn-export" onclick="exportData('til-henting','xlsx')">Eksporter Excel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Rediger verksted -->
+<div id="ws-edit-modal" class="modal-overlay">
+  <div class="modal" style="max-width:440px;">
+    <h3>Rediger verksted</h3>
+    <div class="form-grid">
+      <div class="field full"><label>Navn *</label><input id="ws-edit-name"></div>
+      <div class="field"><label>Kontakt</label><input id="ws-edit-contact"></div>
+      <div class="field"><label>Adresse</label><input id="ws-edit-address"></div>
+      <div class="field full"><label>Merknader</label><input id="ws-edit-notes"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('ws-edit-modal')">Avbryt</button>
+      <button class="btn btn-primary" onclick="saveWorkshopEdit()">Lagre</button>
+    </div>
+  </div>
+</div>
+
 <!-- Hidden print area -->
 <div id="qr-print-area">
   <div style="text-align:center;">
@@ -369,8 +479,6 @@
 </div>
 
 <div id="toast"></div>
-
-<!-- QR: self-contained, no CDN -->
 
 <script>
 // --- THEME ---
@@ -383,10 +491,14 @@ function toggleTheme() { applyTheme(localStorage.getItem('korps-theme') === 'dar
 applyTheme(localStorage.getItem('korps-theme') || 'light');
 
 // --- STATE ---
-let state = { instruments: [], players: [], service: [], accessories: [] };
-let editingId = { inst: null, player: null, service: null, acc: null };
+let state = { instruments: [], players: [], service: [], accessories: [], workshops: [], accCategories: [] };
+let editingId = { inst: null, player: null, service: null, acc: null, ws: null };
 let scannerActive = false;
-let scannerReader = null;
+let barcodeScannerActive = false;
+let _scanStream = null;
+let _scanFrame = null;
+let _barcodeStream = null;
+let _barcodeFrame = null;
 let currentQrInst = null;
 
 function toast(msg) {
@@ -406,11 +518,12 @@ async function api(method, path, body) {
 }
 
 async function loadAll() {
-  const [instruments, players, service, accessories] = await Promise.all([
+  const [instruments, players, service, accessories, workshops, accCategories] = await Promise.all([
     api('GET', '/api/instruments'), api('GET', '/api/players'),
-    api('GET', '/api/service'), api('GET', '/api/accessories')
+    api('GET', '/api/service'), api('GET', '/api/accessories'),
+    api('GET', '/api/workshops'), api('GET', '/api/acc-categories')
   ]);
-  state = { instruments, players, service, accessories };
+  state = { instruments, players, service, accessories, workshops, accCategories };
   render();
 }
 
@@ -426,12 +539,24 @@ document.querySelectorAll('nav button').forEach(btn => {
 function openModal(id) { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 document.querySelectorAll('.modal-overlay').forEach(o => {
-  o.addEventListener('click', e => { if (e.target === o) { stopScanner(); o.classList.remove('open'); } });
+  o.addEventListener('click', e => {
+    if (e.target === o) {
+      stopScanner();
+      stopBarcodeScanner();
+      o.classList.remove('open');
+    }
+  });
 });
+
+// --- SERVICE STATUS ---
+function getServiceStatus(s) {
+  if (!s.date_finished) return { key: 'under_service', label: 'Under service', cls: 'badge-warn' };
+  if (s.workshop_id && !s.picked_up) return { key: 'til_henting', label: 'Til henting', cls: 'badge-purple' };
+  return { key: 'ferdig', label: 'Ferdig', cls: 'badge-ok' };
+}
 
 // --- QR CODE GENERATOR (self-contained, no CDN) ---
 const QRGen = (() => {
-  // GF(256) arithmetic
   const EXP = new Uint8Array(512), LOG = new Uint8Array(256);
   { let x=1; for(let i=0;i<255;i++){EXP[i]=x;LOG[x]=i;x=x<128?x*2:(x*2)^285;} for(let i=255;i<512;i++) EXP[i]=EXP[i-255]; }
   const mul=(a,b)=>(!a||!b)?0:EXP[LOG[a]+LOG[b]];
@@ -442,9 +567,7 @@ const QRGen = (() => {
     for(let i=0;i<data.length;i++){const c=msg[i];if(c)for(let j=0;j<g.length;j++)msg[i+j]^=mul(g[j],c);}
     return msg.slice(data.length);
   }
-
   function encode(text) {
-    // Byte mode, version 2M (28 data codewords, 16 EC codewords)
     const bytes=[...text].map(c=>c.charCodeAt(0));
     const bits=[];
     const push=(v,n)=>{for(let i=n-1;i>=0;i--)bits.push((v>>i)&1);};
@@ -455,34 +578,23 @@ const QRGen = (() => {
     const cw=[]; for(let i=0;i<bits.length;i+=8){let b=0;for(let j=0;j<8;j++)b=(b<<1)|bits[i+j];cw.push(b);}
     return [...cw,...rsEncode(cw,16)];
   }
-
   function build(text) {
     const S=25;
     const mod=Array.from({length:S},()=>new Int8Array(S).fill(-1));
     const fn=Array.from({length:S},()=>new Uint8Array(S));
     const sf=(r,c,v)=>{if(r>=0&&r<S&&c>=0&&c<S){mod[r][c]=v;fn[r][c]=1;}};
-
-    // Finders
     const finder=(tr,tc)=>{
       for(let dr=0;dr<=6;dr++)for(let dc=0;dc<=6;dc++)
         sf(tr+dr,tc+dc,(dr===0||dr===6||dc===0||dc===6||(dr>=2&&dr<=4&&dc>=2&&dc<=4))?1:0);
       for(let i=-1;i<=7;i++){sf(tr+7,tc+i,0);sf(tr+i,tc+7,0);}
     };
     finder(0,0);finder(0,S-7);finder(S-7,0);
-
-    // Alignment at (18,18)
     for(let dr=-2;dr<=2;dr++)for(let dc=-2;dc<=2;dc++)
       sf(18+dr,18+dc,(Math.abs(dr)===2||Math.abs(dc)===2||(dr===0&&dc===0))?1:0);
-
-    // Timing
     for(let i=8;i<S-8;i++){sf(6,i,i%2===0?1:0);sf(i,6,i%2===0?1:0);}
-
-    // Dark module + format placeholders
     sf(S-8,8,1);
     for(let i=0;i<=8;i++){if(!fn[8][i])sf(8,i,0);if(!fn[i][8])sf(i,8,0);}
     for(let i=0;i<=7;i++){sf(8,S-1-i,0);sf(S-1-i,8,0);}
-
-    // Place data bits
     const allBits=encode(text).flatMap(b=>[7,6,5,4,3,2,1,0].map(i=>(b>>i)&1));
     let bi=0,up=true;
     for(let right=S-1;right>=1;right-=2){
@@ -493,12 +605,8 @@ const QRGen = (() => {
       }
       up=!up;
     }
-
-    // Mask 2: col%3===0
     for(let r=0;r<S;r++)for(let c=0;c<S;c++)
       if(!fn[r][c]&&mod[r][c]>=0) mod[r][c]^=(c%3===0?1:0);
-
-    // Format info (EC=M=01, mask=2 → fmtData=0b01010=10)
     const fd=0b01010; let rem=fd<<10;
     for(let i=14;i>=10;i--)if((rem>>i)&1)rem^=0b10100110111<<(i-10);
     const fmt=((fd<<10)|rem)^0b101010000010010;
@@ -508,10 +616,8 @@ const QRGen = (() => {
     for(let i=5;i>=0;i--)mod[i][8]=fb(14-i);
     for(let i=0;i<=7;i++)mod[S-1-i][8]=fb(i);
     for(let i=8;i<=14;i++)mod[8][S-15+i]=fb(i);
-
     return mod;
   }
-
   function draw(canvas, text, px) {
     const mod=build(text), S=mod.length;
     const margin=2, scale=Math.max(2,Math.floor(px/S));
@@ -538,7 +644,6 @@ function openQrModal(instId) {
     openModal('qr-modal');
   } catch(e) { toast('Feil ved generering av QR: ' + e.message); }
 }
-
 function downloadQr() {
   if (!currentQrInst) return;
   const a = document.createElement('a');
@@ -547,7 +652,6 @@ function downloadQr() {
   a.click();
   toast('QR-kode lastet ned');
 }
-
 function printQr() {
   if (!currentQrInst) return;
   const pc = document.getElementById('qr-print-canvas');
@@ -557,16 +661,8 @@ function printQr() {
   window.print();
 }
 
-// --- QR SCANNER ---
-// Strategy: use BarcodeDetector if available (Chrome/Edge/Android Chrome).
-// On Firefox/older browsers: show manual input fallback.
-// The camera itself uses standard getUserMedia which works over HTTP on localhost.
-let _scanStream = null;
-let _scanFrame = null;
-
-function toggleScanner() {
-  scannerActive ? stopScanner() : startScanner();
-}
+// --- QR SCANNER (for player modal) ---
+function toggleScanner() { scannerActive ? stopScanner() : startScanner(); }
 
 async function startScanner() {
   const wrap = document.getElementById('scanner-wrap');
@@ -581,53 +677,40 @@ async function startScanner() {
   resultEl.textContent = 'Starter kamera...';
   scannerActive = true;
 
-  // Check camera support
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
     showScannerFallback('Kameraet er ikke tilgjengelig i denne nettleseren.');
     return;
   }
-
-  // Try to get camera
   let stream;
   try {
-    // Try back camera first (mobile), fall back to any camera
-    try {
-      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' } } });
-    } catch(e) {
-      stream = await navigator.mediaDevices.getUserMedia({ video: true });
-    }
+    try { stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' } } }); }
+    catch(e) { stream = await navigator.mediaDevices.getUserMedia({ video: true }); }
   } catch(e) {
     let msg = 'Kunne ikke starte kamera.';
-    if (e.name === 'NotAllowedError') msg = 'Kameratillatelse ble avvist. Tillat kameratilgang i nettleseren og prøv igjen.';
-    else if (e.name === 'NotFoundError') msg = 'Ingen kamera funnet på denne enheten.';
-    else if (e.name === 'NotReadableError') msg = 'Kameraet er i bruk av en annen app.';
+    if (e.name === 'NotAllowedError') msg = 'Kameratillatelse ble avvist.';
+    else if (e.name === 'NotFoundError') msg = 'Ingen kamera funnet.';
     showScannerFallback(msg);
     return;
   }
-
   _scanStream = stream;
   video.srcObject = stream;
   try { await video.play(); } catch(e) {}
   resultEl.textContent = 'Pek kameraet mot en QR-kode...';
 
-  // Use BarcodeDetector if available
   if ('BarcodeDetector' in window) {
     let detector;
     try { detector = new BarcodeDetector({ formats: ['qr_code'] }); }
     catch(e) { detector = new BarcodeDetector(); }
-
     const offscreen = document.createElement('canvas');
     const ctx = offscreen.getContext('2d');
     let lastVal = '', lastTime = 0;
-
     async function tick() {
       if (!scannerActive) return;
       _scanFrame = requestAnimationFrame(tick);
       const now = Date.now();
       if (now - lastTime < 400 || video.readyState < 2 || !video.videoWidth) return;
       lastTime = now;
-      offscreen.width = video.videoWidth;
-      offscreen.height = video.videoHeight;
+      offscreen.width = video.videoWidth; offscreen.height = video.videoHeight;
       ctx.drawImage(video, 0, 0);
       try {
         const codes = await detector.detect(offscreen);
@@ -641,7 +724,6 @@ async function startScanner() {
     }
     tick();
   } else {
-    // BarcodeDetector not available — show manual input alongside live video
     resultEl.textContent = 'Kamera aktivt. Skriv inn ID manuelt under (QR-skanning krever Chrome/Edge).';
     if (manualWrap) manualWrap.style.display = 'block';
   }
@@ -693,11 +775,102 @@ function stopScanner() {
   if (_scanFrame) { cancelAnimationFrame(_scanFrame); _scanFrame = null; }
   if (_scanStream) { _scanStream.getTracks().forEach(t => t.stop()); _scanStream = null; }
   scannerActive = false;
-  document.getElementById('scanner-wrap').style.display = 'none';
+  const w = document.getElementById('scanner-wrap');
+  if (w) w.style.display = 'none';
   const mw = document.getElementById('scanner-manual-wrap');
   if (mw) mw.style.display = 'none';
   const btn = document.getElementById('scanner-toggle-btn');
   if (btn) btn.textContent = '📷 Skann QR';
+}
+
+// --- BARCODE SCANNER (for accessories modal) ---
+function toggleBarcodeScanner() { barcodeScannerActive ? stopBarcodeScanner() : startBarcodeScanner(); }
+
+async function startBarcodeScanner() {
+  const wrap = document.getElementById('barcode-scanner-wrap');
+  const video = document.getElementById('barcode-video');
+  const resultEl = document.getElementById('barcode-scan-result');
+  const btn = document.getElementById('barcode-toggle-btn');
+  const manualWrap = document.getElementById('barcode-manual-wrap');
+
+  wrap.style.display = 'block';
+  btn.textContent = '⏹ Stopp';
+  resultEl.className = 'qr-scan-result';
+  resultEl.textContent = 'Starter kamera...';
+  barcodeScannerActive = true;
+
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    resultEl.className = 'qr-scan-result notfound';
+    resultEl.textContent = 'Kamera ikke tilgjengelig.';
+    if (manualWrap) manualWrap.style.display = 'block';
+    barcodeScannerActive = false;
+    btn.textContent = '📷 Skann';
+    return;
+  }
+  let stream;
+  try {
+    try { stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' } } }); }
+    catch(e) { stream = await navigator.mediaDevices.getUserMedia({ video: true }); }
+  } catch(e) {
+    resultEl.className = 'qr-scan-result notfound';
+    resultEl.textContent = e.name === 'NotAllowedError' ? 'Kameratillatelse avvist.' : 'Kunne ikke starte kamera.';
+    if (manualWrap) manualWrap.style.display = 'block';
+    barcodeScannerActive = false;
+    btn.textContent = '📷 Skann';
+    return;
+  }
+  _barcodeStream = stream;
+  video.srcObject = stream;
+  try { await video.play(); } catch(e) {}
+  resultEl.textContent = 'Pek kameraet mot strekkoden...';
+
+  if ('BarcodeDetector' in window) {
+    let detector;
+    try { detector = new BarcodeDetector({ formats: ['ean_13','ean_8','upc_a','upc_e','code_128','code_39','qr_code'] }); }
+    catch(e) { detector = new BarcodeDetector(); }
+    const offscreen = document.createElement('canvas');
+    const ctx = offscreen.getContext('2d');
+    let lastVal = '', lastTime = 0;
+    async function tick() {
+      if (!barcodeScannerActive) return;
+      _barcodeFrame = requestAnimationFrame(tick);
+      const now = Date.now();
+      if (now - lastTime < 300 || video.readyState < 2 || !video.videoWidth) return;
+      lastTime = now;
+      offscreen.width = video.videoWidth; offscreen.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0);
+      try {
+        const codes = await detector.detect(offscreen);
+        if (!codes.length) return;
+        const val = codes[0].rawValue.trim();
+        if (val === lastVal) return;
+        lastVal = val;
+        document.getElementById('acc-barcode').value = val;
+        resultEl.className = 'qr-scan-result found';
+        resultEl.textContent = `Funnet: ${val}`;
+        stopBarcodeScanner();
+      } catch(e) {}
+    }
+    tick();
+  } else {
+    resultEl.textContent = 'BarcodeDetector ikke støttet. Bruk Chrome/Edge eller skriv inn manuelt.';
+    if (manualWrap) manualWrap.style.display = 'block';
+  }
+}
+
+function stopBarcodeScanner() {
+  if (_barcodeFrame) { cancelAnimationFrame(_barcodeFrame); _barcodeFrame = null; }
+  if (_barcodeStream) { _barcodeStream.getTracks().forEach(t => t.stop()); _barcodeStream = null; }
+  barcodeScannerActive = false;
+  const w = document.getElementById('barcode-scanner-wrap');
+  if (w) w.style.display = 'none';
+  const btn = document.getElementById('barcode-toggle-btn');
+  if (btn) btn.textContent = '📷 Skann';
+}
+
+function closeAccModal() {
+  stopBarcodeScanner();
+  closeModal('acc-modal');
 }
 
 // --- INSTRUMENT-ID GENERATION ---
@@ -738,7 +911,6 @@ function condBadge(c) {
 }
 function idbadge(kid) { return kid ? `<span class="idbadge">${kid}</span>` : ''; }
 
-// --- EXPORT (server-side via backend) ---
 function exportData(type, format) {
   window.location.href = `/api/export/${type}/${format}`;
 }
@@ -820,10 +992,7 @@ function openPlayerModal(id) {
   }
   openModal('player-modal');
 }
-function closePlayerModal() {
-  stopScanner();
-  closeModal('player-modal');
-}
+function closePlayerModal() { stopScanner(); closeModal('player-modal'); }
 async function savePlayer() {
   stopScanner();
   const body = { name: document.getElementById('player-name').value.trim(),
@@ -870,16 +1039,34 @@ function openServiceModal(id) {
   document.getElementById('svc-by').value = s?.by_whom || '';
   document.getElementById('svc-next').value = s?.next_due || '';
   document.getElementById('svc-desc').value = s?.desc || '';
+  document.getElementById('svc-date-finished').value = s?.date_finished || '';
+
+  // Populate instrument dropdown
   document.getElementById('svc-inst').innerHTML = state.instruments.map(i =>
     `<option value="${i.id}"${s&&s.inst_id===i.id?' selected':''}>${i.korps_id?i.korps_id+' — ':''}${i.name}</option>`
   ).join('');
+
+  // Populate workshop dropdown
+  document.getElementById('svc-workshop').innerHTML =
+    '<option value="">— Intern / ingen verksted —</option>' +
+    state.workshops.map(w =>
+      `<option value="${w.id}"${s&&s.workshop_id===w.id?' selected':''}>${w.name}</option>`
+    ).join('');
+
   openModal('service-modal');
 }
 async function saveService() {
-  const body = { date: document.getElementById('svc-date').value, inst_id: document.getElementById('svc-inst').value,
-    type: document.getElementById('svc-type').value, cost: parseFloat(document.getElementById('svc-cost').value)||0,
-    by_whom: document.getElementById('svc-by').value.trim(), desc: document.getElementById('svc-desc').value.trim(),
-    next_due: document.getElementById('svc-next').value };
+  const body = {
+    date: document.getElementById('svc-date').value,
+    inst_id: document.getElementById('svc-inst').value,
+    type: document.getElementById('svc-type').value,
+    cost: parseFloat(document.getElementById('svc-cost').value)||0,
+    by_whom: document.getElementById('svc-by').value.trim(),
+    desc: document.getElementById('svc-desc').value.trim(),
+    next_due: document.getElementById('svc-next').value,
+    date_finished: document.getElementById('svc-date-finished').value || null,
+    workshop_id: document.getElementById('svc-workshop').value || null
+  };
   if (!body.inst_id || !body.date) return;
   if (editingId.service) await api('PUT', '/api/service/'+editingId.service, body);
   else await api('POST', '/api/service', body);
@@ -889,50 +1076,193 @@ async function deleteService(id) {
   if (!confirm('Slette denne oppføringen?')) return;
   await api('DELETE', '/api/service/'+id); toast('Slettet'); await loadAll();
 }
+async function pickupService(id) {
+  if (!confirm('Bekreft at instrumentet er hentet?')) return;
+  await api('POST', `/api/service/${id}/pickup`);
+  toast('Kvittert ut som hentet!'); await loadAll();
+}
 function renderServiceTable() {
   const tb = document.getElementById('service-table');
-  if (!state.service.length) { tb.innerHTML='<tr><td colspan="8" class="empty">Ingen serviceoppføringer ennå</td></tr>'; return; }
+  if (!state.service.length) { tb.innerHTML='<tr><td colspan="9" class="empty">Ingen serviceoppføringer ennå</td></tr>'; return; }
   const today = new Date().toISOString().split('T')[0];
   tb.innerHTML = state.service.map(s => {
     const inst = state.instruments.find(i => i.id === s.inst_id);
+    const ws = state.workshops.find(w => w.id === s.workshop_id);
+    const status = getServiceStatus(s);
     const nextBadge = !s.next_due ? '—'
       : s.next_due < today ? `<span class="badge badge-bad">${s.next_due} — forfalt</span>`
       : `<span class="badge badge-ok">${s.next_due}</span>`;
+    const pickupBtn = status.key === 'til_henting'
+      ? `<button class="btn-pickup" onclick="pickupService('${s.id}')">✓ Hentet</button>` : '';
     return `<tr>
-      <td style="white-space:nowrap;font-size:12px;">${s.date}</td>
+      <td style="white-space:nowrap;font-size:12px;">${s.date}${s.date_finished?`<br><span style="color:var(--text-faint)">Ferdig: ${s.date_finished}</span>`:''}</td>
       <td>${inst?`${inst.name} ${idbadge(inst.korps_id)}`:'<span style="color:var(--text-faint)">Ukjent</span>'}</td>
       <td><span class="badge badge-gray">${s.type}</span></td>
+      <td><span class="badge ${status.cls}">${status.label}</span></td>
+      <td style="font-size:12px;color:var(--text-muted);">${ws?ws.name:(s.by_whom||'—')}</td>
       <td style="font-size:13px;">${s.desc||'—'}</td>
-      <td style="font-size:12px;color:var(--text-muted);">${s.by_whom||'—'}</td>
       <td style="white-space:nowrap;">${s.cost?s.cost.toLocaleString('nb-NO')+' kr':'—'}</td>
       <td>${nextBadge}</td>
-      <td><div style="display:flex;gap:6px;">
+      <td><div style="display:flex;gap:6px;flex-wrap:wrap;">
+        ${pickupBtn}
         <button class="btn-sm" onclick="openServiceModal('${s.id}')">Rediger</button>
         <button class="btn-sm btn-danger" onclick="deleteService('${s.id}')">Slett</button>
       </div></td></tr>`;
   }).join('');
 }
 
+// --- WORKSHOPS ---
+function openWorkshopsModal() {
+  editingId.ws = null;
+  document.getElementById('ws-name').value = '';
+  document.getElementById('ws-contact').value = '';
+  document.getElementById('ws-address').value = '';
+  document.getElementById('ws-notes').value = '';
+  document.getElementById('ws-form-title').textContent = 'Legg til verksted';
+  renderWorkshopsList();
+  openModal('workshops-modal');
+}
+function closeWorkshopsModal() { closeModal('workshops-modal'); }
+function renderWorkshopsList() {
+  const el = document.getElementById('workshops-list');
+  if (!state.workshops.length) {
+    el.innerHTML = '<p style="color:var(--text-faint);font-size:13px;padding:8px 0;">Ingen verksteder registrert ennå.</p>';
+    return;
+  }
+  el.innerHTML = state.workshops.map(w => `
+    <div class="ws-item">
+      <div class="ws-item-info">
+        <div class="ws-item-name">${w.name}</div>
+        <div class="ws-item-meta">${[w.contact, w.address].filter(Boolean).join(' · ') || '—'}</div>
+      </div>
+      <div style="display:flex;gap:6px;">
+        <button class="btn-sm" onclick="openWorkshopEdit('${w.id}')">Rediger</button>
+        <button class="btn-sm btn-danger" onclick="deleteWorkshop('${w.id}')">Slett</button>
+      </div>
+    </div>`).join('');
+}
+async function saveWorkshop() {
+  const name = document.getElementById('ws-name').value.trim();
+  if (!name) { toast('Navn er påkrevd'); return; }
+  const body = { name,
+    contact: document.getElementById('ws-contact').value.trim(),
+    address: document.getElementById('ws-address').value.trim(),
+    notes: document.getElementById('ws-notes').value.trim() };
+  await api('POST', '/api/workshops', body);
+  document.getElementById('ws-name').value = '';
+  document.getElementById('ws-contact').value = '';
+  document.getElementById('ws-address').value = '';
+  document.getElementById('ws-notes').value = '';
+  toast('Verksted lagret!');
+  await loadAll();
+  renderWorkshopsList();
+}
+function openWorkshopEdit(id) {
+  const w = state.workshops.find(x => x.id === id);
+  if (!w) return;
+  editingId.ws = id;
+  document.getElementById('ws-edit-name').value = w.name;
+  document.getElementById('ws-edit-contact').value = w.contact || '';
+  document.getElementById('ws-edit-address').value = w.address || '';
+  document.getElementById('ws-edit-notes').value = w.notes || '';
+  openModal('ws-edit-modal');
+}
+async function saveWorkshopEdit() {
+  const name = document.getElementById('ws-edit-name').value.trim();
+  if (!name) return;
+  const body = { name,
+    contact: document.getElementById('ws-edit-contact').value.trim(),
+    address: document.getElementById('ws-edit-address').value.trim(),
+    notes: document.getElementById('ws-edit-notes').value.trim() };
+  await api('PUT', '/api/workshops/'+editingId.ws, body);
+  closeModal('ws-edit-modal');
+  toast('Verksted oppdatert!');
+  await loadAll();
+  renderWorkshopsList();
+}
+async function deleteWorkshop(id) {
+  if (!confirm('Slette dette verkstedet?')) return;
+  await api('DELETE', '/api/workshops/'+id);
+  toast('Slettet'); await loadAll(); renderWorkshopsList();
+}
+
+// --- TIL HENTING MODAL ---
+function openTilHentingModal() {
+  const tilHenting = state.service.filter(s => getServiceStatus(s).key === 'til_henting');
+  const el = document.getElementById('til-henting-list');
+  if (!tilHenting.length) {
+    el.innerHTML = '<p class="empty" style="padding:1.5rem 0;">Ingen instrumenter venter på henting.</p>';
+  } else {
+    el.innerHTML = tilHenting.map(s => {
+      const inst = state.instruments.find(i => i.id === s.inst_id);
+      const ws = state.workshops.find(w => w.id === s.workshop_id);
+      return `<div class="th-list-item">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
+          <div>
+            <div class="th-list-item-title">${inst?.name||'Ukjent'} ${idbadge(inst?.korps_id)}</div>
+            <div class="th-list-item-meta">
+              Verksted: <strong>${ws?.name||'—'}</strong>${ws?.contact?' · '+ws.contact:''}
+            </div>
+            <div class="th-list-item-meta">
+              Innlevert: ${s.date} &nbsp;·&nbsp; Ferdig: ${s.date_finished}
+            </div>
+            ${s.desc?`<div class="th-list-item-meta">${s.desc}</div>`:''}
+          </div>
+          <button class="btn-pickup" onclick="pickupFromModal('${s.id}')">✓ Hentet</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+  openModal('til-henting-modal');
+}
+async function pickupFromModal(id) {
+  if (!confirm('Bekreft at instrumentet er hentet?')) return;
+  await api('POST', `/api/service/${id}/pickup`);
+  toast('Kvittert ut som hentet!');
+  await loadAll();
+  openTilHentingModal(); // refresh modal
+}
+
 // --- ACCESSORIES ---
+function updateAccCategoryDatalist() {
+  const dl = document.getElementById('acc-category-list');
+  dl.innerHTML = state.accCategories.map(c => `<option value="${c.name}">`).join('');
+}
+async function ensureCategoryExists(name) {
+  if (!name) return;
+  const exists = state.accCategories.find(c => c.name === name);
+  if (!exists) {
+    await api('POST', '/api/acc-categories', { name });
+  }
+}
 function openAccModal(id) {
   editingId.acc = id || null;
   const a = id ? state.accessories.find(x => x.id === id) : null;
   document.getElementById('acc-modal-title').textContent = a ? 'Rediger vare' : 'Legg til vare';
   document.getElementById('acc-name').value = a?.name || '';
-  document.getElementById('acc-cat').value = a?.category || 'Rørblad';
+  document.getElementById('acc-cat').value = a?.category || '';
+  document.getElementById('acc-supplier').value = a?.supplier || '';
   document.getElementById('acc-stock').value = a?.stock ?? 0;
   document.getElementById('acc-min').value = a?.min_level ?? 2;
   document.getElementById('acc-notes').value = a?.notes || '';
+  document.getElementById('acc-barcode').value = a?.barcode || '';
+  updateAccCategoryDatalist();
   openModal('acc-modal');
 }
 async function saveAccessory() {
-  const body = { name: document.getElementById('acc-name').value.trim(), category: document.getElementById('acc-cat').value,
-    stock: parseInt(document.getElementById('acc-stock').value)||0, min_level: parseInt(document.getElementById('acc-min').value)||0,
-    notes: document.getElementById('acc-notes').value.trim() };
-  if (!body.name) return;
+  const name = document.getElementById('acc-name').value.trim();
+  const category = document.getElementById('acc-cat').value.trim();
+  if (!name) return;
+  await ensureCategoryExists(category);
+  const body = { name, category,
+    stock: parseInt(document.getElementById('acc-stock').value)||0,
+    min_level: parseInt(document.getElementById('acc-min').value)||0,
+    notes: document.getElementById('acc-notes').value.trim(),
+    supplier: document.getElementById('acc-supplier').value.trim(),
+    barcode: document.getElementById('acc-barcode').value.trim() };
   if (editingId.acc) await api('PUT', '/api/accessories/'+editingId.acc, body);
   else await api('POST', '/api/accessories', body);
-  closeModal('acc-modal'); toast('Lagret!'); await loadAll();
+  closeAccModal(); toast('Lagret!'); await loadAll();
 }
 async function deleteAccessory(id) {
   if (!confirm('Slette denne varen?')) return;
@@ -956,12 +1286,13 @@ function renderAccessories() {
   const alerts = document.getElementById('acc-alerts');
   const low = state.accessories.filter(a => a.stock <= a.min_level);
   alerts.innerHTML = low.map(a => `<div class="alert-box">Lavt lager: <strong>${a.name}</strong> — ${a.stock} stk igjen (minimum: ${a.min_level})</div>`).join('');
-  if (!state.accessories.length) { tb.innerHTML='<tr><td colspan="6" class="empty">Ingen varer registrert ennå</td></tr>'; return; }
+  if (!state.accessories.length) { tb.innerHTML='<tr><td colspan="7" class="empty">Ingen varer registrert ennå</td></tr>'; return; }
   tb.innerHTML = state.accessories.map(a => {
     const s = a.stock===0?'<span class="badge badge-bad">Tomt</span>':a.stock<=a.min_level?'<span class="badge badge-warn">Lavt</span>':'<span class="badge badge-ok">OK</span>';
     return `<tr>
-      <td><strong style="font-weight:600">${a.name}</strong>${a.notes?`<br><span style="font-size:12px;color:var(--text-muted)">${a.notes}</span>`:''}</td>
-      <td><span class="badge badge-gray">${a.category}</span></td>
+      <td><strong style="font-weight:600">${a.name}</strong>${a.notes?`<br><span style="font-size:12px;color:var(--text-muted)">${a.notes}</span>`:''}${a.barcode?`<br><span style="font-size:11px;color:var(--text-faint);font-family:monospace">${a.barcode}</span>`:''}</td>
+      <td><span class="badge badge-gray">${a.category||'—'}</span></td>
+      <td style="font-size:12px;color:var(--text-muted);">${a.supplier||'—'}</td>
       <td style="font-weight:600">${a.stock}</td>
       <td style="color:var(--text-muted)">${a.min_level}</td>
       <td>${s}</td>
@@ -973,29 +1304,42 @@ function renderAccessories() {
   }).join('');
 }
 
+// --- DASHBOARD ---
 function renderDashboard() {
   const needsService = state.instruments.filter(i => i.condition==='Trenger service').length;
   const assigned = state.instruments.filter(i => state.players.some(p => (p.instruments||[]).includes(i.id))).length;
   const lowAcc = state.accessories.filter(a => a.stock <= a.min_level).length;
+  const tilHenting = state.service.filter(s => getServiceStatus(s).key === 'til_henting').length;
+
   document.getElementById('metrics').innerHTML = `
     <div class="metric"><div class="label">Instrumenter totalt</div><div class="value">${state.instruments.length}</div></div>
     <div class="metric"><div class="label">Musikanter</div><div class="value">${state.players.length}</div></div>
     <div class="metric"><div class="label">Tildelte</div><div class="value">${assigned}</div></div>
     <div class="metric"><div class="label">Trenger service</div><div class="value" style="color:${needsService>0?'#c0392b':'inherit'}">${needsService}</div></div>
+    <div class="metric"><div class="label">Til henting</div><div class="value" style="color:${tilHenting>0?'#7040a0':'inherit'}">${tilHenting}</div></div>
     <div class="metric"><div class="label">Lavt lager</div><div class="value" style="color:${lowAcc>0?'#b8740a':'inherit'}">${lowAcc}</div></div>`;
+
   const today = new Date().toISOString().split('T')[0];
-  const overdue = state.service.filter(s => s.next_due && s.next_due < today);
+  const overdue = state.service.filter(s => s.next_due && s.next_due < today && getServiceStatus(s).key === 'ferdig');
+  const tilHentingItems = state.service.filter(s => getServiceStatus(s).key === 'til_henting');
   const lowAccItems = state.accessories.filter(a => a.stock <= a.min_level);
+
   document.getElementById('alerts-area').innerHTML = [
+    ...tilHentingItems.map(s => {
+      const i=state.instruments.find(x=>x.id===s.inst_id);
+      const ws=state.workshops.find(w=>w.id===s.workshop_id);
+      return `<div class="alert-box-purple">Klar til henting: <strong>${i?.name||'ukjent'}${i?.korps_id?' ('+i.korps_id+')':''}</strong> — ${ws?.name||'ukjent verksted'}</div>`;
+    }),
     ...overdue.map(s => { const i=state.instruments.find(x=>x.id===s.inst_id);
       return `<div class="alert-box">Service forfalt for <strong>${i?.name||'ukjent'}${i?.korps_id?' ('+i.korps_id+')':''}</strong> — frist var ${s.next_due}</div>`; }),
     ...lowAccItems.map(a=>`<div class="alert-box">Lavt lager: <strong>${a.name}</strong> — ${a.stock} stk igjen (minimum: ${a.min_level})</div>`)
   ].join('');
+
   const recent = state.service.slice(0,5);
   document.getElementById('dash-service').innerHTML = recent.length
-    ? recent.map(s => { const i=state.instruments.find(x=>x.id===s.inst_id);
+    ? recent.map(s => { const i=state.instruments.find(x=>x.id===s.inst_id); const st=getServiceStatus(s);
         return `<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:0.5px solid var(--border);font-size:13px;">
-          <span>${i?.name||'?'} ${idbadge(i?.korps_id)} — ${s.type}</span>
+          <span>${i?.name||'?'} ${idbadge(i?.korps_id)} — ${s.type} <span class="badge ${st.cls}" style="font-size:10px;">${st.label}</span></span>
           <span style="color:var(--text-muted);font-size:12px;">${s.date}</span></div>`; }).join('')
     : '<p class="empty">Ingen serviceoppføringer ennå</p>';
 }

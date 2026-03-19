@@ -1,14 +1,13 @@
 Endringer til utføring:
 
-Varer:
-* Mulighet til å legge til custom vare kategorier
-* Mulighet for å scanne inn strekkode på varer
-* Mulighet til å regisrere leverandører
+Tilbehør fanen:
+* Mulighet til å legge til custom varekategorier
+* Mulighet for å scanne og skrive inn strekkode på varer
+* Mulighet til å registrere leverandører
 
-Servicelogg:
+Servicelogg fanen:
 * Mulighet til å legge til verksted og registrere hvilket verksted som utfører service på hver enkelt service
 * Dato for innlevert til service og dator for service ferdig, samt satt i status "Under service" dersom ferdig dato ikke. Dersom ekstern service er brukt, legg til status "Til henting" og knapp for å kvittere ut "Hentet". Lage også en knapp for å vise alle servicer "Til Henting" med mulighet for å skrive den ut til Excel eller CSV.
 
 
 FEIL:
-* Problemer med eksport til Excel, får feil ved åpning i Excel.
