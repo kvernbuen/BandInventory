@@ -1,5 +1,6 @@
 const express = require('express');
 const Database = require('better-sqlite3');
+const XLSX = require('xlsx');
 const path = require('path');
 
 const app = express();
@@ -169,6 +170,101 @@ app.put('/api/accessories/:id', (req, res) => {
 app.delete('/api/accessories/:id', (req, res) => {
   db.prepare('DELETE FROM accessories WHERE id=?').run(req.params.id);
   res.json({ ok: true });
+});
+
+// --- EXPORT ---
+app.get('/api/export/:type/:format', (req, res) => {
+  const { type, format } = req.params;
+  const today = new Date().toISOString().slice(0, 10);
+
+  let rows = [];
+  let sheetName = 'Data';
+
+  if (type === 'instruments') {
+    sheetName = 'Instrumenter';
+    const instruments = db.prepare('SELECT * FROM instruments ORDER BY name').all();
+    const players = db.prepare('SELECT * FROM players').all();
+    const links = db.prepare('SELECT * FROM player_instruments').all();
+    players.forEach(p => { p.instruments = links.filter(l => l.player_id === p.id).map(l => l.instrument_id); });
+
+    rows.push(['Instrument-ID', 'Navn', 'Kategori', 'Stand', 'Serienummer', 'Kjøpsdato', 'Tildelt musiker', 'Merknader']);
+    instruments.forEach(i => {
+      const player = players.find(p => p.instruments.includes(i.id));
+      rows.push([i.korps_id || '', i.name, i.category, i.condition, i.serial || '', i.purchase || '', player?.name || '', i.notes || '']);
+    });
+
+  } else if (type === 'players') {
+    sheetName = 'Musikanter';
+    const players = db.prepare('SELECT * FROM players ORDER BY name').all();
+    const links = db.prepare('SELECT * FROM player_instruments').all();
+    const instruments = db.prepare('SELECT * FROM instruments').all();
+
+    rows.push(['Navn', 'Seksjon', 'Kontakt', 'Tildelte instrumenter (ID)', 'Tildelte instrumenter (navn)']);
+    players.forEach(p => {
+      const iids = links.filter(l => l.player_id === p.id).map(l => l.instrument_id);
+      const insts = iids.map(iid => instruments.find(i => i.id === iid)).filter(Boolean);
+      rows.push([p.name, p.section, p.contact || '', insts.map(i => i.korps_id || i.name).join('; '), insts.map(i => i.name).join('; ')]);
+    });
+
+  } else if (type === 'service') {
+    sheetName = 'Servicelogg';
+    const service = db.prepare('SELECT * FROM service ORDER BY date DESC').all();
+    const instruments = db.prepare('SELECT * FROM instruments').all();
+
+    rows.push(['Dato', 'Instrument-ID', 'Instrument', 'Type', 'Beskrivelse', 'Utført av', 'Kostnad (kr)', 'Neste servicefrist']);
+    service.forEach(s => {
+      const inst = instruments.find(i => i.id === s.inst_id);
+      rows.push([s.date, inst?.korps_id || '', inst?.name || '', s.type, s.desc || '', s.by_whom || '', s.cost || 0, s.next_due || '']);
+    });
+
+  } else if (type === 'accessories') {
+    sheetName = 'Tilbehør';
+    const accessories = db.prepare('SELECT * FROM accessories ORDER BY name').all();
+
+    rows.push(['Varenavn', 'Kategori', 'På lager', 'Minimum', 'Status', 'Merknader']);
+    accessories.forEach(a => {
+      const status = a.stock === 0 ? 'Tomt' : a.stock <= a.min_level ? 'Lavt' : 'OK';
+      rows.push([a.name, a.category, a.stock, a.min_level, status, a.notes || '']);
+    });
+
+  } else {
+    return res.status(400).json({ error: 'Ukjent type' });
+  }
+
+  const filename = `korpsinventar_${type}_${today}`;
+
+  if (format === 'csv') {
+    const csv = rows.map(r => r.map(v => {
+      const s = String(v ?? '');
+      return s.includes(',') || s.includes('"') || s.includes('\n') ? `"${s.replace(/"/g, '""')}"` : s;
+    }).join(',')).join('\r\n');
+    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}.csv"`);
+    res.send('\uFEFF' + csv); // BOM for Excel UTF-8
+
+  } else if (format === 'xlsx') {
+    const ws = XLSX.utils.aoa_to_sheet(rows);
+    // Auto column widths
+    const colWidths = rows[0].map((_, ci) =>
+      ({ wch: Math.min(50, Math.max(10, ...rows.map(r => String(r[ci] ?? '').length))) })
+    );
+    ws['!cols'] = colWidths;
+    // Bold header row
+    const range = XLSX.utils.decode_range(ws['!ref']);
+    for (let c = range.s.c; c <= range.e.c; c++) {
+      const cell = ws[XLSX.utils.encode_cell({ r: 0, c })];
+      if (cell) cell.s = { font: { bold: true } };
+    }
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, sheetName);
+    const buf = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}.xlsx"`);
+    res.send(buf);
+
+  } else {
+    res.status(400).json({ error: 'Ukjent format' });
+  }
 });
 
 app.listen(PORT, () => console.log(`Korpsinventar kjører på port ${PORT}`));

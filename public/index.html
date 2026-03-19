@@ -738,62 +738,9 @@ function condBadge(c) {
 }
 function idbadge(kid) { return kid ? `<span class="idbadge">${kid}</span>` : ''; }
 
-// --- EXPORT ---
-function escCsv(v) {
-  if (v === null || v === undefined) return '';
-  const s = String(v);
-  return s.includes(',') || s.includes('"') || s.includes('\n') ? `"${s.replace(/"/g,'""')}"` : s;
-}
-function downloadFile(content, filename, mimeType) {
-  const blob = new Blob([content], { type: mimeType });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = filename;
-  a.click();
-  URL.revokeObjectURL(a.href);
-}
-function toCsv(rows) { return rows.map(r => r.map(escCsv).join(',')).join('\r\n'); }
-function toXlsx(rows) {
-  const esc = v => String(v===null||v===undefined?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  const cells = rows.map((row,ri) => row.map((val,ci) => {
-    const addr = String.fromCharCode(65+ci)+(ri+1);
-    const isNum = ri>0 && val!=='' && !isNaN(val) && val!==null;
-    return isNum ? `<c r="${addr}"><v>${esc(val)}</v></c>` : `<c r="${addr}" t="inlineStr"><is><t>${esc(val)}</t></is></c>`;
-  }).join('')).map((r,ri) => `<row r="${ri+1}">${r}</row>`).join('');
-  const sheet = `<?xml version="1.0" encoding="UTF-8"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>${cells}</sheetData></worksheet>`;
-  const wb = `<?xml version="1.0" encoding="UTF-8"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="Data" sheetId="1" r:id="rId1"/></sheets></workbook>`;
-  const rels = `<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/></Relationships>`;
-  const ctype = `<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/></Types>`;
-  function strToBytes(s){const b=[];for(let i=0;i<s.length;i++){const c=s.charCodeAt(i);if(c<0x80)b.push(c);else if(c<0x800){b.push(0xC0|(c>>6));b.push(0x80|(c&0x3F));}else{b.push(0xE0|(c>>12));b.push(0x80|((c>>6)&0x3F));b.push(0x80|(c&0x3F));}}return new Uint8Array(b);}
-  function crc32(data){let c=0xFFFFFFFF;const t=[];for(let i=0;i<256;i++){let n=i;for(let j=0;j<8;j++)n=n&1?(n>>>1)^0xEDB88320:n>>>1;t[i]=n;}for(let i=0;i<data.length;i++)c=(c>>>8)^t[(c^data[i])&0xFF];return(c^0xFFFFFFFF)>>>0;}
-  function u16le(n){return[n&0xFF,(n>>8)&0xFF];}
-  function u32le(n){return[n&0xFF,(n>>8)&0xFF,(n>>16)&0xFF,(n>>24)&0xFF];}
-  const files=[['[Content_Types].xml',ctype],['_rels/.rels',`<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>`],['xl/workbook.xml',wb],['xl/_rels/workbook.xml.rels',rels],['xl/worksheets/sheet1.xml',sheet]];
-  const localHeaders=[],centralHeaders=[];let offset=0;
-  for(const[name,content]of files){const nameBytes=strToBytes(name);const dataBytes=strToBytes(content);const crc=crc32(dataBytes);const size=dataBytes.length;const lh=[0x50,0x4B,0x03,0x04,...u16le(20),...u16le(0),...u16le(0),...u16le(0),...u16le(0),...u32le(crc),...u32le(size),...u32le(size),...u16le(nameBytes.length),...u16le(0),...nameBytes,...dataBytes];const ch=[0x50,0x4B,0x01,0x02,...u16le(20),...u16le(20),...u16le(0),...u16le(0),...u16le(0),...u16le(0),...u16le(0),...u32le(crc),...u32le(size),...u32le(size),...u16le(nameBytes.length),...u16le(0),...u16le(0),...u16le(0),...u16le(0),...u32le(0),...u32le(offset),...nameBytes];localHeaders.push(lh);centralHeaders.push(ch);offset+=lh.length;}
-  const centralStart=offset;const centralSize=centralHeaders.reduce((s,h)=>s+h.length,0);const eocd=[0x50,0x4B,0x05,0x06,...u16le(0),...u16le(0),...u16le(files.length),...u16le(files.length),...u32le(centralSize),...u32le(centralStart),...u16le(0)];
-  return new Uint8Array([...localHeaders.flat(),...centralHeaders.flat(),...eocd]);
-}
+// --- EXPORT (server-side via backend) ---
 function exportData(type, format) {
-  let rows = [];
-  const date = new Date().toISOString().slice(0,10);
-  if (type==='instruments') {
-    rows.push(['Instrument-ID','Navn','Kategori','Stand','Serienummer','Kjøpsdato','Tildelt musiker','Merknader']);
-    state.instruments.forEach(i => { const p=state.players.find(p=>(p.instruments||[]).includes(i.id)); rows.push([i.korps_id||'',i.name,i.category,i.condition,i.serial||'',i.purchase||'',p?.name||'',i.notes||'']); });
-  } else if (type==='players') {
-    rows.push(['Navn','Seksjon','Kontakt','Tildelte instrumenter (ID)','Tildelte instrumenter (navn)']);
-    state.players.forEach(p => { const insts=(p.instruments||[]).map(iid=>state.instruments.find(x=>x.id===iid)).filter(Boolean); rows.push([p.name,p.section,p.contact||'',insts.map(i=>i.korps_id||i.name).join('; '),insts.map(i=>i.name).join('; ')]); });
-  } else if (type==='service') {
-    rows.push(['Dato','Instrument-ID','Instrument','Type','Beskrivelse','Utført av','Kostnad (kr)','Neste servicefrist']);
-    state.service.forEach(s => { const i=state.instruments.find(x=>x.id===s.inst_id); rows.push([s.date,i?.korps_id||'',i?.name||'',s.type,s.desc||'',s.by_whom||'',s.cost||0,s.next_due||'']); });
-  } else if (type==='accessories') {
-    rows.push(['Varenavn','Kategori','På lager','Minimum','Status','Merknader']);
-    state.accessories.forEach(a => { const s=a.stock===0?'Tomt':a.stock<=a.min_level?'Lavt':'OK'; rows.push([a.name,a.category,a.stock,a.min_level,s,a.notes||'']); });
-  }
-  const labels={instruments:'instrumenter',players:'musikanter',service:'servicelogg',accessories:'tilbehor'};
-  const base=`korpsinventar_${labels[type]}_${date}`;
-  if (format==='csv') { downloadFile('\uFEFF'+toCsv(rows), base+'.csv','text/csv;charset=utf-8;'); toast('CSV lastet ned'); }
-  else { downloadFile(toXlsx(rows), base+'.xlsx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'); toast('Excel-fil lastet ned'); }
+  window.location.href = `/api/export/${type}/${format}`;
 }
 
 // --- INSTRUMENTS ---

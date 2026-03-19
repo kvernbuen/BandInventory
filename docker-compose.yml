@@ -2,7 +2,7 @@ services:
   korpsinventar:
     build: .
     expose:
-      - "30001"
+      - "3000"
     volumes:
       - korpsinventar-data:/data
     restart: unless-stopped
@@ -13,8 +13,8 @@ services:
   nginx:
     image: nginx:alpine
     ports:
-      - "8088:80"
-      - "4343:443"
+      - "80:80"
+      - "443:443"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/certs:/etc/nginx/certs:ro
