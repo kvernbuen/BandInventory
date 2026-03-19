@@ -7,3 +7,7 @@ Varer:
 
 Servicelogg:
 * Mulighet til å legge til verksted og registrere hvilket verksted som utfører service på hver enkelt service
+
+
+FEIL:
+* Problemer med eksport til Excel, får feil ved åpning i Excel.
