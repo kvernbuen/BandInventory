@@ -6,243 +6,581 @@
   <title>Korpsinventar</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     :root {
-      --bg: #f9f9f8; --surface: #ffffff; --surface2: #f0efe8;
-      --border: rgba(0,0,0,0.09); --border-md: rgba(0,0,0,0.16);
-      --text: #1a1a18; --text-muted: #666662; --text-faint: #bbb;
-      --nav-active-bg: #1a1a18; --nav-active-fg: #fff;
-      --input-bg: #f9f9f8; --metric-bg: #f0efe8;
-      --radius: 8px; --radius-lg: 12px;
+      --sidebar-w: 220px;
+      --accent: #4f46e5; --accent-hover: #4338ca;
+      --bg: #f5f6fa; --surface: #ffffff; --surface2: #f0f1f5;
+      --border: rgba(0,0,0,0.07); --border-md: rgba(0,0,0,0.12);
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      --text: #111827; --text-muted: #6b7280; --text-faint: #9ca3af;
+      --radius: 10px; --radius-lg: 14px;
+      --topbar-bg: rgba(245,246,250,0.9);
+      --input-bg: #ffffff;
+      --nav-active-bg: #4f46e5; --nav-active-fg: #fff;
     }
     [data-theme="dark"] {
-      --bg: #141413; --surface: #1e1e1c; --surface2: #282826;
-      --border: rgba(255,255,255,0.08); --border-md: rgba(255,255,255,0.14);
-      --text: #e8e8e4; --text-muted: #999994; --text-faint: #555;
-      --nav-active-bg: #e8e8e4; --nav-active-fg: #1a1a18;
-      --input-bg: #141413; --metric-bg: #282826;
+      --bg: #0f0f13; --surface: #1a1a20; --surface2: #242430;
+      --border: rgba(255,255,255,0.07); --border-md: rgba(255,255,255,0.12);
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
+      --text: #e8e8e4; --text-muted: #9ca3af; --text-faint: #4b5563;
+      --topbar-bg: rgba(15,15,19,0.9);
+      --input-bg: #0f0f13;
+      --nav-active-bg: #4f46e5; --nav-active-fg: #fff;
     }
-    [data-theme="dark"] .badge-ok   { background:#1a2e10; color:#7ec254; }
-    [data-theme="dark"] .badge-warn { background:#2e1f08; color:#e0a040; }
-    [data-theme="dark"] .badge-bad  { background:#2e1010; color:#e07070; }
-    [data-theme="dark"] .badge-info { background:#0e1e34; color:#6aabee; }
-    [data-theme="dark"] .badge-purple { background:#1e1030; color:#b07aee; }
-    [data-theme="dark"] .alert-box  { background:#2e1f08; border-color:#6b4910; color:#e0a040; }
-    [data-theme="dark"] .alert-box-purple { background:#1e1030; border-color:#6b30b0; color:#c09aee; }
-    [data-theme="dark"] .idbadge   { background:#1a2540; color:#7aaeee; border-color:#2a4060; }
-    [data-theme="dark"] .btn-danger { color:#e07070; border-color:#7a3030; }
-    [data-theme="dark"] .qr-scan-area { background:#0a0a0a; border-color:#333; }
 
-    body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; transition: background 0.2s, color 0.2s; }
-    .app { max-width: 1200px; margin: 0 auto; padding: 1.5rem 1rem; }
-    header { display: flex; align-items: center; gap: 10px; margin-bottom: 1.5rem; }
-    header h1 { font-size: 20px; font-weight: 600; flex: 1; }
-    .theme-toggle { background: var(--surface2); border: 0.5px solid var(--border-md); border-radius: 20px; padding: 5px 14px; cursor: pointer; font-size: 12px; color: var(--text-muted); font-family: inherit; white-space: nowrap; }
-    .theme-toggle:hover { background: var(--surface); }
-    nav { display: flex; gap: 6px; margin-bottom: 1.5rem; flex-wrap: wrap; }
-    nav button { font-size: 13px; padding: 6px 14px; border-radius: var(--radius); border: 0.5px solid var(--border-md); background: var(--surface); color: var(--text-muted); cursor: pointer; font-family: inherit; }
-    nav button.active { background: var(--nav-active-bg); color: var(--nav-active-fg); border-color: var(--nav-active-bg); }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; display: flex; min-height: 100vh; }
+
+    /* SIDEBAR */
+    .sidebar { width: var(--sidebar-w); min-height: 100vh; background: #1e1b4b; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 10; }
+    .sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 22px 20px 18px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .logo-icon { width: 34px; height: 34px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border-radius: 9px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(99,102,241,0.4); flex-shrink: 0; }
+    .logo-icon svg { width: 18px; height: 18px; }
+    .logo-text { font-size: 15px; font-weight: 700; color: #fff; letter-spacing: -0.3px; }
+    .logo-sub { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 1px; }
+    .sidebar-nav { flex: 1; padding: 14px 12px; display: flex; flex-direction: column; gap: 2px; overflow-y: auto; }
+    .nav-section-label { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; color: rgba(255,255,255,0.3); text-transform: uppercase; padding: 10px 8px 4px; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 9px; color: rgba(255,255,255,0.65); font-size: 13.5px; font-weight: 500; cursor: pointer; transition: all 0.15s; border: 1px solid transparent; background: none; font-family: inherit; width: 100%; text-align: left; }
+    .nav-item:hover { background: rgba(255,255,255,0.07); color: #fff; }
+    .nav-item.active { background: rgba(99,102,241,0.25); color: #c7d2fe; border-color: rgba(99,102,241,0.3); }
+    .nav-item.active .nav-icon { color: #818cf8; opacity: 1; }
+    .nav-icon { width: 18px; height: 18px; flex-shrink: 0; opacity: 0.8; }
+    .nav-badge { margin-left: auto; font-size: 11px; font-weight: 600; background: #ef4444; color: #fff; padding: 1px 7px; border-radius: 20px; min-width: 20px; text-align: center; }
+    .nav-badge.amber { background: #d97706; }
+    .sidebar-footer { padding: 14px 12px; border-top: 1px solid rgba(255,255,255,0.08); }
+    .theme-toggle { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 9px; color: rgba(255,255,255,0.65); font-size: 13px; background: none; border: none; cursor: pointer; font-family: inherit; width: 100%; transition: all 0.15s; }
+    .theme-toggle:hover { background: rgba(255,255,255,0.07); color: #fff; }
+
+    /* MAIN */
+    .main { margin-left: var(--sidebar-w); flex: 1; min-height: 100vh; display: flex; flex-direction: column; }
+
+    /* TOPBAR */
+    .topbar { position: sticky; top: 0; z-index: 5; background: var(--topbar-bg); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); padding: 14px 28px; display: flex; align-items: center; gap: 12px; }
+    .topbar-title { font-size: 18px; font-weight: 700; flex: 1; letter-spacing: -0.3px; }
+
+    /* TOPBAR SEARCH */
+    .topbar-search-wrap { position: relative; }
+    .topbar-search-wrap svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 15px; height: 15px; color: var(--text-faint); pointer-events: none; }
+    .topbar-search-input { font-family: inherit; font-size: 13px; padding: 7px 12px 7px 32px; border: 1px solid var(--border-md); border-radius: 9px; background: var(--surface); color: var(--text); width: 240px; box-shadow: var(--shadow-sm); }
+    .topbar-search-input:focus { outline: 2px solid var(--accent); outline-offset: 1px; width: 280px; }
+    .topbar-search-input::placeholder { color: var(--text-faint); }
+
+    /* CONTENT */
+    .content { padding: 24px 28px; flex: 1; }
     .section { display: none; }
     .section.active { display: block; }
-    .card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 1rem 1.25rem; margin-bottom: 12px; }
-    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 8px; }
-    .section-header h2 { font-size: 16px; font-weight: 600; }
-    .section-header-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-    .btn { font-family: inherit; font-size: 13px; padding: 7px 16px; border-radius: var(--radius); cursor: pointer; border: 0.5px solid var(--border-md); background: var(--surface); color: var(--text); }
+
+    /* BUTTONS */
+    .btn { font-family: inherit; font-size: 13px; font-weight: 500; padding: 8px 18px; border-radius: 9px; cursor: pointer; border: 1px solid var(--border-md); background: var(--surface); color: var(--text); display: inline-flex; align-items: center; gap: 6px; box-shadow: var(--shadow-sm); transition: all 0.15s; }
     .btn:hover { background: var(--surface2); }
-    .btn-primary { background: var(--nav-active-bg); color: var(--nav-active-fg); border-color: var(--nav-active-bg); }
-    .btn-primary:hover { opacity: 0.85; }
-    .btn-sm { font-size: 12px; padding: 4px 10px; border-radius: var(--radius); border: 0.5px solid var(--border); background: transparent; cursor: pointer; color: var(--text-muted); font-family: inherit; }
-    .btn-sm:hover { background: var(--surface2); }
-    .btn-export { font-size: 12px; padding: 5px 12px; border-radius: var(--radius); border: 0.5px solid var(--border-md); background: var(--surface2); color: var(--text-muted); cursor: pointer; font-family: inherit; }
+    .btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); box-shadow: 0 2px 8px rgba(79,70,229,0.3); }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-sm { font-family: inherit; font-size: 12px; padding: 5px 12px; border-radius: 7px; border: 1px solid var(--border-md); background: var(--surface); color: var(--text-muted); cursor: pointer; transition: all 0.15s; }
+    .btn-sm:hover { background: var(--surface2); color: var(--text); }
+    .btn-export { font-size: 12px; padding: 5px 12px; border-radius: 7px; border: 1px solid var(--border-md); background: var(--surface2); color: var(--text-muted); cursor: pointer; font-family: inherit; }
     .btn-export:hover { background: var(--surface); color: var(--text); }
-    .btn-danger { color: #a32d2d; border-color: #e09090; }
-    .btn-pickup { font-size: 12px; padding: 4px 10px; border-radius: var(--radius); border: 0.5px solid #9060c0; background: transparent; cursor: pointer; color: #7040a0; font-family: inherit; }
-    .btn-pickup:hover { background: #f0e8f8; }
-    [data-theme="dark"] .btn-pickup { color:#c090ee; border-color:#7050a0; }
-    [data-theme="dark"] .btn-pickup:hover { background:#1e1030; }
-    .badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
-    .badge-ok     { background: #eaf3de; color: #3b6d11; }
-    .badge-warn   { background: #faeeda; color: #854f0b; }
-    .badge-bad    { background: #fcebeb; color: #a32d2d; }
-    .badge-info   { background: #e6f1fb; color: #185fa5; }
-    .badge-gray   { background: var(--surface2); color: var(--text-muted); }
-    .badge-purple { background: #f0e8f8; color: #7040a0; }
-    .idbadge { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 5px; background: #e8f0fb; color: #1a4a8a; border: 0.5px solid #b8d0f0; font-family: monospace; letter-spacing: 0.03em; white-space: nowrap; }
-    table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    th { text-align: left; font-weight: 500; font-size: 12px; color: var(--text-muted); padding: 6px 10px; border-bottom: 0.5px solid var(--border); }
-    td { padding: 8px 10px; border-bottom: 0.5px solid var(--border); vertical-align: top; }
-    tr:last-child td { border-bottom: none; }
+    .btn-danger { color: #dc2626; border-color: #fca5a5; background: transparent; }
+    .btn-danger:hover { background: #fef2f2; }
+    [data-theme="dark"] .btn-danger { color: #f87171; border-color: #7f1d1d; }
+    [data-theme="dark"] .btn-danger:hover { background: #450a0a; }
+    .btn-service { font-size: 12px; padding: 5px 12px; border-radius: 7px; border: 1px solid #c4b5fd; background: #ede9fe; cursor: pointer; color: #5b21b6; font-family: inherit; }
+    .btn-service:hover { background: #ddd6fe; }
+    [data-theme="dark"] .btn-service { background: #2e1065; border-color: #6d28d9; color: #c084fc; }
+    [data-theme="dark"] .btn-service:hover { background: #3b0764; }
+    .btn-pickup { font-size: 12px; padding: 5px 12px; border-radius: 7px; border: 1px solid #c4b5fd; background: #ede9fe; cursor: pointer; color: #5b21b6; font-family: inherit; }
+    .btn-pickup:hover { background: #ddd6fe; }
+    [data-theme="dark"] .btn-pickup { background: #2e1065; border-color: #6d28d9; color: #c084fc; }
+    [data-theme="dark"] .btn-pickup:hover { background: #3b0764; }
+
+    /* SECTION HEADER */
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; flex-wrap: wrap; gap: 8px; }
+    .section-header h2 { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; }
+    .section-header-actions { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+
+    /* FILTER BAR */
+    .filter-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+    .filter-bar-label { font-size: 12px; font-weight: 500; color: var(--text-muted); }
+    .multiselect { position: relative; display: inline-block; }
+    .multiselect summary { list-style: none; cursor: pointer; font-size: 13px; padding: 6px 28px 6px 12px; background: var(--surface); border: 1px solid var(--border-md); border-radius: 8px; color: var(--text); user-select: none; position: relative; white-space: nowrap; transition: border-color 0.15s; }
+    .multiselect summary::-webkit-details-marker { display: none; }
+    .multiselect summary::after { content: '▾'; position: absolute; right: 9px; top: 50%; transform: translateY(-50%); font-size: 11px; color: var(--text-muted); pointer-events: none; }
+    .multiselect[open] summary { border-color: var(--accent); }
+    .multiselect-options { position: absolute; top: calc(100% + 4px); left: 0; z-index: 50; background: var(--surface); border: 1px solid var(--border-md); border-radius: 10px; padding: 6px; min-width: 190px; box-shadow: 0 4px 20px rgba(0,0,0,0.13); display: flex; flex-direction: column; gap: 1px; }
+    .multiselect-options label { display: flex; align-items: center; gap: 9px; padding: 7px 10px; border-radius: 7px; cursor: pointer; font-size: 13px; color: var(--text); transition: background 0.1s; }
+    .multiselect-options label:hover { background: var(--surface2); }
+    .multiselect-options label input[type=checkbox] { width: 15px; height: 15px; accent-color: var(--accent); cursor: pointer; flex-shrink: 0; }
+    .multiselect.filter-active summary { background: rgba(79,70,229,0.08); border-color: var(--accent); color: var(--accent); font-weight: 600; }
+    [data-theme="dark"] .multiselect.filter-active summary { background: rgba(129,140,248,0.12); }
+    .filter-date-input { font-family: inherit; font-size: 13px; padding: 5px 10px; border: 1px solid var(--border-md); border-radius: 8px; background: var(--surface); color: var(--text); width: 150px; }
+    .filter-date-input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+    .filter-date-input::placeholder { color: var(--text-faint); }
+    .filter-date-input.filter-active { border-color: var(--accent); background: rgba(79,70,229,0.08); font-weight: 600; }
+    [data-theme="dark"] .filter-date-input.filter-active { background: rgba(129,140,248,0.12); }
+
+    /* VARSLER DROPDOWN */
+    .varsler-wrap { position: relative; }
+    .varsler-dropdown { display: none; position: absolute; top: calc(100% + 8px); right: 0; z-index: 200; background: var(--surface); border: 1px solid var(--border-md); border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.16); width: 340px; overflow: hidden; }
+    .varsler-dropdown.open { display: block; }
+    .varsler-dropdown-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px 10px; border-bottom: 1px solid var(--border); }
+    .varsler-dropdown-title { font-size: 13px; font-weight: 600; color: var(--text); }
+    .varsler-dropdown-body { max-height: 360px; overflow-y: auto; padding: 8px; display: flex; flex-direction: column; gap: 2px; }
+    .varsler-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 10px; border-radius: 8px; cursor: pointer; transition: background 0.12s; text-decoration: none; }
+    .varsler-item:hover { background: var(--surface2); }
+    .varsler-item-dot { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .varsler-item-dot.purple { background: rgba(124,58,237,0.12); color: #7c3aed; }
+    .varsler-item-dot.red { background: rgba(220,38,38,0.1); color: #dc2626; }
+    .varsler-item-dot.amber { background: rgba(217,119,6,0.1); color: #d97706; }
+    [data-theme="dark"] .varsler-item-dot.purple { background: rgba(167,139,250,0.15); color: #a78bfa; }
+    [data-theme="dark"] .varsler-item-dot.red { background: rgba(248,113,113,0.15); color: #f87171; }
+    [data-theme="dark"] .varsler-item-dot.amber { background: rgba(251,191,36,0.12); color: #fbbf24; }
+    .varsler-item-title { font-size: 13px; font-weight: 500; color: var(--text); line-height: 1.3; }
+    .varsler-item-sub { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; }
+    .varsler-empty { padding: 24px 16px; text-align: center; font-size: 13px; color: var(--text-muted); }
+
+    /* METRIC CARDS */
+    .metric-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; margin-bottom: 24px; }
+    .metric-card { background: var(--surface); border-radius: var(--radius-lg); padding: 18px 16px; box-shadow: var(--shadow-sm); border: 1px solid var(--border); display: flex; flex-direction: column; gap: 10px; transition: box-shadow 0.15s, border-color 0.15s, transform 0.1s; }
+    .metric-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.1); border-color: var(--border-md); transform: translateY(-1px); }
+    .metric-top { display: flex; align-items: center; justify-content: space-between; }
+    .metric-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .metric-icon svg { width: 18px; height: 18px; }
+    .metric-icon.indigo { background: #eef2ff; color: #4f46e5; }
+    .metric-icon.green  { background: #f0fdf4; color: #16a34a; }
+    .metric-icon.amber  { background: #fffbeb; color: #d97706; }
+    .metric-icon.red    { background: #fef2f2; color: #dc2626; }
+    .metric-icon.purple { background: #faf5ff; color: #7c3aed; }
+    .metric-icon.sky    { background: #f0f9ff; color: #0284c7; }
+    [data-theme="dark"] .metric-icon.indigo { background: #1e1b4b; color: #818cf8; }
+    [data-theme="dark"] .metric-icon.green  { background: #052e16; color: #4ade80; }
+    [data-theme="dark"] .metric-icon.amber  { background: #431407; color: #fb923c; }
+    [data-theme="dark"] .metric-icon.red    { background: #450a0a; color: #f87171; }
+    [data-theme="dark"] .metric-icon.purple { background: #2e1065; color: #c084fc; }
+    [data-theme="dark"] .metric-icon.sky    { background: #082f49; color: #38bdf8; }
+    .metric-trend { font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 20px; }
+    .trend-up   { background: #dcfce7; color: #15803d; }
+    .trend-warn { background: #fef3c7; color: #92400e; }
+    .trend-bad  { background: #fee2e2; color: #991b1b; }
+    [data-theme="dark"] .trend-up   { background: #052e16; color: #4ade80; }
+    [data-theme="dark"] .trend-warn { background: #431407; color: #fb923c; }
+    [data-theme="dark"] .trend-bad  { background: #450a0a; color: #f87171; }
+    .metric-value { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
+    .metric-label { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+
+    /* CONTENT GRID */
+    .content-grid { display: grid; grid-template-columns: 1fr 360px; gap: 20px; }
+
+    /* CARDS */
+    .card { background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); border: 1px solid var(--border); overflow: hidden; margin-bottom: 0; }
+    .card-mb { margin-bottom: 18px; }
+    .card-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+    .card-title { font-size: 14px; font-weight: 650; letter-spacing: -0.2px; }
+    .card-subtitle { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+    .card-body { padding: 0; }
+
+    /* TABLES */
     .table-wrap { overflow-x: auto; }
-    .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 1.5rem; }
-    .metric { background: var(--metric-bg); border-radius: var(--radius); padding: 1rem; }
-    .metric .label { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
-    .metric .value { font-size: 24px; font-weight: 600; }
-    .alert-box { background: #faeeda; border: 0.5px solid #fac775; border-radius: var(--radius); padding: 10px 14px; font-size: 13px; color: #633806; margin-bottom: 10px; }
-    .alert-box-purple { background: #f0e8f8; border: 0.5px solid #c090e0; border-radius: var(--radius); padding: 10px 14px; font-size: 13px; color: #5020a0; margin-bottom: 10px; }
-    .empty { color: var(--text-faint); font-size: 13px; padding: 2rem; text-align: center; }
+    table { width: 100%; border-collapse: collapse; }
+    th { text-align: left; font-size: 11.5px; font-weight: 600; color: var(--text-muted); padding: 10px 20px; background: var(--surface2); border-bottom: 1px solid var(--border); text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; }
+    th[data-sort] { cursor: pointer; user-select: none; }
+    th[data-sort]:hover { color: var(--accent); }
+    th[data-sort]::after { content: ' ⇅'; font-size: 9px; opacity: 0.35; }
+    th[data-sort].sort-asc::after { content: ' ▲'; opacity: 1; color: var(--accent); }
+    th[data-sort].sort-desc::after { content: ' ▼'; opacity: 1; color: var(--accent); }
+    th[data-sort].sort-asc, th[data-sort].sort-desc { color: var(--accent); }
+    td { padding: 12px 20px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--surface2); }
+
+    /* BADGES */
+    .badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px; }
+    .badge-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .badge-ok, .badge-green { background: #dcfce7; color: #15803d; }
+    .badge-warn, .badge-amber { background: #fef3c7; color: #92400e; }
+    .badge-bad, .badge-red { background: #fee2e2; color: #991b1b; }
+    .badge-info, .badge-indigo { background: #eef2ff; color: #3730a3; }
+    .badge-purple { background: #ede9fe; color: #5b21b6; }
+    .badge-gray { background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border); }
+    [data-theme="dark"] .badge-ok, [data-theme="dark"] .badge-green { background: #052e16; color: #4ade80; }
+    [data-theme="dark"] .badge-warn, [data-theme="dark"] .badge-amber { background: #431407; color: #fb923c; }
+    [data-theme="dark"] .badge-bad, [data-theme="dark"] .badge-red { background: #450a0a; color: #f87171; }
+    [data-theme="dark"] .badge-info, [data-theme="dark"] .badge-indigo { background: #1e1b4b; color: #a5b4fc; }
+    [data-theme="dark"] .badge-purple { background: #2e1065; color: #c084fc; }
+
+    /* IDBADGE */
+    .idbadge { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px; background: #eef2ff; color: #3730a3; border: 1px solid #c7d2fe; font-family: 'SF Mono', 'Consolas', monospace; letter-spacing: 0.04em; white-space: nowrap; }
+    [data-theme="dark"] .idbadge { background: #1e1b4b; color: #a5b4fc; border-color: #312e81; }
+
+    /* ALERT CARDS (dashboard right panel) */
+    .alert-list { display: flex; flex-direction: column; }
+    .alert-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 20px; border-bottom: 1px solid var(--border); }
+    .alert-item:last-child { border-bottom: none; }
+    .alert-dot-wrap { width: 30px; height: 30px; border-radius: 8px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; margin-top: 1px; }
+    .alert-dot-wrap.purple { background: #ede9fe; color: #7c3aed; }
+    .alert-dot-wrap.amber  { background: #fef3c7; color: #d97706; }
+    .alert-dot-wrap.red    { background: #fee2e2; color: #dc2626; }
+    [data-theme="dark"] .alert-dot-wrap.purple { background: #2e1065; color: #c084fc; }
+    [data-theme="dark"] .alert-dot-wrap.amber  { background: #431407; color: #fb923c; }
+    [data-theme="dark"] .alert-dot-wrap.red    { background: #450a0a; color: #f87171; }
+    .alert-dot-wrap svg { width: 15px; height: 15px; }
+    .alert-title { font-size: 13px; font-weight: 600; }
+    .alert-sub   { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+    /* ACTIVITY FEED */
+    .activity-item { display: flex; align-items: center; gap: 12px; padding: 11px 20px; border-bottom: 1px solid var(--border); }
+    .activity-item:last-child { border-bottom: none; }
+    .activity-title { font-size: 13px; font-weight: 500; flex: 1; }
+    .activity-sub   { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+    .activity-time  { font-size: 11px; color: var(--text-faint); white-space: nowrap; }
+
+    /* ALERT BOXES (inline) */
+    .alert-box        { background: #fffbeb; border: 1px solid #fcd34d; border-radius: var(--radius); padding: 10px 14px; font-size: 13px; color: #92400e; margin-bottom: 10px; }
+    .alert-box-purple { background: #faf5ff; border: 1px solid #c4b5fd; border-radius: var(--radius); padding: 10px 14px; font-size: 13px; color: #5b21b6; margin-bottom: 10px; }
+    [data-theme="dark"] .alert-box        { background: #431407; border-color: #b45309; color: #fb923c; }
+    [data-theme="dark"] .alert-box-purple { background: #2e1065; border-color: #6d28d9; color: #c084fc; }
+
+    /* MODALS */
     .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; align-items: flex-start; justify-content: center; padding: 50px 12px 20px; overflow-y: auto; }
     .modal-overlay.open { display: flex; }
-    .modal { background: var(--surface); border-radius: var(--radius-lg); border: 0.5px solid var(--border-md); padding: 1.5rem; width: 100%; max-width: 540px; align-self: flex-start; }
+    .modal { background: var(--surface); border-radius: var(--radius-lg); border: 1px solid var(--border-md); padding: 1.5rem; width: 100%; max-width: 540px; align-self: flex-start; }
     .modal h3 { font-size: 16px; font-weight: 600; margin-bottom: 1.25rem; }
     .modal-wide { max-width: 720px; }
+    .modal-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 1.25rem; }
+
+    /* FORMS */
     .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .form-grid .full { grid-column: 1 / -1; }
     .field { display: flex; flex-direction: column; gap: 5px; }
     .field label { font-size: 12px; color: var(--text-muted); font-weight: 500; }
-    input, select, textarea { font-family: inherit; font-size: 14px; padding: 7px 10px; border: 0.5px solid var(--border-md); border-radius: var(--radius); background: var(--input-bg); color: var(--text); width: 100%; }
-    input:focus, select:focus, textarea:focus { outline: 2px solid var(--nav-active-bg); outline-offset: 1px; }
+    input, select, textarea { font-family: inherit; font-size: 14px; padding: 7px 10px; border: 1px solid var(--border-md); border-radius: var(--radius); background: var(--input-bg); color: var(--text); width: 100%; }
+    input:focus, select:focus, textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
     textarea { resize: vertical; min-height: 70px; }
-    .modal-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 1.25rem; }
+
+    /* ID PREVIEW */
     .id-preview { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
-    .id-preview .kid { font-family: monospace; font-weight: 600; color: #185fa5; }
-    [data-theme="dark"] .id-preview .kid { color: #6aabee; }
-    .inst-picker-item { display: grid; grid-template-columns: 20px 1fr auto; align-items: center; gap: 8px; padding: 7px 8px; border-bottom: 0.5px solid var(--border); cursor: pointer; }
+    .id-preview .kid { font-family: monospace; font-weight: 600; color: #3730a3; }
+    [data-theme="dark"] .id-preview .kid { color: #a5b4fc; }
+
+    /* INSTRUMENT PICKER */
+    .inst-picker-item { display: grid; grid-template-columns: 20px 1fr auto; align-items: center; gap: 8px; padding: 7px 8px; border-bottom: 1px solid var(--border); cursor: pointer; }
     .inst-picker-item:last-child { border-bottom: none; }
     .inst-picker-item:hover { background: var(--surface2); }
     .inst-picker-item input[type="checkbox"] { width: 15px; height: 15px; cursor: pointer; }
     .inst-picker-name { font-size: 13px; color: var(--text); }
     .inst-picker-meta { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
 
-    /* Workshop list in modal */
-    .ws-item { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 0.5px solid var(--border); }
-    .ws-item:last-child { border-bottom: none; }
-    .ws-item-info { flex: 1; }
-    .ws-item-name { font-size: 13px; font-weight: 500; }
-    .ws-item-meta { font-size: 12px; color: var(--text-muted); }
+    /* ENTITY LIST */
+    .entity-item { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--border); }
+    .entity-item:last-child { border-bottom: none; }
+    .entity-item-info { flex: 1; }
+    .entity-item-name { font-size: 13px; font-weight: 500; }
+    .entity-item-meta { font-size: 12px; color: var(--text-muted); }
 
-    /* QR modal */
+    /* REPORT TABLE */
+    .report-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
+    .report-table th { text-align: left; font-size: 11px; font-weight: 600; color: var(--text-muted); padding: 8px 20px; border-bottom: 1px solid var(--border); background: var(--surface2); text-transform: uppercase; letter-spacing: 0.04em; }
+    .report-table td { padding: 10px 20px; border-bottom: 1px solid var(--border); }
+    .report-table tr:last-child td { border-bottom: none; }
+    .report-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+    .report-total { background: var(--surface2); border-radius: var(--radius); padding: 10px 14px; margin-top: 12px; display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 13px; }
+
+    /* QR */
     .qr-center { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 8px 0; }
-    .qr-canvas-wrap { background: #fff; padding: 16px; border-radius: var(--radius); border: 0.5px solid var(--border-md); }
+    .qr-canvas-wrap { background: #fff; padding: 16px; border-radius: var(--radius); border: 1px solid var(--border-md); }
     .qr-inst-name { font-size: 16px; font-weight: 600; text-align: center; }
-    .qr-inst-id { font-family: monospace; font-size: 18px; font-weight: 700; color: #1a4a8a; letter-spacing: 0.05em; }
-    [data-theme="dark"] .qr-inst-id { color: #7aaeee; }
+    .qr-inst-id { font-family: monospace; font-size: 18px; font-weight: 700; color: #3730a3; letter-spacing: 0.05em; }
+    [data-theme="dark"] .qr-inst-id { color: #a5b4fc; }
 
-    /* QR/barcode scanner */
-    .qr-scan-area { position: relative; width: 100%; max-width: 360px; border-radius: var(--radius); overflow: hidden; background: #000; border: 0.5px solid var(--border-md); margin: 0 auto; }
+    /* SCANNER */
+    .qr-scan-area { position: relative; width: 100%; max-width: 360px; border-radius: var(--radius); overflow: hidden; background: #000; border: 1px solid var(--border-md); margin: 0 auto; }
     .qr-scan-area video { display: block; width: 100%; }
     .qr-scan-line { position: absolute; left: 10%; right: 10%; height: 2px; background: #ef4444; opacity: 0.85; animation: scanline 2s ease-in-out infinite; top: 50%; }
     @keyframes scanline { 0%,100%{top:20%} 50%{top:80%} }
     .qr-scan-result { margin-top: 10px; font-size: 13px; min-height: 24px; text-align: center; color: var(--text-muted); }
-    .qr-scan-result.found { color: #3b6d11; font-weight: 600; }
-    .qr-scan-result.notfound { color: #a32d2d; }
+    .qr-scan-result.found    { color: #15803d; font-weight: 600; }
+    .qr-scan-result.notfound { color: #991b1b; }
     .scanner-hint { font-size: 12px; color: var(--text-muted); text-align: center; margin-top: 6px; }
 
-    /* Til henting list */
-    .th-list-item { padding: 10px 0; border-bottom: 0.5px solid var(--border); }
+    /* TIL HENTING */
+    .th-list-item { padding: 10px 0; border-bottom: 1px solid var(--border); }
     .th-list-item:last-child { border-bottom: none; }
     .th-list-item-title { font-weight: 600; font-size: 13px; }
-    .th-list-item-meta { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+    .th-list-item-meta  { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
 
-    /* Print styles */
-    @media print {
-      body * { visibility: hidden; }
-      #qr-print-area, #qr-print-area * { visibility: visible; }
-      #qr-print-area { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: white; }
-    }
-    #qr-print-area { display: none; }
-
-    #toast { position: fixed; bottom: 1.5rem; right: 1.5rem; background: var(--nav-active-bg); color: var(--nav-active-fg); padding: 10px 18px; border-radius: var(--radius); font-size: 13px; opacity: 0; transition: opacity 0.2s; z-index: 200; pointer-events: none; }
+    /* MISC */
+    .empty { color: var(--text-faint); font-size: 13px; padding: 2rem; text-align: center; }
+    #toast { position: fixed; bottom: 1.5rem; right: 1.5rem; background: #1e1b4b; color: #c7d2fe; padding: 10px 18px; border-radius: var(--radius); font-size: 13px; opacity: 0; transition: opacity 0.2s; z-index: 200; pointer-events: none; }
     #toast.show { opacity: 1; }
-    @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } .form-grid .full { grid-column: 1; } }
+    @media print { body * { visibility: hidden; } #qr-print-area, #qr-print-area * { visibility: visible; } #qr-print-area { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: white; } }
+    #qr-print-area { display: none; }
+    @media (max-width: 900px) { .metric-grid { grid-template-columns: repeat(3,1fr); } .content-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 600px) { .sidebar { display: none; } .main { margin-left: 0; } .content { padding: 16px; } .topbar { padding: 12px 16px; } .metric-grid { grid-template-columns: repeat(2,1fr); } .form-grid { grid-template-columns: 1fr; } .form-grid .full { grid-column: 1; } th, td { padding: 8px 12px; } }
   </style>
 </head>
 <body>
-<div class="app">
-  <header>
-    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-      <circle cx="14" cy="14" r="13" stroke="currentColor" stroke-width="1" opacity="0.35"/>
-      <path d="M8 17 Q11 11 14 11 Q17 11 20 17" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-      <circle cx="8" cy="17" r="2" fill="currentColor"/><circle cx="20" cy="17" r="2" fill="currentColor"/>
-    </svg>
-    <h1>Korpsinventar</h1>
-    <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">🌙 Mørk modus</button>
-  </header>
 
-  <nav>
-    <button class="active" data-section="dashboard">Oversikt</button>
-    <button data-section="instrumenter">Instrumenter</button>
-    <button data-section="musikanter">Musikanter</button>
-    <button data-section="service">Servicelogg</button>
-    <button data-section="tilbehor">Tilbehør</button>
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 28 28" fill="none">
+        <path d="M8 17 Q11 11 14 11 Q17 11 20 17" stroke="white" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+        <circle cx="8" cy="17" r="2.2" fill="white"/>
+        <circle cx="20" cy="17" r="2.2" fill="white"/>
+      </svg>
+    </div>
+    <div>
+      <div class="logo-text">Korpsinventar</div>
+      <div class="logo-sub">v2.0</div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Hovedmeny</div>
+    <button class="nav-item active" data-section="dashboard">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zm6-4a1.5 1.5 0 113 0v10a1.5 1.5 0 01-3 0v-10zm6 7a1.5 1.5 0 113 0v3a1.5 1.5 0 01-3 0v-3z"/></svg>
+      Oversikt
+    </button>
+    <button class="nav-item" data-section="instrumenter">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>
+      Instrumenter
+    </button>
+    <button class="nav-item" data-section="musikanter">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>
+      Musikanter
+    </button>
+    <button class="nav-item" data-section="service">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947z" clip-rule="evenodd"/><path fill-rule="evenodd" d="M10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/></svg>
+      Servicelogg
+      <span class="nav-badge" id="nav-badge-service" style="display:none">0</span>
+    </button>
+    <button class="nav-item" data-section="tilbehor">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3z"/></svg>
+      Tilbehør
+      <span class="nav-badge amber" id="nav-badge-acc" style="display:none">0</span>
+    </button>
+    <div class="nav-section-label" style="margin-top:8px;">Administrasjon</div>
+    <button class="nav-item" data-section="rapporter">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm2 10a1 1 0 10-2 0v3a1 1 0 102 0v-3zm4-1a1 1 0 011 1v3a1 1 0 11-2 0v-3a1 1 0 011-1zm-2-6a1 1 0 10-2 0v3a1 1 0 102 0V5z" clip-rule="evenodd"/></svg>
+      Rapporter
+    </button>
+    <button class="nav-item" onclick="openWorkshopsModal()">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4z" clip-rule="evenodd"/></svg>
+      Verksteder
+    </button>
+    <button class="nav-item" onclick="openSuppliersModal()">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5z" clip-rule="evenodd"/></svg>
+      Leverandører
+    </button>
   </nav>
-
-  <!-- OVERSIKT -->
-  <div id="dashboard" class="section active">
-    <div class="metric-grid" id="metrics"></div>
-    <div id="alerts-area"></div>
-    <div class="card">
-      <p style="font-size:13px;font-weight:600;margin-bottom:10px;">Siste serviceoppføringer</p>
-      <div id="dash-service"></div>
-    </div>
+  <div class="sidebar-footer">
+    <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">
+      <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>
+      Mørk modus
+    </button>
   </div>
+</aside>
 
-  <!-- INSTRUMENTER -->
-  <div id="instrumenter" class="section">
-    <div class="section-header">
-      <h2>Instrumenter</h2>
-      <div class="section-header-actions">
-        <button class="btn-export" onclick="exportData('instruments','csv')">Eksporter CSV</button>
-        <button class="btn-export" onclick="exportData('instruments','xlsx')">Eksporter Excel</button>
-        <button class="btn btn-primary" onclick="openInstModal()">+ Legg til instrument</button>
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar">
+    <div id="topbar-title" class="topbar-title">Oversikt</div>
+    <div class="topbar-search-wrap">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
+      <input id="topbar-search" class="topbar-search-input" placeholder="Søk i aktiv liste…" oninput="filterActiveSection(this.value)">
+    </div>
+    <div class="varsler-wrap">
+      <button class="btn btn-sm" id="varsler-btn" onclick="toggleVarslerDropdown()" title="Vis varsler" style="gap:6px;">
+        <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zm0 16a3 3 0 01-2.83-2h5.66A3 3 0 0110 18z"/></svg>
+        Varsler
+        <span id="varsler-count" style="display:none;background:#ef4444;color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;line-height:1.4;">0</span>
+      </button>
+      <div class="varsler-dropdown" id="varsler-dropdown">
+        <div class="varsler-dropdown-header">
+          <span class="varsler-dropdown-title">Aktive varsler</span>
+          <span id="varsler-dropdown-count" class="badge badge-red" style="font-size:11px;"></span>
+        </div>
+        <div class="varsler-dropdown-body" id="varsler-dropdown-body"></div>
       </div>
     </div>
-    <div class="table-wrap card">
-      <table><thead><tr><th>Instrument-ID</th><th>Navn</th><th>Kategori</th><th>Stand</th><th>Tildelt</th><th>Handlinger</th></tr></thead>
-      <tbody id="inst-table"></tbody></table>
-    </div>
   </div>
+  <div class="content">
 
-  <!-- MUSIKANTER -->
-  <div id="musikanter" class="section">
-    <div class="section-header">
-      <h2>Musikanter</h2>
-      <div class="section-header-actions">
-        <button class="btn-export" onclick="exportData('players','csv')">Eksporter CSV</button>
-        <button class="btn-export" onclick="exportData('players','xlsx')">Eksporter Excel</button>
-        <button class="btn btn-primary" onclick="openPlayerModal()">+ Legg til musiker</button>
+    <!-- OVERSIKT -->
+    <div id="dashboard" class="section active">
+      <div class="metric-grid" id="metrics"></div>
+      <div id="dash-content-grid"></div>
+    </div>
+
+    <!-- INSTRUMENTER -->
+    <div id="instrumenter" class="section">
+      <div class="section-header">
+        <h2>Instrumenter</h2>
+        <div class="section-header-actions">
+          <button class="btn-export" onclick="exportData('instruments','csv')">Eksporter CSV</button>
+          <button class="btn-export" onclick="exportData('instruments','xlsx')">Eksporter Excel</button>
+          <button class="btn" onclick="openImportModal('instruments')">↑ Importer CSV</button>
+          <button class="btn btn-primary" onclick="openInstModal()">+ Legg til instrument</button>
+        </div>
+      </div>
+      <div class="filter-bar">
+        <span class="filter-bar-label">Filter:</span>
+        <details class="multiselect" id="inst-cond-multiselect">
+          <summary id="inst-cond-summary">Stand: Alle</summary>
+          <div class="multiselect-options">
+            <label><input type="checkbox" value="God" onchange="toggleInstFilter(this)"> God</label>
+            <label><input type="checkbox" value="Akseptabel" onchange="toggleInstFilter(this)"> Akseptabel</label>
+            <label><input type="checkbox" value="Trenger service" onchange="toggleInstFilter(this)"> Trenger service</label>
+          </div>
+        </details>
+        <details class="multiselect" id="inst-cat-multiselect">
+          <summary id="inst-cat-summary">Kategori: Alle</summary>
+          <div class="multiselect-options" id="inst-cat-options"></div>
+        </details>
+        <details class="multiselect" id="inst-player-multiselect">
+          <summary id="inst-player-summary">Tildelt: Alle</summary>
+          <div class="multiselect-options">
+            <label><input type="checkbox" value="tildelt" onchange="toggleInstPlayerFilter(this)"> Tildelt</label>
+            <label><input type="checkbox" value="ikke_tildelt" onchange="toggleInstPlayerFilter(this)"> Ikke tildelt</label>
+          </div>
+        </details>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th data-sort="korps_id">Instrument-ID</th><th data-sort="name">Navn</th><th data-sort="category">Kategori</th><th data-sort="condition">Stand</th><th data-sort="player">Tildelt</th><th>Handlinger</th></tr></thead>
+            <tbody id="inst-table"></tbody>
+          </table>
+        </div>
       </div>
     </div>
-    <div class="table-wrap card">
-      <table><thead><tr><th>Navn</th><th>Seksjon</th><th>Kontakt</th><th>Tildelte instrumenter</th><th>Handlinger</th></tr></thead>
-      <tbody id="player-table"></tbody></table>
-    </div>
-  </div>
 
-  <!-- SERVICELOGG -->
-  <div id="service" class="section">
-    <div class="section-header">
-      <h2>Servicelogg</h2>
-      <div class="section-header-actions">
-        <button class="btn-export" onclick="exportData('service','csv')">Eksporter CSV</button>
-        <button class="btn-export" onclick="exportData('service','xlsx')">Eksporter Excel</button>
-        <button class="btn" onclick="openTilHentingModal()">📦 Til henting</button>
-        <button class="btn" onclick="openWorkshopsModal()">🔧 Verksteder</button>
-        <button class="btn btn-primary" onclick="openServiceModal()">+ Logg service</button>
+    <!-- MUSIKANTER -->
+    <div id="musikanter" class="section">
+      <div class="section-header">
+        <h2>Musikanter</h2>
+        <div class="section-header-actions">
+          <button class="btn-export" onclick="exportData('players','csv')">Eksporter CSV</button>
+          <button class="btn-export" onclick="exportData('players','xlsx')">Eksporter Excel</button>
+          <button class="btn btn-primary" onclick="openPlayerModal()">+ Legg til musiker</button>
+        </div>
+      </div>
+      <div class="filter-bar">
+        <span class="filter-bar-label">Filter:</span>
+        <details class="multiselect" id="player-section-multiselect">
+          <summary id="player-section-summary">Seksjon: Alle</summary>
+          <div class="multiselect-options" id="player-section-options"></div>
+        </details>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th data-sort="name">Navn</th><th data-sort="section">Seksjon</th><th data-sort="contact">Kontakt</th><th data-sort="inst_count">Tildelte instrumenter</th><th>Handlinger</th></tr></thead>
+            <tbody id="player-table"></tbody>
+          </table>
+        </div>
       </div>
     </div>
-    <div class="table-wrap card">
-      <table><thead><tr><th>Innlevert</th><th>Instrument</th><th>Type</th><th>Status</th><th>Verksted</th><th>Beskrivelse</th><th>Kostnad</th><th>Neste frist</th><th>Handlinger</th></tr></thead>
-      <tbody id="service-table"></tbody></table>
-    </div>
-  </div>
 
-  <!-- TILBEHØR -->
-  <div id="tilbehor" class="section">
-    <div class="section-header">
-      <h2>Tilbehør og lager</h2>
-      <div class="section-header-actions">
-        <button class="btn-export" onclick="exportData('accessories','csv')">Eksporter CSV</button>
-        <button class="btn-export" onclick="exportData('accessories','xlsx')">Eksporter Excel</button>
-        <button class="btn btn-primary" onclick="openAccModal()">+ Legg til vare</button>
+    <!-- SERVICELOGG -->
+    <div id="service" class="section">
+      <div class="section-header">
+        <h2>Servicelogg</h2>
+        <div class="section-header-actions">
+          <button class="btn-export" onclick="exportData('service','csv')">Eksporter CSV</button>
+          <button class="btn-export" onclick="exportData('service','xlsx')">Eksporter Excel</button>
+          <button class="btn" onclick="openServiceReport()">📊 Rapport</button>
+          <button class="btn" onclick="openTilHentingModal()">📦 Til henting</button>
+          <button class="btn btn-primary" onclick="openServiceModal()">+ Logg service</button>
+        </div>
+      </div>
+      <div class="filter-bar">
+        <span class="filter-bar-label">Filter:</span>
+        <details class="multiselect" id="svc-status-multiselect">
+          <summary id="svc-status-summary">Status: Alle</summary>
+          <div class="multiselect-options">
+            <label><input type="checkbox" value="under_service" onchange="toggleSvcFilter(this)"> Under service</label>
+            <label><input type="checkbox" value="til_henting" onchange="toggleSvcFilter(this)"> Til henting</label>
+            <label><input type="checkbox" value="ferdig" onchange="toggleSvcFilter(this)"> Ferdig</label>
+          </div>
+        </details>
+        <details class="multiselect" id="svc-type-multiselect">
+          <summary id="svc-type-summary">Type: Alle</summary>
+          <div class="multiselect-options">
+            <label><input type="checkbox" value="Rutinemessig vedlikehold" onchange="toggleSvcTypeFilter(this)"> Rutinemessig vedlikehold</label>
+            <label><input type="checkbox" value="Reparasjon" onchange="toggleSvcTypeFilter(this)"> Reparasjon</label>
+            <label><input type="checkbox" value="Dybderens" onchange="toggleSvcTypeFilter(this)"> Dybderens</label>
+            <label><input type="checkbox" value="Pute-/filtbytte" onchange="toggleSvcTypeFilter(this)"> Pute-/filtbytte</label>
+            <label><input type="checkbox" value="Ventilservice" onchange="toggleSvcTypeFilter(this)"> Ventilservice</label>
+            <label><input type="checkbox" value="Annet" onchange="toggleSvcTypeFilter(this)"> Annet</label>
+          </div>
+        </details>
+        <details class="multiselect" id="svc-workshop-multiselect">
+          <summary id="svc-workshop-summary">Verksted: Alle</summary>
+          <div class="multiselect-options" id="svc-workshop-options"></div>
+        </details>
+        <input type="text" id="svc-date-search" class="filter-date-input" placeholder="Søk dato (f.eks. 2025-03)" oninput="onSvcDateSearch(this)">
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th data-sort="date">Innlevert</th><th data-sort="inst_name">Instrument</th><th data-sort="type">Type</th><th data-sort="status">Status</th><th data-sort="workshop">Verksted</th><th data-sort="desc">Beskrivelse</th><th data-sort="cost">Kostnad</th><th data-sort="invoice_no">Fakturanr.</th><th data-sort="next_due">Neste frist</th><th>Handlinger</th></tr></thead>
+            <tbody id="service-table"></tbody>
+          </table>
+        </div>
       </div>
     </div>
-    <div id="acc-alerts"></div>
-    <div class="table-wrap card">
-      <table><thead><tr><th>Vare</th><th>Kategori</th><th>Leverandør</th><th>På lager</th><th>Minimum</th><th>Status</th><th>Handlinger</th></tr></thead>
-      <tbody id="acc-table"></tbody></table>
+
+    <!-- TILBEHØR -->
+    <div id="tilbehor" class="section">
+      <div class="section-header">
+        <h2>Tilbehør og lager</h2>
+        <div class="section-header-actions">
+          <button class="btn-export" onclick="exportData('accessories','csv')">Eksporter CSV</button>
+          <button class="btn-export" onclick="exportData('accessories','xlsx')">Eksporter Excel</button>
+          <button class="btn" onclick="openAccReport()">📊 Rapport</button>
+          <button class="btn" onclick="openImportModal('accessories')">↑ Importer CSV</button>
+          <button class="btn btn-primary" onclick="openAccModal()">+ Legg til vare</button>
+        </div>
+      </div>
+      <div class="filter-bar">
+        <span class="filter-bar-label">Filter:</span>
+        <details class="multiselect" id="acc-status-multiselect">
+          <summary id="acc-status-summary">Status: Alle</summary>
+          <div class="multiselect-options">
+            <label><input type="checkbox" value="OK" onchange="toggleAccFilter(this)"> OK</label>
+            <label><input type="checkbox" value="Lavt" onchange="toggleAccFilter(this)"> Lavt</label>
+            <label><input type="checkbox" value="Tomt" onchange="toggleAccFilter(this)"> Tomt</label>
+          </div>
+        </details>
+        <details class="multiselect" id="acc-cat-multiselect">
+          <summary id="acc-cat-summary">Kategori: Alle</summary>
+          <div class="multiselect-options" id="acc-cat-options"></div>
+        </details>
+        <details class="multiselect" id="acc-supplier-multiselect">
+          <summary id="acc-supplier-summary">Leverandør: Alle</summary>
+          <div class="multiselect-options" id="acc-supplier-options"></div>
+        </details>
+      </div>
+      <div id="acc-alerts"></div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th data-sort="name">Vare</th><th data-sort="category">Kategori</th><th data-sort="supplier">Leverandør</th><th data-sort="price">Pris</th><th data-sort="stock">På lager</th><th data-sort="min_level">Min.</th><th data-sort="status">Status</th><th>Handlinger</th></tr></thead>
+            <tbody id="acc-table"></tbody>
+          </table>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
+
+    <!-- RAPPORTER -->
+    <div id="rapporter" class="section">
+      <div class="section-header">
+        <h2>Rapporter</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;" id="reports-grid"></div>
+    </div>
+
+  </div><!-- /content -->
+</main>
 
 <!-- ===== MODALER ===== -->
 
@@ -266,7 +604,7 @@
       </div>
       <div class="field"><label>Serienummer (valgfritt)</label><input id="inst-serial" placeholder="Produsentens serienr."></div>
       <div class="field"><label>Kjøpsdato</label><input type="date" id="inst-purchase"></div>
-      <div class="field full"><label>Merknader</label><textarea id="inst-notes" placeholder="Oppbevaringssted, leverandør, osv."></textarea></div>
+      <div class="field full"><label>Merknader</label><textarea id="inst-notes" placeholder="Oppbevaringssted, osv."></textarea></div>
     </div>
     <div class="modal-footer">
       <button class="btn" onclick="closeModal('inst-modal')">Avbryt</button>
@@ -275,7 +613,7 @@
   </div>
 </div>
 
-<!-- Modal: QR-kode visning -->
+<!-- Modal: QR-kode -->
 <div id="qr-modal" class="modal-overlay">
   <div class="modal" style="max-width:380px;">
     <h3>QR-kode</h3>
@@ -317,11 +655,11 @@
         </div>
         <div class="qr-scan-result" id="scan-result">Pek kameraet mot en QR-kode...</div>
         <p class="scanner-hint">Automatisk skanning — ingen knapp å trykke</p>
-        <p class="scanner-hint" style="color:var(--text-faint);margin-top:2px;">Merk: QR-skanning krever at appen kjøres over HTTPS eller på localhost</p>
+        <p class="scanner-hint" style="color:var(--text-faint);margin-top:2px;">QR-skanning krever HTTPS eller localhost</p>
       </div>
       <div id="scanner-manual-wrap" style="display:none;margin-bottom:8px;">
         <div style="display:flex;gap:6px;align-items:center;">
-          <input id="manual-scan-input" placeholder="Skriv inn Instrument-ID manuelt (f.eks. TRMP-001)" style="flex:1;" onkeydown="if(event.key==='Enter')manualScanSubmit()">
+          <input id="manual-scan-input" placeholder="Skriv inn Instrument-ID (f.eks. TRMP-001)" style="flex:1;" onkeydown="if(event.key==='Enter')manualScanSubmit()">
           <button class="btn-sm" onclick="manualScanSubmit()">Legg til</button>
         </div>
       </div>
@@ -349,8 +687,9 @@
       <div class="field"><label>Type</label>
         <select id="svc-type"><option>Rutinemessig vedlikehold</option><option>Reparasjon</option><option>Dybderens</option><option>Pute-/filtbytte</option><option>Ventilservice</option><option>Annet</option></select>
       </div>
-      <div class="field"><label>Ferdig dato</label><input type="date" id="svc-date-finished" placeholder="La stå tom om ikke ferdig"></div>
+      <div class="field"><label>Ferdig dato</label><input type="date" id="svc-date-finished"></div>
       <div class="field"><label>Kostnad (kr)</label><input type="number" id="svc-cost" placeholder="0" min="0"></div>
+      <div class="field"><label>Fakturanummer</label><input id="svc-invoice" placeholder="Fakturanr."></div>
       <div class="field"><label>Utført av</label><input id="svc-by" placeholder="Navn, verksted, osv."></div>
       <div class="field"><label>Neste service (valgfritt)</label><input type="date" id="svc-next"></div>
       <div class="field full"><label>Beskrivelse</label><textarea id="svc-desc" placeholder="Hva ble gjort?"></textarea></div>
@@ -373,13 +712,19 @@
         <input id="acc-cat" list="acc-category-list" placeholder="Velg eller skriv ny kategori">
         <datalist id="acc-category-list"></datalist>
       </div>
-      <div class="field"><label>Leverandør</label><input id="acc-supplier" placeholder="f.eks. Norges Musikk AS"></div>
+      <div class="field"><label>Leverandør</label>
+        <select id="acc-supplier-id">
+          <option value="">— Ingen leverandør —</option>
+        </select>
+      </div>
+      <div class="field"><label>Pris per enhet (kr)</label><input type="number" id="acc-price" min="0" step="0.01" placeholder="0"></div>
+      <div class="field"><label>Fakturanummer</label><input id="acc-invoice" placeholder="Fakturanr."></div>
       <div class="field"><label>Antall på lager</label><input type="number" id="acc-stock" min="0" value="0"></div>
       <div class="field"><label>Minimumsgrense (varsel)</label><input type="number" id="acc-min" min="0" value="2"></div>
       <div class="field full">
         <label>Strekkode</label>
         <div style="display:flex;gap:6px;align-items:center;">
-          <input id="acc-barcode" placeholder="Skann eller skriv inn strekkode" style="flex:1;" onkeydown="if(event.key==='Enter')event.preventDefault()">
+          <input id="acc-barcode" placeholder="Skann eller skriv inn strekkode" style="flex:1;">
           <button class="btn-sm" onclick="toggleBarcodeScanner()" id="barcode-toggle-btn" style="font-size:11px;padding:3px 10px;white-space:nowrap;">📷 Skann</button>
         </div>
       </div>
@@ -390,9 +735,6 @@
         </div>
         <div class="qr-scan-result" id="barcode-scan-result">Pek kameraet mot strekkoden...</div>
         <p class="scanner-hint">Støtter EAN-13, EAN-8, UPC, Code 128, QR m.fl.</p>
-      </div>
-      <div class="field full" id="barcode-manual-wrap" style="display:none;">
-        <p style="font-size:12px;color:var(--text-muted);">Skriv strekkoden direkte i feltet over.</p>
       </div>
       <div class="field full"><label>Merknader</label><textarea id="acc-notes" placeholder="Størrelse, spesifikasjoner, osv."></textarea></div>
     </div>
@@ -419,9 +761,9 @@
 <div id="workshops-modal" class="modal-overlay">
   <div class="modal modal-wide">
     <h3>Verksteder</h3>
-    <div id="workshops-list" style="margin-bottom:1rem;max-height:300px;overflow-y:auto;"></div>
+    <div id="workshops-list" style="margin-bottom:1rem;max-height:260px;overflow-y:auto;"></div>
     <div style="border-top:0.5px solid var(--border);padding-top:1rem;">
-      <p style="font-size:12px;font-weight:500;color:var(--text-muted);margin-bottom:8px;" id="ws-form-title">Legg til verksted</p>
+      <p style="font-size:12px;font-weight:500;color:var(--text-muted);margin-bottom:8px;">Legg til verksted</p>
       <div class="form-grid">
         <div class="field full"><label>Navn *</label><input id="ws-name" placeholder="f.eks. Musikk & Service AS"></div>
         <div class="field"><label>Kontakt</label><input id="ws-contact" placeholder="Telefon eller e-post"></div>
@@ -430,24 +772,8 @@
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn" onclick="closeWorkshopsModal()">Lukk</button>
+      <button class="btn" onclick="closeModal('workshops-modal')">Lukk</button>
       <button class="btn btn-primary" onclick="saveWorkshop()">Lagre verksted</button>
-    </div>
-  </div>
-</div>
-
-<!-- Modal: Til henting -->
-<div id="til-henting-modal" class="modal-overlay">
-  <div class="modal modal-wide">
-    <h3>Instrumenter til henting</h3>
-    <p style="font-size:12px;color:var(--text-muted);margin-bottom:1rem;">Instrumenter som er ferdig servicet eksternt og venter på henting.</p>
-    <div id="til-henting-list"></div>
-    <div class="modal-footer" style="justify-content:space-between;margin-top:1rem;">
-      <button class="btn" onclick="closeModal('til-henting-modal')">Lukk</button>
-      <div style="display:flex;gap:8px;">
-        <button class="btn-export" onclick="exportData('til-henting','csv')">Eksporter CSV</button>
-        <button class="btn-export" onclick="exportData('til-henting','xlsx')">Eksporter Excel</button>
-      </div>
     </div>
   </div>
 </div>
@@ -469,6 +795,116 @@
   </div>
 </div>
 
+<!-- Modal: Leverandører -->
+<div id="suppliers-modal" class="modal-overlay">
+  <div class="modal modal-wide">
+    <h3>Leverandører</h3>
+    <div id="suppliers-list" style="margin-bottom:1rem;max-height:260px;overflow-y:auto;"></div>
+    <div style="border-top:0.5px solid var(--border);padding-top:1rem;">
+      <p style="font-size:12px;font-weight:500;color:var(--text-muted);margin-bottom:8px;">Legg til leverandør</p>
+      <div class="form-grid">
+        <div class="field full"><label>Navn *</label><input id="sup-name" placeholder="f.eks. Norges Musikk AS"></div>
+        <div class="field"><label>Kontakt</label><input id="sup-contact" placeholder="Telefon eller e-post"></div>
+        <div class="field"><label>Adresse</label><input id="sup-address" placeholder="Gateadresse"></div>
+        <div class="field full"><label>Merknader</label><input id="sup-notes" placeholder="Nettside, kontaktperson, osv."></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('suppliers-modal')">Lukk</button>
+      <button class="btn btn-primary" onclick="saveSupplier()">Lagre leverandør</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Rediger leverandør -->
+<div id="sup-edit-modal" class="modal-overlay">
+  <div class="modal" style="max-width:440px;">
+    <h3>Rediger leverandør</h3>
+    <div class="form-grid">
+      <div class="field full"><label>Navn *</label><input id="sup-edit-name"></div>
+      <div class="field"><label>Kontakt</label><input id="sup-edit-contact"></div>
+      <div class="field"><label>Adresse</label><input id="sup-edit-address"></div>
+      <div class="field full"><label>Merknader</label><input id="sup-edit-notes"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('sup-edit-modal')">Avbryt</button>
+      <button class="btn btn-primary" onclick="saveSupplierEdit()">Lagre</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Til henting -->
+<div id="til-henting-modal" class="modal-overlay">
+  <div class="modal modal-wide">
+    <h3>Instrumenter til henting</h3>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:1rem;">Ferdig servicet eksternt — venter på henting.</p>
+    <div id="til-henting-list"></div>
+    <div class="modal-footer" style="justify-content:space-between;margin-top:1rem;">
+      <button class="btn" onclick="closeModal('til-henting-modal')">Lukk</button>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-export" onclick="exportData('til-henting','csv')">Eksporter CSV</button>
+        <button class="btn-export" onclick="exportData('til-henting','xlsx')">Eksporter Excel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Servicerapport (kostnad per verksted) -->
+<div id="service-report-modal" class="modal-overlay">
+  <div class="modal modal-wide">
+    <h3>Rapport — servicekostnad per verksted</h3>
+    <div id="service-report-content"></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('service-report-modal')">Lukk</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Tilbehørsrapport (kostnad per kategori) -->
+<div id="acc-report-modal" class="modal-overlay">
+  <div class="modal modal-wide">
+    <h3>Rapport — varekostnad per kategori</h3>
+    <div id="acc-report-content"></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('acc-report-modal')">Lukk</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: CSV-import -->
+<div id="import-modal" class="modal-overlay">
+  <div class="modal modal-wide">
+    <h3 id="import-modal-title">Importer fra CSV</h3>
+    <div id="import-instructions" style="font-size:12px;color:var(--text-muted);background:var(--surface2);border-radius:var(--radius);padding:10px 14px;margin-bottom:12px;line-height:1.8;"></div>
+    <div class="field" style="margin-bottom:10px;">
+      <label>Last opp CSV-fil</label>
+      <input type="file" id="import-file" accept=".csv,.txt" onchange="handleImportFile(this)">
+    </div>
+    <div class="field" style="margin-bottom:12px;">
+      <label>… eller lim inn CSV-innhold direkte</label>
+      <textarea id="import-text" rows="6" placeholder="Navn,Kategori,Stand,Serienummer,Kjøpsdato,Merknader&#10;Trompet i Bb,Messingblåser,God,,,"></textarea>
+    </div>
+    <button class="btn btn-sm" onclick="previewImport()" style="margin-bottom:12px;">Forhåndsvis</button>
+    <div id="import-preview"></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('import-modal')">Avbryt</button>
+      <button class="btn btn-primary" id="import-confirm-btn" style="display:none" onclick="confirmImport()">Importer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Confirm transfer -->
+<div id="transfer-confirm-modal" class="modal-overlay">
+  <div class="modal" style="max-width:400px;">
+    <h3>Endre tildeling?</h3>
+    <p id="transfer-confirm-msg" style="margin-bottom:1.5rem;line-height:1.5;color:var(--text);"></p>
+    <div style="display:flex;gap:8px;justify-content:flex-end;">
+      <button class="btn" onclick="cancelTransfer()">Nei</button>
+      <button class="btn btn-primary" onclick="confirmTransfer()">Ja, endre tildeling</button>
+    </div>
+  </div>
+</div>
+
 <!-- Hidden print area -->
 <div id="qr-print-area">
   <div style="text-align:center;">
@@ -484,21 +920,22 @@
 // --- THEME ---
 function applyTheme(t) {
   document.documentElement.setAttribute('data-theme', t);
-  document.getElementById('theme-btn').textContent = t === 'dark' ? '☀️ Lys modus' : '🌙 Mørk modus';
+  const btn = document.getElementById('theme-btn');
+  if (btn) btn.innerHTML = t === 'dark'
+    ? '<svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"/></svg> Lys modus'
+    : '<svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg> Mørk modus';
   localStorage.setItem('korps-theme', t);
 }
 function toggleTheme() { applyTheme(localStorage.getItem('korps-theme') === 'dark' ? 'light' : 'dark'); }
 applyTheme(localStorage.getItem('korps-theme') || 'light');
 
 // --- STATE ---
-let state = { instruments: [], players: [], service: [], accessories: [], workshops: [], accCategories: [] };
-let editingId = { inst: null, player: null, service: null, acc: null, ws: null };
+let state = { instruments: [], players: [], service: [], accessories: [], workshops: [], suppliers: [], accCategories: [] };
+let editingId = { inst: null, player: null, service: null, acc: null, ws: null, sup: null };
 let scannerActive = false;
 let barcodeScannerActive = false;
-let _scanStream = null;
-let _scanFrame = null;
-let _barcodeStream = null;
-let _barcodeFrame = null;
+let _scanStream = null, _scanFrame = null;
+let _barcodeStream = null, _barcodeFrame = null;
 let currentQrInst = null;
 
 function toast(msg) {
@@ -518,139 +955,86 @@ async function api(method, path, body) {
 }
 
 async function loadAll() {
-  const [instruments, players, service, accessories, workshops, accCategories] = await Promise.all([
+  const [instruments, players, service, accessories, workshops, suppliers, accCategories] = await Promise.all([
     api('GET', '/api/instruments'), api('GET', '/api/players'),
     api('GET', '/api/service'), api('GET', '/api/accessories'),
-    api('GET', '/api/workshops'), api('GET', '/api/acc-categories')
+    api('GET', '/api/workshops'), api('GET', '/api/suppliers'),
+    api('GET', '/api/acc-categories')
   ]);
-  state = { instruments, players, service, accessories, workshops, accCategories };
+  state = { instruments, players, service, accessories, workshops, suppliers, accCategories };
   render();
 }
 
-document.querySelectorAll('nav button').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById(btn.dataset.section).classList.add('active');
-  });
+const sectionTitles = { dashboard: 'Oversikt', instrumenter: 'Instrumenter', musikanter: 'Musikanter', service: 'Servicelogg', tilbehor: 'Tilbehør og lager', rapporter: 'Rapporter' };
+function navigateTo(sid) {
+  document.querySelectorAll('.nav-item[data-section]').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  const btn = document.querySelector(`.nav-item[data-section="${sid}"]`);
+  if (btn) btn.classList.add('active');
+  const sec = document.getElementById(sid);
+  if (sec) sec.classList.add('active');
+  const titleEl = document.getElementById('topbar-title');
+  if (titleEl) titleEl.textContent = sectionTitles[sid] || '';
+  const inp = document.getElementById('topbar-search');
+  if (inp) inp.value = '';
+}
+document.querySelectorAll('.nav-item[data-section]').forEach(btn => {
+  btn.addEventListener('click', () => navigateTo(btn.dataset.section));
 });
 
 function openModal(id) { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 document.querySelectorAll('.modal-overlay').forEach(o => {
   o.addEventListener('click', e => {
-    if (e.target === o) {
-      stopScanner();
-      stopBarcodeScanner();
-      o.classList.remove('open');
-    }
+    if (e.target === o) { stopScanner(); stopBarcodeScanner(); o.classList.remove('open'); }
   });
 });
 
-// --- SERVICE STATUS ---
+// --- HELPERS ---
+function fmt(n) { return (n||0).toLocaleString('nb-NO', { minimumFractionDigits: 0, maximumFractionDigits: 2 }); }
+function fmtKr(n) { return n ? fmt(n) + ' kr' : '—'; }
+
 function getServiceStatus(s) {
   if (!s.date_finished) return { key: 'under_service', label: 'Under service', cls: 'badge-warn' };
   if (s.workshop_id && !s.picked_up) return { key: 'til_henting', label: 'Til henting', cls: 'badge-purple' };
   return { key: 'ferdig', label: 'Ferdig', cls: 'badge-ok' };
 }
 
+function condBadge(c) {
+  return c === 'God' ? '<span class="badge badge-ok">God</span>'
+    : c === 'Akseptabel' ? '<span class="badge badge-warn">Akseptabel</span>'
+    : '<span class="badge badge-bad">Trenger service</span>';
+}
+function idbadge(kid) { return kid ? `<span class="idbadge">${kid}</span>` : ''; }
+function exportData(type, format) { window.location.href = `/api/export/${type}/${format}`; }
+
 // --- QR CODE GENERATOR (self-contained, no CDN) ---
 const QRGen = (() => {
   const EXP = new Uint8Array(512), LOG = new Uint8Array(256);
   { let x=1; for(let i=0;i<255;i++){EXP[i]=x;LOG[x]=i;x=x<128?x*2:(x*2)^285;} for(let i=255;i<512;i++) EXP[i]=EXP[i-255]; }
   const mul=(a,b)=>(!a||!b)?0:EXP[LOG[a]+LOG[b]];
-  function rsEncode(data, n) {
-    let g=[1];
-    for(let i=0;i<n;i++){const ng=[0,...g];for(let j=0;j<g.length;j++){ng[j]^=mul(g[j],EXP[i]);ng[j+1]^=mul(g[j],EXP[i+1]||0);}g=ng;}
-    const msg=[...data,...new Uint8Array(n)];
-    for(let i=0;i<data.length;i++){const c=msg[i];if(c)for(let j=0;j<g.length;j++)msg[i+j]^=mul(g[j],c);}
-    return msg.slice(data.length);
-  }
-  function encode(text) {
-    const bytes=[...text].map(c=>c.charCodeAt(0));
-    const bits=[];
-    const push=(v,n)=>{for(let i=n-1;i>=0;i--)bits.push((v>>i)&1);};
-    push(4,4); push(bytes.length,8); bytes.forEach(b=>push(b,8));
-    for(let i=0;i<4&&bits.length<224;i++) bits.push(0);
-    while(bits.length%8) bits.push(0);
-    let pi=0; while(bits.length<224){push(pi%2?0b00010001:0b11101100,8);pi++;}
-    const cw=[]; for(let i=0;i<bits.length;i+=8){let b=0;for(let j=0;j<8;j++)b=(b<<1)|bits[i+j];cw.push(b);}
-    return [...cw,...rsEncode(cw,16)];
-  }
-  function build(text) {
-    const S=25;
-    const mod=Array.from({length:S},()=>new Int8Array(S).fill(-1));
-    const fn=Array.from({length:S},()=>new Uint8Array(S));
-    const sf=(r,c,v)=>{if(r>=0&&r<S&&c>=0&&c<S){mod[r][c]=v;fn[r][c]=1;}};
-    const finder=(tr,tc)=>{
-      for(let dr=0;dr<=6;dr++)for(let dc=0;dc<=6;dc++)
-        sf(tr+dr,tc+dc,(dr===0||dr===6||dc===0||dc===6||(dr>=2&&dr<=4&&dc>=2&&dc<=4))?1:0);
-      for(let i=-1;i<=7;i++){sf(tr+7,tc+i,0);sf(tr+i,tc+7,0);}
-    };
-    finder(0,0);finder(0,S-7);finder(S-7,0);
-    for(let dr=-2;dr<=2;dr++)for(let dc=-2;dc<=2;dc++)
-      sf(18+dr,18+dc,(Math.abs(dr)===2||Math.abs(dc)===2||(dr===0&&dc===0))?1:0);
-    for(let i=8;i<S-8;i++){sf(6,i,i%2===0?1:0);sf(i,6,i%2===0?1:0);}
-    sf(S-8,8,1);
-    for(let i=0;i<=8;i++){if(!fn[8][i])sf(8,i,0);if(!fn[i][8])sf(i,8,0);}
-    for(let i=0;i<=7;i++){sf(8,S-1-i,0);sf(S-1-i,8,0);}
-    const allBits=encode(text).flatMap(b=>[7,6,5,4,3,2,1,0].map(i=>(b>>i)&1));
-    let bi=0,up=true;
-    for(let right=S-1;right>=1;right-=2){
-      if(right===6)right=5;
-      for(let vi=0;vi<S;vi++){
-        const r=up?S-1-vi:vi;
-        for(let dc=0;dc<2;dc++){const c=right-dc;if(!fn[r][c])mod[r][c]=allBits[bi++]??0;}
-      }
-      up=!up;
-    }
-    for(let r=0;r<S;r++)for(let c=0;c<S;c++)
-      if(!fn[r][c]&&mod[r][c]>=0) mod[r][c]^=(c%3===0?1:0);
-    const fd=0b01010; let rem=fd<<10;
-    for(let i=14;i>=10;i--)if((rem>>i)&1)rem^=0b10100110111<<(i-10);
-    const fmt=((fd<<10)|rem)^0b101010000010010;
-    const fb=i=>(fmt>>(14-i))&1;
-    for(let i=0;i<=5;i++)mod[8][i]=fb(i);
-    mod[8][7]=fb(6);mod[8][8]=fb(7);mod[7][8]=fb(8);
-    for(let i=5;i>=0;i--)mod[i][8]=fb(14-i);
-    for(let i=0;i<=7;i++)mod[S-1-i][8]=fb(i);
-    for(let i=8;i<=14;i++)mod[8][S-15+i]=fb(i);
-    return mod;
-  }
-  function draw(canvas, text, px) {
-    const mod=build(text), S=mod.length;
-    const margin=2, scale=Math.max(2,Math.floor(px/S));
-    const dim=S*scale+margin*2*scale;
-    canvas.width=canvas.height=dim;
-    const ctx=canvas.getContext('2d');
-    ctx.fillStyle='#fff'; ctx.fillRect(0,0,dim,dim);
-    ctx.fillStyle='#000';
-    for(let r=0;r<S;r++)for(let c=0;c<S;c++)
-      if(mod[r][c]===1) ctx.fillRect((margin+c)*scale,(margin+r)*scale,scale,scale);
-  }
+  function rsEncode(data,n){let g=[1];for(let i=0;i<n;i++){const ng=[0,...g];for(let j=0;j<g.length;j++){ng[j]^=mul(g[j],EXP[i]);ng[j+1]^=mul(g[j],EXP[i+1]||0);}g=ng;}const msg=[...data,...new Uint8Array(n)];for(let i=0;i<data.length;i++){const c=msg[i];if(c)for(let j=0;j<g.length;j++)msg[i+j]^=mul(g[j],c);}return msg.slice(data.length);}
+  function encode(text){const bytes=[...text].map(c=>c.charCodeAt(0));const bits=[];const push=(v,n)=>{for(let i=n-1;i>=0;i--)bits.push((v>>i)&1);};push(4,4);push(bytes.length,8);bytes.forEach(b=>push(b,8));for(let i=0;i<4&&bits.length<224;i++)bits.push(0);while(bits.length%8)bits.push(0);let pi=0;while(bits.length<224){push(pi%2?0b00010001:0b11101100,8);pi++;}const cw=[];for(let i=0;i<bits.length;i+=8){let b=0;for(let j=0;j<8;j++)b=(b<<1)|bits[i+j];cw.push(b);}return[...cw,...rsEncode(cw,16)];}
+  function build(text){const S=25;const mod=Array.from({length:S},()=>new Int8Array(S).fill(-1));const fn=Array.from({length:S},()=>new Uint8Array(S));const sf=(r,c,v)=>{if(r>=0&&r<S&&c>=0&&c<S){mod[r][c]=v;fn[r][c]=1;}};const finder=(tr,tc)=>{for(let dr=0;dr<=6;dr++)for(let dc=0;dc<=6;dc++)sf(tr+dr,tc+dc,(dr===0||dr===6||dc===0||dc===6||(dr>=2&&dr<=4&&dc>=2&&dc<=4))?1:0);for(let i=-1;i<=7;i++){sf(tr+7,tc+i,0);sf(tr+i,tc+7,0);}};finder(0,0);finder(0,S-7);finder(S-7,0);for(let dr=-2;dr<=2;dr++)for(let dc=-2;dc<=2;dc++)sf(18+dr,18+dc,(Math.abs(dr)===2||Math.abs(dc)===2||(dr===0&&dc===0))?1:0);for(let i=8;i<S-8;i++){sf(6,i,i%2===0?1:0);sf(i,6,i%2===0?1:0);}sf(S-8,8,1);for(let i=0;i<=8;i++){if(!fn[8][i])sf(8,i,0);if(!fn[i][8])sf(i,8,0);}for(let i=0;i<=7;i++){sf(8,S-1-i,0);sf(S-1-i,8,0);}const allBits=encode(text).flatMap(b=>[7,6,5,4,3,2,1,0].map(i=>(b>>i)&1));let bi=0,up=true;for(let right=S-1;right>=1;right-=2){if(right===6)right=5;for(let vi=0;vi<S;vi++){const r=up?S-1-vi:vi;for(let dc=0;dc<2;dc++){const c=right-dc;if(!fn[r][c])mod[r][c]=allBits[bi++]??0;}}up=!up;}for(let r=0;r<S;r++)for(let c=0;c<S;c++)if(!fn[r][c]&&mod[r][c]>=0)mod[r][c]^=(c%3===0?1:0);const fd=0b01010;let rem=fd<<10;for(let i=14;i>=10;i--)if((rem>>i)&1)rem^=0b10100110111<<(i-10);const fmt=((fd<<10)|rem)^0b101010000010010;const fb=i=>(fmt>>(14-i))&1;for(let i=0;i<=5;i++)mod[8][i]=fb(i);mod[8][7]=fb(6);mod[8][8]=fb(7);mod[7][8]=fb(8);for(let i=5;i>=0;i--)mod[i][8]=fb(14-i);for(let i=0;i<=7;i++)mod[S-1-i][8]=fb(i);for(let i=8;i<=14;i++)mod[8][S-15+i]=fb(i);return mod;}
+  function draw(canvas,text,px){const mod=build(text),S=mod.length;const margin=2,scale=Math.max(2,Math.floor(px/S));const dim=S*scale+margin*2*scale;canvas.width=canvas.height=dim;const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,dim,dim);ctx.fillStyle='#000';for(let r=0;r<S;r++)for(let c=0;c<S;c++)if(mod[r][c]===1)ctx.fillRect((margin+c)*scale,(margin+r)*scale,scale,scale);}
   return {draw};
 })();
 
-// --- QR CODE UI ---
 function openQrModal(instId) {
   const inst = state.instruments.find(i => i.id === instId);
   if (!inst || !inst.korps_id) { toast('Instrument mangler ID'); return; }
   currentQrInst = inst;
   document.getElementById('qr-inst-name').textContent = inst.name;
   document.getElementById('qr-inst-id-label').textContent = inst.korps_id;
-  try {
-    QRGen.draw(document.getElementById('qr-canvas'), inst.korps_id, 200);
-    openModal('qr-modal');
-  } catch(e) { toast('Feil ved generering av QR: ' + e.message); }
+  try { QRGen.draw(document.getElementById('qr-canvas'), inst.korps_id, 200); openModal('qr-modal'); }
+  catch(e) { toast('Feil ved generering av QR: ' + e.message); }
 }
 function downloadQr() {
   if (!currentQrInst) return;
   const a = document.createElement('a');
   a.download = `qr_${currentQrInst.korps_id}.png`;
   a.href = document.getElementById('qr-canvas').toDataURL('image/png');
-  a.click();
-  toast('QR-kode lastet ned');
+  a.click(); toast('QR-kode lastet ned');
 }
 function printQr() {
   if (!currentQrInst) return;
@@ -661,151 +1045,92 @@ function printQr() {
   window.print();
 }
 
-// --- QR SCANNER (for player modal) ---
+// --- QR SCANNER (player modal) ---
 function toggleScanner() { scannerActive ? stopScanner() : startScanner(); }
-
 async function startScanner() {
   const wrap = document.getElementById('scanner-wrap');
   const video = document.getElementById('scanner-video');
   const resultEl = document.getElementById('scan-result');
   const btn = document.getElementById('scanner-toggle-btn');
-  const manualWrap = document.getElementById('scanner-manual-wrap');
-
-  wrap.style.display = 'block';
-  btn.textContent = '⏹ Stopp skanner';
-  resultEl.className = 'qr-scan-result';
-  resultEl.textContent = 'Starter kamera...';
+  wrap.style.display = 'block'; btn.textContent = '⏹ Stopp skanner';
+  resultEl.className = 'qr-scan-result'; resultEl.textContent = 'Starter kamera...';
   scannerActive = true;
-
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    showScannerFallback('Kameraet er ikke tilgjengelig i denne nettleseren.');
-    return;
-  }
+  if (!navigator.mediaDevices?.getUserMedia) { showScannerFallback('Kamera ikke tilgjengelig.'); return; }
   let stream;
   try {
     try { stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' } } }); }
     catch(e) { stream = await navigator.mediaDevices.getUserMedia({ video: true }); }
   } catch(e) {
-    let msg = 'Kunne ikke starte kamera.';
-    if (e.name === 'NotAllowedError') msg = 'Kameratillatelse ble avvist.';
-    else if (e.name === 'NotFoundError') msg = 'Ingen kamera funnet.';
-    showScannerFallback(msg);
+    showScannerFallback(e.name === 'NotAllowedError' ? 'Kameratillatelse avvist.' : 'Kunne ikke starte kamera.');
     return;
   }
-  _scanStream = stream;
-  video.srcObject = stream;
+  _scanStream = stream; video.srcObject = stream;
   try { await video.play(); } catch(e) {}
   resultEl.textContent = 'Pek kameraet mot en QR-kode...';
-
   if ('BarcodeDetector' in window) {
     let detector;
-    try { detector = new BarcodeDetector({ formats: ['qr_code'] }); }
-    catch(e) { detector = new BarcodeDetector(); }
-    const offscreen = document.createElement('canvas');
-    const ctx = offscreen.getContext('2d');
+    try { detector = new BarcodeDetector({ formats: ['qr_code'] }); } catch(e) { detector = new BarcodeDetector(); }
+    const offscreen = document.createElement('canvas'); const ctx = offscreen.getContext('2d');
     let lastVal = '', lastTime = 0;
     async function tick() {
-      if (!scannerActive) return;
-      _scanFrame = requestAnimationFrame(tick);
-      const now = Date.now();
-      if (now - lastTime < 400 || video.readyState < 2 || !video.videoWidth) return;
-      lastTime = now;
-      offscreen.width = video.videoWidth; offscreen.height = video.videoHeight;
+      if (!scannerActive) return; _scanFrame = requestAnimationFrame(tick);
+      const now = Date.now(); if (now - lastTime < 400 || video.readyState < 2 || !video.videoWidth) return;
+      lastTime = now; offscreen.width = video.videoWidth; offscreen.height = video.videoHeight;
       ctx.drawImage(video, 0, 0);
-      try {
-        const codes = await detector.detect(offscreen);
-        if (!codes.length) return;
-        const val = codes[0].rawValue.trim();
-        if (val === lastVal) return;
-        lastVal = val;
-        setTimeout(() => { lastVal = ''; }, 2000);
-        handleScanResult(val, resultEl);
-      } catch(e) {}
+      try { const codes = await detector.detect(offscreen); if (!codes.length) return; const val = codes[0].rawValue.trim(); if (val === lastVal) return; lastVal = val; setTimeout(() => { lastVal = ''; }, 2000); handleScanResult(val, resultEl); } catch(e) {}
     }
     tick();
   } else {
-    resultEl.textContent = 'Kamera aktivt. Skriv inn ID manuelt under (QR-skanning krever Chrome/Edge).';
-    if (manualWrap) manualWrap.style.display = 'block';
+    resultEl.textContent = 'Skriv inn ID manuelt under (QR-skanning krever Chrome/Edge).';
+    document.getElementById('scanner-manual-wrap').style.display = 'block';
   }
 }
-
 function handleScanResult(val, resultEl) {
   const inst = state.instruments.find(i => i.korps_id === val);
   if (inst) {
-    resultEl.className = 'qr-scan-result found';
-    resultEl.textContent = `Funnet: ${inst.name} (${inst.korps_id})`;
+    resultEl.className = 'qr-scan-result found'; resultEl.textContent = `Funnet: ${inst.name} (${inst.korps_id})`;
     const cb = document.querySelector(`#inst-checkboxes input[value="${inst.id}"]`);
-    if (cb && !cb.checked) {
-      cb.checked = true;
-      const row = cb.closest('.inst-picker-item');
-      if (row) { row.style.background = '#eaf3de'; setTimeout(() => row.style.background = '', 1400); }
-    }
-    setTimeout(() => {
-      if (scannerActive) { resultEl.className = 'qr-scan-result'; resultEl.textContent = 'Klar for neste skann...'; }
-    }, 1600);
+    if (cb && !cb.checked) { cb.checked = true; const row = cb.closest('.inst-picker-item'); if (row) { row.style.background = '#eaf3de'; setTimeout(() => row.style.background = '', 1400); } }
+    setTimeout(() => { if (scannerActive) { resultEl.className = 'qr-scan-result'; resultEl.textContent = 'Klar for neste skann...'; } }, 1600);
   } else {
-    resultEl.className = 'qr-scan-result notfound';
-    resultEl.textContent = `Ukjent ID: "${val}"`;
-    setTimeout(() => {
-      if (scannerActive) { resultEl.className = 'qr-scan-result'; resultEl.textContent = 'Pek kameraet mot en QR-kode...'; }
-    }, 1600);
+    resultEl.className = 'qr-scan-result notfound'; resultEl.textContent = `Ukjent ID: "${val}"`;
+    setTimeout(() => { if (scannerActive) { resultEl.className = 'qr-scan-result'; resultEl.textContent = 'Pek kameraet mot en QR-kode...'; } }, 1600);
   }
 }
-
 function manualScanSubmit() {
   const input = document.getElementById('manual-scan-input');
   const val = (input.value || '').trim().toUpperCase();
-  if (!val) return;
-  input.value = '';
+  if (!val) return; input.value = '';
   handleScanResult(val, document.getElementById('scan-result'));
 }
-
 function showScannerFallback(msg) {
   const resultEl = document.getElementById('scan-result');
-  const manualWrap = document.getElementById('scanner-manual-wrap');
-  resultEl.className = 'qr-scan-result notfound';
-  resultEl.textContent = msg;
-  if (manualWrap) manualWrap.style.display = 'block';
+  resultEl.className = 'qr-scan-result notfound'; resultEl.textContent = msg;
+  document.getElementById('scanner-manual-wrap').style.display = 'block';
   scannerActive = false;
-  const btn = document.getElementById('scanner-toggle-btn');
-  if (btn) btn.textContent = '📷 Skann QR';
+  const btn = document.getElementById('scanner-toggle-btn'); if (btn) btn.textContent = '📷 Skann QR';
 }
-
 function stopScanner() {
   if (_scanFrame) { cancelAnimationFrame(_scanFrame); _scanFrame = null; }
   if (_scanStream) { _scanStream.getTracks().forEach(t => t.stop()); _scanStream = null; }
   scannerActive = false;
-  const w = document.getElementById('scanner-wrap');
-  if (w) w.style.display = 'none';
-  const mw = document.getElementById('scanner-manual-wrap');
-  if (mw) mw.style.display = 'none';
-  const btn = document.getElementById('scanner-toggle-btn');
-  if (btn) btn.textContent = '📷 Skann QR';
+  const w = document.getElementById('scanner-wrap'); if (w) w.style.display = 'none';
+  const mw = document.getElementById('scanner-manual-wrap'); if (mw) mw.style.display = 'none';
+  const btn = document.getElementById('scanner-toggle-btn'); if (btn) btn.textContent = '📷 Skann QR';
 }
 
-// --- BARCODE SCANNER (for accessories modal) ---
+// --- BARCODE SCANNER (accessories modal) ---
 function toggleBarcodeScanner() { barcodeScannerActive ? stopBarcodeScanner() : startBarcodeScanner(); }
-
 async function startBarcodeScanner() {
   const wrap = document.getElementById('barcode-scanner-wrap');
   const video = document.getElementById('barcode-video');
   const resultEl = document.getElementById('barcode-scan-result');
   const btn = document.getElementById('barcode-toggle-btn');
-  const manualWrap = document.getElementById('barcode-manual-wrap');
-
-  wrap.style.display = 'block';
-  btn.textContent = '⏹ Stopp';
-  resultEl.className = 'qr-scan-result';
-  resultEl.textContent = 'Starter kamera...';
-  barcodeScannerActive = true;
-
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    resultEl.className = 'qr-scan-result notfound';
-    resultEl.textContent = 'Kamera ikke tilgjengelig.';
-    if (manualWrap) manualWrap.style.display = 'block';
-    barcodeScannerActive = false;
-    btn.textContent = '📷 Skann';
-    return;
+  wrap.style.display = 'block'; btn.textContent = '⏹ Stopp'; barcodeScannerActive = true;
+  resultEl.className = 'qr-scan-result'; resultEl.textContent = 'Starter kamera...';
+  if (!navigator.mediaDevices?.getUserMedia) {
+    resultEl.className = 'qr-scan-result notfound'; resultEl.textContent = 'Kamera ikke tilgjengelig.';
+    barcodeScannerActive = false; btn.textContent = '📷 Skann'; return;
   }
   let stream;
   try {
@@ -814,64 +1139,43 @@ async function startBarcodeScanner() {
   } catch(e) {
     resultEl.className = 'qr-scan-result notfound';
     resultEl.textContent = e.name === 'NotAllowedError' ? 'Kameratillatelse avvist.' : 'Kunne ikke starte kamera.';
-    if (manualWrap) manualWrap.style.display = 'block';
-    barcodeScannerActive = false;
-    btn.textContent = '📷 Skann';
-    return;
+    barcodeScannerActive = false; btn.textContent = '📷 Skann'; return;
   }
-  _barcodeStream = stream;
-  video.srcObject = stream;
+  _barcodeStream = stream; video.srcObject = stream;
   try { await video.play(); } catch(e) {}
   resultEl.textContent = 'Pek kameraet mot strekkoden...';
-
   if ('BarcodeDetector' in window) {
     let detector;
     try { detector = new BarcodeDetector({ formats: ['ean_13','ean_8','upc_a','upc_e','code_128','code_39','qr_code'] }); }
     catch(e) { detector = new BarcodeDetector(); }
-    const offscreen = document.createElement('canvas');
-    const ctx = offscreen.getContext('2d');
+    const offscreen = document.createElement('canvas'); const ctx = offscreen.getContext('2d');
     let lastVal = '', lastTime = 0;
     async function tick() {
-      if (!barcodeScannerActive) return;
-      _barcodeFrame = requestAnimationFrame(tick);
-      const now = Date.now();
-      if (now - lastTime < 300 || video.readyState < 2 || !video.videoWidth) return;
-      lastTime = now;
-      offscreen.width = video.videoWidth; offscreen.height = video.videoHeight;
+      if (!barcodeScannerActive) return; _barcodeFrame = requestAnimationFrame(tick);
+      const now = Date.now(); if (now - lastTime < 300 || video.readyState < 2 || !video.videoWidth) return;
+      lastTime = now; offscreen.width = video.videoWidth; offscreen.height = video.videoHeight;
       ctx.drawImage(video, 0, 0);
       try {
-        const codes = await detector.detect(offscreen);
-        if (!codes.length) return;
-        const val = codes[0].rawValue.trim();
-        if (val === lastVal) return;
-        lastVal = val;
+        const codes = await detector.detect(offscreen); if (!codes.length) return;
+        const val = codes[0].rawValue.trim(); if (val === lastVal) return; lastVal = val;
         document.getElementById('acc-barcode').value = val;
-        resultEl.className = 'qr-scan-result found';
-        resultEl.textContent = `Funnet: ${val}`;
+        resultEl.className = 'qr-scan-result found'; resultEl.textContent = `Funnet: ${val}`;
         stopBarcodeScanner();
       } catch(e) {}
     }
     tick();
   } else {
-    resultEl.textContent = 'BarcodeDetector ikke støttet. Bruk Chrome/Edge eller skriv inn manuelt.';
-    if (manualWrap) manualWrap.style.display = 'block';
+    resultEl.textContent = 'BarcodeDetector ikke støttet (bruk Chrome/Edge).';
   }
 }
-
 function stopBarcodeScanner() {
   if (_barcodeFrame) { cancelAnimationFrame(_barcodeFrame); _barcodeFrame = null; }
   if (_barcodeStream) { _barcodeStream.getTracks().forEach(t => t.stop()); _barcodeStream = null; }
   barcodeScannerActive = false;
-  const w = document.getElementById('barcode-scanner-wrap');
-  if (w) w.style.display = 'none';
-  const btn = document.getElementById('barcode-toggle-btn');
-  if (btn) btn.textContent = '📷 Skann';
+  const w = document.getElementById('barcode-scanner-wrap'); if (w) w.style.display = 'none';
+  const btn = document.getElementById('barcode-toggle-btn'); if (btn) btn.textContent = '📷 Skann';
 }
-
-function closeAccModal() {
-  stopBarcodeScanner();
-  closeModal('acc-modal');
-}
+function closeAccModal() { stopBarcodeScanner(); closeModal('acc-modal'); }
 
 // --- INSTRUMENT-ID GENERATION ---
 const nameMap = [
@@ -904,17 +1208,6 @@ function updateIdPreview() {
   document.getElementById('id-preview-wrap').style.display = 'block';
 }
 
-function condBadge(c) {
-  return c==='God' ? '<span class="badge badge-ok">God</span>'
-    : c==='Akseptabel' ? '<span class="badge badge-warn">Akseptabel</span>'
-    : '<span class="badge badge-bad">Trenger service</span>';
-}
-function idbadge(kid) { return kid ? `<span class="idbadge">${kid}</span>` : ''; }
-
-function exportData(type, format) {
-  window.location.href = `/api/export/${type}/${format}`;
-}
-
 // --- INSTRUMENTS ---
 function openInstModal(id) {
   editingId.inst = id || null;
@@ -931,12 +1224,12 @@ function openInstModal(id) {
 }
 async function saveInstrument() {
   const name = document.getElementById('inst-name').value.trim();
-  const category = document.getElementById('inst-cat').value;
   if (!name) return;
   const korps_id = editingId.inst
     ? state.instruments.find(i => i.id === editingId.inst)?.korps_id
     : generateInstrumentId(name);
-  const body = { name, category, korps_id, condition: document.getElementById('inst-cond').value,
+  const body = { name, category: document.getElementById('inst-cat').value, korps_id,
+    condition: document.getElementById('inst-cond').value,
     serial: document.getElementById('inst-serial').value.trim(),
     purchase: document.getElementById('inst-purchase').value,
     notes: document.getElementById('inst-notes').value.trim() };
@@ -948,11 +1241,243 @@ async function deleteInstrument(id) {
   if (!confirm('Slette dette instrumentet?')) return;
   await api('DELETE', '/api/instruments/'+id); toast('Slettet'); await loadAll();
 }
+function openServiceForInstrument(instId) {
+  openServiceModal();
+  // Set the instrument after modal is open and dropdown is populated
+  document.getElementById('svc-inst').value = instId;
+}
+// --- CLICK-OUTSIDE: close details dropdowns ---
+document.addEventListener('click', e => {
+  document.querySelectorAll('details.multiselect[open]').forEach(d => {
+    if (!d.contains(e.target)) d.removeAttribute('open');
+  });
+});
+
+// --- FILTERS ---
+const instCondFilter = new Set();
+const instCatFilter = new Set();
+const instPlayerFilter = new Set();
+const playerSectionFilter = new Set();
+const accStatusFilter = new Set();
+const accCatFilter = new Set();
+const accSupplierFilter = new Set();
+const svcStatusFilter = new Set();
+const svcTypeFilter = new Set();
+const svcWorkshopFilter = new Set();
+let svcDateSearch = '';
+
+function populateDynOptions(containerId, values, currentFilter, toggleFnName) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  el.innerHTML = values.map(v =>
+    `<label><input type="checkbox" value="${v}" onchange="${toggleFnName}(this)"${currentFilter.has(v) ? ' checked' : ''}> ${v}</label>`
+  ).join('');
+}
+
+// --- SORTING ---
+const sortState = {
+  instruments: { col: null, dir: 1 },
+  players:     { col: null, dir: 1 },
+  service:     { col: null, dir: 1 },
+  accessories: { col: null, dir: 1 }
+};
+const tbodyIds = { instruments: 'inst-table', players: 'player-table', service: 'service-table', accessories: 'acc-table' };
+
+function getSortVal(tableKey, item, col) {
+  switch (tableKey) {
+    case 'instruments':
+      if (col === 'korps_id')  return item.korps_id || '';
+      if (col === 'name')      return item.name?.toLowerCase() || '';
+      if (col === 'category')  return item.category?.toLowerCase() || '';
+      if (col === 'condition') return item.condition?.toLowerCase() || '';
+      if (col === 'player')    { const p = state.players.find(p => (p.instruments||[]).includes(item.id)); return p?.name?.toLowerCase() || ''; }
+      break;
+    case 'players':
+      if (col === 'name')       return item.name?.toLowerCase() || '';
+      if (col === 'section')    return item.section?.toLowerCase() || '';
+      if (col === 'contact')    return item.contact?.toLowerCase() || '';
+      if (col === 'inst_count') return (item.instruments?.length || 0);
+      break;
+    case 'service':
+      if (col === 'date')       return item.date || '';
+      if (col === 'inst_name')  { const i = state.instruments.find(x => x.id===item.inst_id); return i?.name?.toLowerCase() || ''; }
+      if (col === 'type')       return item.type?.toLowerCase() || '';
+      if (col === 'status')     return getServiceStatus(item).key || '';
+      if (col === 'workshop')   { const w = state.workshops.find(x => x.id===item.workshop_id); return (w?.name||item.by_whom||'').toLowerCase(); }
+      if (col === 'desc')       return item.desc?.toLowerCase() || '';
+      if (col === 'cost')       return item.cost || 0;
+      if (col === 'invoice_no') return item.invoice_no?.toLowerCase() || '';
+      if (col === 'next_due')   return item.next_due || '';
+      break;
+    case 'accessories':
+      if (col === 'name')      return item.name?.toLowerCase() || '';
+      if (col === 'category')  return item.category?.toLowerCase() || '';
+      if (col === 'supplier')  { const s = state.suppliers.find(x => x.id===item.supplier_id); return s?.name?.toLowerCase() || ''; }
+      if (col === 'price')     return item.price || 0;
+      if (col === 'stock')     return item.stock || 0;
+      if (col === 'min_level') return item.min_level || 0;
+      if (col === 'status')    return getAccStatus(item);
+      break;
+  }
+  return '';
+}
+function applySort(tableKey, list) {
+  const { col, dir } = sortState[tableKey];
+  if (!col) return list;
+  return [...list].sort((a, b) => {
+    const va = getSortVal(tableKey, a, col);
+    const vb = getSortVal(tableKey, b, col);
+    if (va < vb) return -dir;
+    if (va > vb) return dir;
+    return 0;
+  });
+}
+function doSort(tableKey, col) {
+  if (sortState[tableKey].col === col) sortState[tableKey].dir *= -1;
+  else { sortState[tableKey].col = col; sortState[tableKey].dir = 1; }
+  ({ instruments: renderInstTable, players: renderPlayerTable, service: renderServiceTable, accessories: renderAccessories })[tableKey]?.();
+}
+function syncSortHeaders(tableKey) {
+  const thead = document.getElementById(tbodyIds[tableKey])?.closest('table')?.querySelector('thead');
+  if (!thead) return;
+  const { col, dir } = sortState[tableKey];
+  thead.querySelectorAll('th[data-sort]').forEach(th => {
+    th.classList.remove('sort-asc', 'sort-desc');
+    if (th.dataset.sort === col) th.classList.add(dir === 1 ? 'sort-asc' : 'sort-desc');
+  });
+}
+// Wire up sort clicks — runs inline after DOM is ready
+[['inst-table','instruments'],['player-table','players'],['service-table','service'],['acc-table','accessories']].forEach(([tbId, key]) => {
+  const table = document.getElementById(tbId)?.closest('table');
+  if (!table) return;
+  table.querySelector('thead')?.querySelectorAll('th[data-sort]').forEach(th => {
+    th.addEventListener('click', () => doSort(key, th.dataset.sort));
+  });
+});
+
+function toggleSvcFilter(cb) {
+  if (cb.checked) svcStatusFilter.add(cb.value); else svcStatusFilter.delete(cb.value);
+  const ms = document.getElementById('svc-status-multiselect');
+  document.getElementById('svc-status-summary').textContent = svcStatusFilter.size === 0 ? 'Status: Alle' : 'Status: ' + [...svcStatusFilter].map(k => ({under_service:'Under service',til_henting:'Til henting',ferdig:'Ferdig'}[k]||k)).join(', ');
+  ms.classList.toggle('filter-active', svcStatusFilter.size > 0);
+  renderServiceTable();
+}
+
+function toggleInstFilter(cb) {
+  if (cb.checked) instCondFilter.add(cb.value); else instCondFilter.delete(cb.value);
+  const ms = document.getElementById('inst-cond-multiselect');
+  document.getElementById('inst-cond-summary').textContent = instCondFilter.size === 0 ? 'Stand: Alle' : 'Stand: ' + [...instCondFilter].join(', ');
+  ms.classList.toggle('filter-active', instCondFilter.size > 0);
+  renderInstTable();
+}
+function toggleAccFilter(cb) {
+  if (cb.checked) accStatusFilter.add(cb.value); else accStatusFilter.delete(cb.value);
+  const ms = document.getElementById('acc-status-multiselect');
+  document.getElementById('acc-status-summary').textContent = accStatusFilter.size === 0 ? 'Status: Alle' : 'Status: ' + [...accStatusFilter].join(', ');
+  ms.classList.toggle('filter-active', accStatusFilter.size > 0);
+  renderAccessories();
+}
+function setInstCondFilter(values) {
+  instCondFilter.clear();
+  values.forEach(v => instCondFilter.add(v));
+  // sync checkboxes
+  document.querySelectorAll('#inst-cond-multiselect input[type=checkbox]').forEach(cb => { cb.checked = instCondFilter.has(cb.value); });
+  const ms = document.getElementById('inst-cond-multiselect');
+  document.getElementById('inst-cond-summary').textContent = instCondFilter.size === 0 ? 'Stand: Alle' : 'Stand: ' + [...instCondFilter].join(', ');
+  ms.classList.toggle('filter-active', instCondFilter.size > 0);
+  renderInstTable();
+}
+function setAccStatusFilter(values) {
+  accStatusFilter.clear();
+  values.forEach(v => accStatusFilter.add(v));
+  document.querySelectorAll('#acc-status-multiselect input[type=checkbox]').forEach(cb => { cb.checked = accStatusFilter.has(cb.value); });
+  const ms = document.getElementById('acc-status-multiselect');
+  document.getElementById('acc-status-summary').textContent = accStatusFilter.size === 0 ? 'Status: Alle' : 'Status: ' + [...accStatusFilter].join(', ');
+  ms.classList.toggle('filter-active', accStatusFilter.size > 0);
+  renderAccessories();
+}
+function getAccStatus(a) { return a.stock === 0 ? 'Tomt' : a.stock <= a.min_level ? 'Lavt' : 'OK'; }
+
+function toggleInstCatFilter(cb) {
+  if (cb.checked) instCatFilter.add(cb.value); else instCatFilter.delete(cb.value);
+  const ms = document.getElementById('inst-cat-multiselect');
+  document.getElementById('inst-cat-summary').textContent = instCatFilter.size === 0 ? 'Kategori: Alle' : 'Kategori: ' + [...instCatFilter].join(', ');
+  ms.classList.toggle('filter-active', instCatFilter.size > 0);
+  renderInstTable();
+}
+function toggleInstPlayerFilter(cb) {
+  if (cb.checked) instPlayerFilter.add(cb.value); else instPlayerFilter.delete(cb.value);
+  const ms = document.getElementById('inst-player-multiselect');
+  const labels = { tildelt: 'Tildelt', ikke_tildelt: 'Ikke tildelt' };
+  document.getElementById('inst-player-summary').textContent = instPlayerFilter.size === 0 ? 'Tildelt: Alle' : 'Tildelt: ' + [...instPlayerFilter].map(v => labels[v]).join(', ');
+  ms.classList.toggle('filter-active', instPlayerFilter.size > 0);
+  renderInstTable();
+}
+function togglePlayerSectionFilter(cb) {
+  if (cb.checked) playerSectionFilter.add(cb.value); else playerSectionFilter.delete(cb.value);
+  const ms = document.getElementById('player-section-multiselect');
+  document.getElementById('player-section-summary').textContent = playerSectionFilter.size === 0 ? 'Seksjon: Alle' : 'Seksjon: ' + [...playerSectionFilter].join(', ');
+  ms.classList.toggle('filter-active', playerSectionFilter.size > 0);
+  renderPlayerTable();
+}
+function toggleSvcTypeFilter(cb) {
+  if (cb.checked) svcTypeFilter.add(cb.value); else svcTypeFilter.delete(cb.value);
+  const ms = document.getElementById('svc-type-multiselect');
+  document.getElementById('svc-type-summary').textContent = svcTypeFilter.size === 0 ? 'Type: Alle' : 'Type: ' + [...svcTypeFilter].join(', ');
+  ms.classList.toggle('filter-active', svcTypeFilter.size > 0);
+  renderServiceTable();
+}
+function toggleSvcWorkshopFilter(cb) {
+  if (cb.checked) svcWorkshopFilter.add(cb.value); else svcWorkshopFilter.delete(cb.value);
+  const ms = document.getElementById('svc-workshop-multiselect');
+  document.getElementById('svc-workshop-summary').textContent = svcWorkshopFilter.size === 0 ? 'Verksted: Alle' : 'Verksted: ' + [...svcWorkshopFilter].join(', ');
+  ms.classList.toggle('filter-active', svcWorkshopFilter.size > 0);
+  renderServiceTable();
+}
+function toggleAccCatFilter(cb) {
+  if (cb.checked) accCatFilter.add(cb.value); else accCatFilter.delete(cb.value);
+  const ms = document.getElementById('acc-cat-multiselect');
+  document.getElementById('acc-cat-summary').textContent = accCatFilter.size === 0 ? 'Kategori: Alle' : 'Kategori: ' + [...accCatFilter].join(', ');
+  ms.classList.toggle('filter-active', accCatFilter.size > 0);
+  renderAccessories();
+}
+function toggleAccSupplierFilter(cb) {
+  if (cb.checked) accSupplierFilter.add(cb.value); else accSupplierFilter.delete(cb.value);
+  const ms = document.getElementById('acc-supplier-multiselect');
+  document.getElementById('acc-supplier-summary').textContent = accSupplierFilter.size === 0 ? 'Leverandør: Alle' : 'Leverandør: ' + [...accSupplierFilter].join(', ');
+  ms.classList.toggle('filter-active', accSupplierFilter.size > 0);
+  renderAccessories();
+}
+function onSvcDateSearch(inp) {
+  svcDateSearch = inp.value.trim();
+  inp.classList.toggle('filter-active', svcDateSearch.length > 0);
+  renderServiceTable();
+}
+
+
 function renderInstTable() {
   const tb = document.getElementById('inst-table');
-  if (!state.instruments.length) { tb.innerHTML='<tr><td colspan="6" class="empty">Ingen instrumenter registrert ennå</td></tr>'; return; }
-  tb.innerHTML = state.instruments.map(inst => {
+  // Populate dynamic category options
+  const cats = [...new Set(state.instruments.map(i => i.category).filter(Boolean))].sort();
+  populateDynOptions('inst-cat-options', cats, instCatFilter, 'toggleInstCatFilter');
+  let filtered = state.instruments;
+  if (instCondFilter.size > 0) filtered = filtered.filter(i => instCondFilter.has(i.condition));
+  if (instCatFilter.size > 0) filtered = filtered.filter(i => instCatFilter.has(i.category));
+  if (instPlayerFilter.size > 0) {
+    filtered = filtered.filter(i => {
+      const isTildelt = state.players.some(p => (p.instruments||[]).includes(i.id));
+      if (instPlayerFilter.has('tildelt') && instPlayerFilter.has('ikke_tildelt')) return true;
+      if (instPlayerFilter.has('tildelt')) return isTildelt;
+      if (instPlayerFilter.has('ikke_tildelt')) return !isTildelt;
+      return true;
+    });
+  }
+  const list = applySort('instruments', filtered);
+  if (!list.length) { tb.innerHTML=`<tr><td colspan="6" class="empty">${state.instruments.length ? 'Ingen instrumenter matcher filteret' : 'Ingen instrumenter registrert ennå'}</td></tr>`; syncSortHeaders('instruments'); return; }
+  tb.innerHTML = list.map(inst => {
     const player = state.players.find(p => (p.instruments||[]).includes(inst.id));
+    const serviceBtn = inst.condition === 'Trenger service'
+      ? `<button class="btn-service" onclick="openServiceForInstrument('${inst.id}')">+ Service</button>` : '';
     return `<tr>
       <td>${idbadge(inst.korps_id)}${inst.serial?`<br><span style="font-size:11px;color:var(--text-faint)">Ser: ${inst.serial}</span>`:''}</td>
       <td><strong style="font-weight:600">${inst.name}</strong>${inst.purchase?`<br><span style="font-size:11px;color:var(--text-faint)">Kjøpt: ${inst.purchase}</span>`:''}</td>
@@ -961,10 +1486,12 @@ function renderInstTable() {
       <td style="color:${player?'var(--text)':'var(--text-faint)'};">${player?player.name:'Ikke tildelt'}</td>
       <td><div style="display:flex;gap:6px;flex-wrap:wrap;">
         <button class="btn-sm" onclick="openQrModal('${inst.id}')" title="Vis QR-kode">QR</button>
+        ${serviceBtn}
         <button class="btn-sm" onclick="openInstModal('${inst.id}')">Rediger</button>
         <button class="btn-sm btn-danger" onclick="deleteInstrument('${inst.id}')">Slett</button>
       </div></td></tr>`;
   }).join('');
+  syncSortHeaders('instruments');
 }
 
 // --- PLAYERS ---
@@ -976,23 +1503,58 @@ function openPlayerModal(id) {
   document.getElementById('player-section').value = p?.section || 'Messingblåsere';
   document.getElementById('player-contact').value = p?.contact || '';
   const assigned = p?.instruments || [];
+  // Build map of instrument_id -> player name for instruments assigned to OTHER players
+  const takenBy = {};
+  state.players.forEach(pl => {
+    if (pl.id === id) return;
+    (pl.instruments || []).forEach(iid => { takenBy[iid] = pl.name; });
+  });
   const wrap = document.getElementById('inst-checkboxes');
   if (!state.instruments.length) {
     wrap.innerHTML = '<p style="color:var(--text-faint);font-size:13px;padding:12px;">Ingen instrumenter registrert ennå</p>';
   } else {
-    wrap.innerHTML = state.instruments.map(i => `
-      <label class="inst-picker-item">
-        <input type="checkbox" value="${i.id}" ${assigned.includes(i.id)?'checked':''}>
-        <div>
-          <div class="inst-picker-name">${i.name}</div>
-          <div class="inst-picker-meta">${i.category}${i.serial?' · Ser: '+i.serial:''}</div>
-        </div>
-        ${idbadge(i.korps_id)}
-      </label>`).join('');
+    wrap.innerHTML = state.instruments.map(i => {
+      const other = takenBy[i.id];
+      const takenLabel = other ? `<span style="font-size:11px;color:var(--text-muted);margin-left:auto;white-space:nowrap;">(tildelt: ${other})</span>` : '';
+      return `
+      <label class="inst-picker-item" style="${other?'opacity:0.7;':''}">
+        <input type="checkbox" value="${i.id}" data-inst-name="${i.name}" data-taken-by="${other||''}" ${assigned.includes(i.id)?'checked':''}>
+        <div><div class="inst-picker-name">${i.name}</div>
+          <div class="inst-picker-meta">${i.category}${i.serial?' · Ser: '+i.serial:''}</div></div>
+        ${idbadge(i.korps_id)}${takenLabel}
+      </label>`;
+    }).join('');
+    // Wire up transfer confirm for taken instruments
+    wrap.querySelectorAll('input[type=checkbox][data-taken-by]').forEach(cb => {
+      if (!cb.dataset.takenBy) return;
+      cb.addEventListener('change', function() {
+        if (!this.checked) return; // unchecking is always fine
+        showTransferConfirm(this, this.dataset.instName, this.dataset.takenBy);
+      });
+    });
   }
   openModal('player-modal');
 }
 function closePlayerModal() { stopScanner(); closeModal('player-modal'); }
+
+// --- INSTRUMENT TRANSFER CONFIRM ---
+let _pendingTransferCb = null;
+function showTransferConfirm(cb, instName, fromPlayer, toPlayer) {
+  _pendingTransferCb = cb;
+  const toName = toPlayer || document.getElementById('player-name').value.trim() || 'ny musikant';
+  document.getElementById('transfer-confirm-msg').textContent =
+    `Vil du endre tildeling av «${instName}» fra ${fromPlayer} til ${toName}?`;
+  openModal('transfer-confirm-modal');
+}
+function confirmTransfer() {
+  closeModal('transfer-confirm-modal');
+  _pendingTransferCb = null;
+}
+function cancelTransfer() {
+  if (_pendingTransferCb) { _pendingTransferCb.checked = false; }
+  _pendingTransferCb = null;
+  closeModal('transfer-confirm-modal');
+}
 async function savePlayer() {
   stopScanner();
   const body = { name: document.getElementById('player-name').value.trim(),
@@ -1010,8 +1572,13 @@ async function deletePlayer(id) {
 }
 function renderPlayerTable() {
   const tb = document.getElementById('player-table');
-  if (!state.players.length) { tb.innerHTML='<tr><td colspan="5" class="empty">Ingen musikanter registrert ennå</td></tr>'; return; }
-  tb.innerHTML = state.players.map(p => {
+  // Populate dynamic section options
+  const sections = [...new Set(state.players.map(p => p.section).filter(Boolean))].sort();
+  populateDynOptions('player-section-options', sections, playerSectionFilter, 'togglePlayerSectionFilter');
+  const filtered = playerSectionFilter.size > 0 ? state.players.filter(p => playerSectionFilter.has(p.section)) : state.players;
+  if (!filtered.length) { tb.innerHTML=`<tr><td colspan="5" class="empty">${state.players.length ? 'Ingen musikanter matcher filteret' : 'Ingen musikanter registrert ennå'}</td></tr>`; syncSortHeaders('players'); return; }
+  const list = applySort('players', filtered);
+  tb.innerHTML = list.map(p => {
     const insts = (p.instruments||[]).map(iid => {
       const i = state.instruments.find(x => x.id === iid);
       return i ? `<span style="display:inline-flex;align-items:center;gap:4px;margin:2px;background:var(--surface2);border:0.5px solid var(--border);border-radius:6px;padding:2px 8px;font-size:12px;">${i.name} ${idbadge(i.korps_id)}</span>` : '';
@@ -1026,6 +1593,7 @@ function renderPlayerTable() {
         <button class="btn-sm btn-danger" onclick="deletePlayer('${p.id}')">Slett</button>
       </div></td></tr>`;
   }).join('');
+  syncSortHeaders('players');
 }
 
 // --- SERVICE ---
@@ -1040,19 +1608,13 @@ function openServiceModal(id) {
   document.getElementById('svc-next').value = s?.next_due || '';
   document.getElementById('svc-desc').value = s?.desc || '';
   document.getElementById('svc-date-finished').value = s?.date_finished || '';
-
-  // Populate instrument dropdown
+  document.getElementById('svc-invoice').value = s?.invoice_no || '';
   document.getElementById('svc-inst').innerHTML = state.instruments.map(i =>
     `<option value="${i.id}"${s&&s.inst_id===i.id?' selected':''}>${i.korps_id?i.korps_id+' — ':''}${i.name}</option>`
   ).join('');
-
-  // Populate workshop dropdown
   document.getElementById('svc-workshop').innerHTML =
     '<option value="">— Intern / ingen verksted —</option>' +
-    state.workshops.map(w =>
-      `<option value="${w.id}"${s&&s.workshop_id===w.id?' selected':''}>${w.name}</option>`
-    ).join('');
-
+    state.workshops.map(w => `<option value="${w.id}"${s&&s.workshop_id===w.id?' selected':''}>${w.name}</option>`).join('');
   openModal('service-modal');
 }
 async function saveService() {
@@ -1063,9 +1625,10 @@ async function saveService() {
     cost: parseFloat(document.getElementById('svc-cost').value)||0,
     by_whom: document.getElementById('svc-by').value.trim(),
     desc: document.getElementById('svc-desc').value.trim(),
-    next_due: document.getElementById('svc-next').value,
+    next_due: document.getElementById('svc-next').value || null,
     date_finished: document.getElementById('svc-date-finished').value || null,
-    workshop_id: document.getElementById('svc-workshop').value || null
+    workshop_id: document.getElementById('svc-workshop').value || null,
+    invoice_no: document.getElementById('svc-invoice').value.trim() || null
   };
   if (!body.inst_id || !body.date) return;
   if (editingId.service) await api('PUT', '/api/service/'+editingId.service, body);
@@ -1078,14 +1641,28 @@ async function deleteService(id) {
 }
 async function pickupService(id) {
   if (!confirm('Bekreft at instrumentet er hentet?')) return;
-  await api('POST', `/api/service/${id}/pickup`);
-  toast('Kvittert ut som hentet!'); await loadAll();
+  await api('POST', `/api/service/${id}/pickup`); toast('Kvittert ut som hentet!'); await loadAll();
 }
 function renderServiceTable() {
   const tb = document.getElementById('service-table');
-  if (!state.service.length) { tb.innerHTML='<tr><td colspan="9" class="empty">Ingen serviceoppføringer ennå</td></tr>'; return; }
+  // Populate dynamic workshop options
+  const wsNames = ['Intern service', ...state.workshops.map(w => w.name)];
+  populateDynOptions('svc-workshop-options', wsNames, svcWorkshopFilter, 'toggleSvcWorkshopFilter');
+  let filtered = state.service;
+  if (svcStatusFilter.size > 0) filtered = filtered.filter(s => svcStatusFilter.has(getServiceStatus(s).key));
+  if (svcTypeFilter.size > 0) filtered = filtered.filter(s => svcTypeFilter.has(s.type));
+  if (svcWorkshopFilter.size > 0) {
+    filtered = filtered.filter(s => {
+      const ws = state.workshops.find(w => w.id === s.workshop_id);
+      const name = ws ? ws.name : 'Intern service';
+      return svcWorkshopFilter.has(name);
+    });
+  }
+  if (svcDateSearch) filtered = filtered.filter(s => s.date && s.date.includes(svcDateSearch));
+  const list = applySort('service', filtered);
+  if (!list.length) { tb.innerHTML=`<tr><td colspan="10" class="empty">${state.service.length ? 'Ingen oppføringer matcher filteret' : 'Ingen serviceoppføringer ennå'}</td></tr>`; syncSortHeaders('service'); return; }
   const today = new Date().toISOString().split('T')[0];
-  tb.innerHTML = state.service.map(s => {
+  tb.innerHTML = list.map(s => {
     const inst = state.instruments.find(i => i.id === s.inst_id);
     const ws = state.workshops.find(w => w.id === s.workshop_id);
     const status = getServiceStatus(s);
@@ -1101,7 +1678,8 @@ function renderServiceTable() {
       <td><span class="badge ${status.cls}">${status.label}</span></td>
       <td style="font-size:12px;color:var(--text-muted);">${ws?ws.name:(s.by_whom||'—')}</td>
       <td style="font-size:13px;">${s.desc||'—'}</td>
-      <td style="white-space:nowrap;">${s.cost?s.cost.toLocaleString('nb-NO')+' kr':'—'}</td>
+      <td style="white-space:nowrap;">${fmtKr(s.cost)}</td>
+      <td style="font-size:12px;color:var(--text-muted);">${s.invoice_no||'—'}</td>
       <td>${nextBadge}</td>
       <td><div style="display:flex;gap:6px;flex-wrap:wrap;">
         ${pickupBtn}
@@ -1109,6 +1687,41 @@ function renderServiceTable() {
         <button class="btn-sm btn-danger" onclick="deleteService('${s.id}')">Slett</button>
       </div></td></tr>`;
   }).join('');
+  syncSortHeaders('service');
+}
+
+// --- SERVICE RAPPORT ---
+function openServiceReport() {
+  const groups = {};
+  state.service.forEach(s => {
+    const ws = state.workshops.find(w => w.id === s.workshop_id);
+    const key = ws ? ws.name : 'Intern service';
+    if (!groups[key]) groups[key] = { count: 0, total: 0 };
+    groups[key].count++;
+    groups[key].total += s.cost || 0;
+  });
+  const sorted = Object.entries(groups).sort((a, b) => b[1].total - a[1].total);
+  const grandTotal = sorted.reduce((sum, [, g]) => sum + g.total, 0);
+  const grandCount = sorted.reduce((sum, [, g]) => sum + g.count, 0);
+
+  const rows = sorted.map(([name, g]) => `
+    <tr>
+      <td>${name}</td>
+      <td class="num">${g.count}</td>
+      <td class="num">${fmt(g.total)} kr</td>
+    </tr>`).join('');
+
+  document.getElementById('service-report-content').innerHTML = sorted.length ? `
+    <table class="report-table">
+      <thead><tr><th>Verksted / Utfører</th><th class="num">Antall servicer</th><th class="num">Total kostnad</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div class="report-total">
+      <span>Totalt (${grandCount} servicer)</span>
+      <span>${fmt(grandTotal)} kr</span>
+    </div>` : '<p class="empty" style="padding:1.5rem 0;">Ingen serviceoppføringer ennå.</p>';
+
+  openModal('service-report-modal');
 }
 
 // --- WORKSHOPS ---
@@ -1118,22 +1731,17 @@ function openWorkshopsModal() {
   document.getElementById('ws-contact').value = '';
   document.getElementById('ws-address').value = '';
   document.getElementById('ws-notes').value = '';
-  document.getElementById('ws-form-title').textContent = 'Legg til verksted';
   renderWorkshopsList();
   openModal('workshops-modal');
 }
-function closeWorkshopsModal() { closeModal('workshops-modal'); }
 function renderWorkshopsList() {
   const el = document.getElementById('workshops-list');
-  if (!state.workshops.length) {
-    el.innerHTML = '<p style="color:var(--text-faint);font-size:13px;padding:8px 0;">Ingen verksteder registrert ennå.</p>';
-    return;
-  }
+  if (!state.workshops.length) { el.innerHTML = '<p style="color:var(--text-faint);font-size:13px;padding:8px 0;">Ingen verksteder registrert ennå.</p>'; return; }
   el.innerHTML = state.workshops.map(w => `
-    <div class="ws-item">
-      <div class="ws-item-info">
-        <div class="ws-item-name">${w.name}</div>
-        <div class="ws-item-meta">${[w.contact, w.address].filter(Boolean).join(' · ') || '—'}</div>
+    <div class="entity-item">
+      <div class="entity-item-info">
+        <div class="entity-item-name">${w.name}</div>
+        <div class="entity-item-meta">${[w.contact, w.address].filter(Boolean).join(' · ') || '—'}</div>
       </div>
       <div style="display:flex;gap:6px;">
         <button class="btn-sm" onclick="openWorkshopEdit('${w.id}')">Rediger</button>
@@ -1144,22 +1752,13 @@ function renderWorkshopsList() {
 async function saveWorkshop() {
   const name = document.getElementById('ws-name').value.trim();
   if (!name) { toast('Navn er påkrevd'); return; }
-  const body = { name,
-    contact: document.getElementById('ws-contact').value.trim(),
-    address: document.getElementById('ws-address').value.trim(),
-    notes: document.getElementById('ws-notes').value.trim() };
-  await api('POST', '/api/workshops', body);
-  document.getElementById('ws-name').value = '';
-  document.getElementById('ws-contact').value = '';
-  document.getElementById('ws-address').value = '';
-  document.getElementById('ws-notes').value = '';
-  toast('Verksted lagret!');
-  await loadAll();
-  renderWorkshopsList();
+  await api('POST', '/api/workshops', { name, contact: document.getElementById('ws-contact').value.trim(), address: document.getElementById('ws-address').value.trim(), notes: document.getElementById('ws-notes').value.trim() });
+  document.getElementById('ws-name').value = ''; document.getElementById('ws-contact').value = '';
+  document.getElementById('ws-address').value = ''; document.getElementById('ws-notes').value = '';
+  toast('Verksted lagret!'); await loadAll(); renderWorkshopsList();
 }
 function openWorkshopEdit(id) {
-  const w = state.workshops.find(x => x.id === id);
-  if (!w) return;
+  const w = state.workshops.find(x => x.id === id); if (!w) return;
   editingId.ws = id;
   document.getElementById('ws-edit-name').value = w.name;
   document.getElementById('ws-edit-contact').value = w.contact || '';
@@ -1168,22 +1767,65 @@ function openWorkshopEdit(id) {
   openModal('ws-edit-modal');
 }
 async function saveWorkshopEdit() {
-  const name = document.getElementById('ws-edit-name').value.trim();
-  if (!name) return;
-  const body = { name,
-    contact: document.getElementById('ws-edit-contact').value.trim(),
-    address: document.getElementById('ws-edit-address').value.trim(),
-    notes: document.getElementById('ws-edit-notes').value.trim() };
-  await api('PUT', '/api/workshops/'+editingId.ws, body);
-  closeModal('ws-edit-modal');
-  toast('Verksted oppdatert!');
-  await loadAll();
-  renderWorkshopsList();
+  const name = document.getElementById('ws-edit-name').value.trim(); if (!name) return;
+  await api('PUT', '/api/workshops/'+editingId.ws, { name, contact: document.getElementById('ws-edit-contact').value.trim(), address: document.getElementById('ws-edit-address').value.trim(), notes: document.getElementById('ws-edit-notes').value.trim() });
+  closeModal('ws-edit-modal'); toast('Verksted oppdatert!'); await loadAll(); renderWorkshopsList();
 }
 async function deleteWorkshop(id) {
   if (!confirm('Slette dette verkstedet?')) return;
-  await api('DELETE', '/api/workshops/'+id);
-  toast('Slettet'); await loadAll(); renderWorkshopsList();
+  await api('DELETE', '/api/workshops/'+id); toast('Slettet'); await loadAll(); renderWorkshopsList();
+}
+
+// --- SUPPLIERS ---
+function openSuppliersModal() {
+  editingId.sup = null;
+  document.getElementById('sup-name').value = '';
+  document.getElementById('sup-contact').value = '';
+  document.getElementById('sup-address').value = '';
+  document.getElementById('sup-notes').value = '';
+  renderSuppliersList();
+  openModal('suppliers-modal');
+}
+function renderSuppliersList() {
+  const el = document.getElementById('suppliers-list');
+  if (!state.suppliers.length) { el.innerHTML = '<p style="color:var(--text-faint);font-size:13px;padding:8px 0;">Ingen leverandører registrert ennå.</p>'; return; }
+  el.innerHTML = state.suppliers.map(s => `
+    <div class="entity-item">
+      <div class="entity-item-info">
+        <div class="entity-item-name">${s.name}</div>
+        <div class="entity-item-meta">${[s.contact, s.address].filter(Boolean).join(' · ') || '—'}</div>
+      </div>
+      <div style="display:flex;gap:6px;">
+        <button class="btn-sm" onclick="openSupplierEdit('${s.id}')">Rediger</button>
+        <button class="btn-sm btn-danger" onclick="deleteSupplier('${s.id}')">Slett</button>
+      </div>
+    </div>`).join('');
+}
+async function saveSupplier() {
+  const name = document.getElementById('sup-name').value.trim();
+  if (!name) { toast('Navn er påkrevd'); return; }
+  await api('POST', '/api/suppliers', { name, contact: document.getElementById('sup-contact').value.trim(), address: document.getElementById('sup-address').value.trim(), notes: document.getElementById('sup-notes').value.trim() });
+  document.getElementById('sup-name').value = ''; document.getElementById('sup-contact').value = '';
+  document.getElementById('sup-address').value = ''; document.getElementById('sup-notes').value = '';
+  toast('Leverandør lagret!'); await loadAll(); renderSuppliersList();
+}
+function openSupplierEdit(id) {
+  const s = state.suppliers.find(x => x.id === id); if (!s) return;
+  editingId.sup = id;
+  document.getElementById('sup-edit-name').value = s.name;
+  document.getElementById('sup-edit-contact').value = s.contact || '';
+  document.getElementById('sup-edit-address').value = s.address || '';
+  document.getElementById('sup-edit-notes').value = s.notes || '';
+  openModal('sup-edit-modal');
+}
+async function saveSupplierEdit() {
+  const name = document.getElementById('sup-edit-name').value.trim(); if (!name) return;
+  await api('PUT', '/api/suppliers/'+editingId.sup, { name, contact: document.getElementById('sup-edit-contact').value.trim(), address: document.getElementById('sup-edit-address').value.trim(), notes: document.getElementById('sup-edit-notes').value.trim() });
+  closeModal('sup-edit-modal'); toast('Leverandør oppdatert!'); await loadAll(); renderSuppliersList();
+}
+async function deleteSupplier(id) {
+  if (!confirm('Slette denne leverandøren?')) return;
+  await api('DELETE', '/api/suppliers/'+id); toast('Slettet'); await loadAll(); renderSuppliersList();
 }
 
 // --- TIL HENTING MODAL ---
@@ -1200,12 +1842,8 @@ function openTilHentingModal() {
         <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
           <div>
             <div class="th-list-item-title">${inst?.name||'Ukjent'} ${idbadge(inst?.korps_id)}</div>
-            <div class="th-list-item-meta">
-              Verksted: <strong>${ws?.name||'—'}</strong>${ws?.contact?' · '+ws.contact:''}
-            </div>
-            <div class="th-list-item-meta">
-              Innlevert: ${s.date} &nbsp;·&nbsp; Ferdig: ${s.date_finished}
-            </div>
+            <div class="th-list-item-meta">Verksted: <strong>${ws?.name||'—'}</strong>${ws?.contact?' · '+ws.contact:''}</div>
+            <div class="th-list-item-meta">Innlevert: ${s.date} &nbsp;·&nbsp; Ferdig: ${s.date_finished}</div>
             ${s.desc?`<div class="th-list-item-meta">${s.desc}</div>`:''}
           </div>
           <button class="btn-pickup" onclick="pickupFromModal('${s.id}')">✓ Hentet</button>
@@ -1217,10 +1855,8 @@ function openTilHentingModal() {
 }
 async function pickupFromModal(id) {
   if (!confirm('Bekreft at instrumentet er hentet?')) return;
-  await api('POST', `/api/service/${id}/pickup`);
-  toast('Kvittert ut som hentet!');
-  await loadAll();
-  openTilHentingModal(); // refresh modal
+  await api('POST', `/api/service/${id}/pickup`); toast('Kvittert ut som hentet!');
+  await loadAll(); openTilHentingModal();
 }
 
 // --- ACCESSORIES ---
@@ -1228,10 +1864,14 @@ function updateAccCategoryDatalist() {
   const dl = document.getElementById('acc-category-list');
   dl.innerHTML = state.accCategories.map(c => `<option value="${c.name}">`).join('');
 }
+function updateAccSupplierDropdown(selectedId) {
+  const sel = document.getElementById('acc-supplier-id');
+  sel.innerHTML = '<option value="">— Ingen leverandør —</option>' +
+    state.suppliers.map(s => `<option value="${s.id}"${s.id === selectedId?' selected':''}>${s.name}</option>`).join('');
+}
 async function ensureCategoryExists(name) {
   if (!name) return;
-  const exists = state.accCategories.find(c => c.name === name);
-  if (!exists) {
+  if (!state.accCategories.find(c => c.name === name)) {
     await api('POST', '/api/acc-categories', { name });
   }
 }
@@ -1241,12 +1881,14 @@ function openAccModal(id) {
   document.getElementById('acc-modal-title').textContent = a ? 'Rediger vare' : 'Legg til vare';
   document.getElementById('acc-name').value = a?.name || '';
   document.getElementById('acc-cat').value = a?.category || '';
-  document.getElementById('acc-supplier').value = a?.supplier || '';
+  document.getElementById('acc-price').value = a?.price ?? '';
+  document.getElementById('acc-invoice').value = a?.invoice_no || '';
   document.getElementById('acc-stock').value = a?.stock ?? 0;
   document.getElementById('acc-min').value = a?.min_level ?? 2;
   document.getElementById('acc-notes').value = a?.notes || '';
   document.getElementById('acc-barcode').value = a?.barcode || '';
   updateAccCategoryDatalist();
+  updateAccSupplierDropdown(a?.supplier_id || '');
   openModal('acc-modal');
 }
 async function saveAccessory() {
@@ -1257,9 +1899,11 @@ async function saveAccessory() {
   const body = { name, category,
     stock: parseInt(document.getElementById('acc-stock').value)||0,
     min_level: parseInt(document.getElementById('acc-min').value)||0,
-    notes: document.getElementById('acc-notes').value.trim(),
-    supplier: document.getElementById('acc-supplier').value.trim(),
-    barcode: document.getElementById('acc-barcode').value.trim() };
+    notes: document.getElementById('acc-notes').value.trim() || null,
+    barcode: document.getElementById('acc-barcode').value.trim() || null,
+    price: parseFloat(document.getElementById('acc-price').value) || null,
+    invoice_no: document.getElementById('acc-invoice').value.trim() || null,
+    supplier_id: document.getElementById('acc-supplier-id').value || null };
   if (editingId.acc) await api('PUT', '/api/accessories/'+editingId.acc, body);
   else await api('POST', '/api/accessories', body);
   closeAccModal(); toast('Lagret!'); await loadAll();
@@ -1286,22 +1930,78 @@ function renderAccessories() {
   const alerts = document.getElementById('acc-alerts');
   const low = state.accessories.filter(a => a.stock <= a.min_level);
   alerts.innerHTML = low.map(a => `<div class="alert-box">Lavt lager: <strong>${a.name}</strong> — ${a.stock} stk igjen (minimum: ${a.min_level})</div>`).join('');
-  if (!state.accessories.length) { tb.innerHTML='<tr><td colspan="7" class="empty">Ingen varer registrert ennå</td></tr>'; return; }
-  tb.innerHTML = state.accessories.map(a => {
-    const s = a.stock===0?'<span class="badge badge-bad">Tomt</span>':a.stock<=a.min_level?'<span class="badge badge-warn">Lavt</span>':'<span class="badge badge-ok">OK</span>';
+  // Populate dynamic category and supplier options
+  const accCats = [...new Set(state.accessories.map(a => a.category).filter(Boolean))].sort();
+  populateDynOptions('acc-cat-options', accCats, accCatFilter, 'toggleAccCatFilter');
+  const accSupNames = state.suppliers.map(s => s.name);
+  populateDynOptions('acc-supplier-options', accSupNames, accSupplierFilter, 'toggleAccSupplierFilter');
+  let filtered2 = state.accessories;
+  if (accStatusFilter.size > 0) filtered2 = filtered2.filter(a => accStatusFilter.has(getAccStatus(a)));
+  if (accCatFilter.size > 0) filtered2 = filtered2.filter(a => accCatFilter.has(a.category));
+  if (accSupplierFilter.size > 0) {
+    filtered2 = filtered2.filter(a => {
+      const sup = state.suppliers.find(s => s.id === a.supplier_id);
+      return sup && accSupplierFilter.has(sup.name);
+    });
+  }
+  const list = applySort('accessories', filtered2);
+  if (!list.length) { tb.innerHTML=`<tr><td colspan="8" class="empty">${state.accessories.length ? 'Ingen varer matcher filteret' : 'Ingen varer registrert ennå'}</td></tr>`; syncSortHeaders('accessories'); return; }
+  tb.innerHTML = list.map(a => {
+    const sup = state.suppliers.find(s => s.id === a.supplier_id);
+    const supName = sup?.name || '—';
+    const statusBadge = a.stock===0?'<span class="badge badge-bad">Tomt</span>':a.stock<=a.min_level?'<span class="badge badge-warn">Lavt</span>':'<span class="badge badge-ok">OK</span>';
     return `<tr>
       <td><strong style="font-weight:600">${a.name}</strong>${a.notes?`<br><span style="font-size:12px;color:var(--text-muted)">${a.notes}</span>`:''}${a.barcode?`<br><span style="font-size:11px;color:var(--text-faint);font-family:monospace">${a.barcode}</span>`:''}</td>
       <td><span class="badge badge-gray">${a.category||'—'}</span></td>
-      <td style="font-size:12px;color:var(--text-muted);">${a.supplier||'—'}</td>
+      <td style="font-size:12px;color:var(--text-muted);">${supName}</td>
+      <td style="white-space:nowrap;">${a.price!=null?fmt(a.price)+' kr':'—'}</td>
       <td style="font-weight:600">${a.stock}</td>
       <td style="color:var(--text-muted)">${a.min_level}</td>
-      <td>${s}</td>
+      <td>${statusBadge}</td>
       <td><div style="display:flex;gap:6px;">
         <button class="btn-sm" onclick="openAdjust('${a.id}')">Lager</button>
         <button class="btn-sm" onclick="openAccModal('${a.id}')">Rediger</button>
         <button class="btn-sm btn-danger" onclick="deleteAccessory('${a.id}')">Slett</button>
       </div></td></tr>`;
   }).join('');
+  syncSortHeaders('accessories');
+}
+
+// --- TILBEHØRS-RAPPORT ---
+function openAccReport() {
+  const groups = {};
+  state.accessories.forEach(a => {
+    const cat = a.category || 'Ukategorisert';
+    if (!groups[cat]) groups[cat] = { count: 0, totalStock: 0, totalValue: 0 };
+    groups[cat].count++;
+    groups[cat].totalStock += a.stock || 0;
+    groups[cat].totalValue += (a.price || 0) * (a.stock || 0);
+  });
+  const sorted = Object.entries(groups).sort((a, b) => b[1].totalValue - a[1].totalValue);
+  const grandValue = sorted.reduce((sum, [, g]) => sum + g.totalValue, 0);
+  const grandCount = sorted.reduce((sum, [, g]) => sum + g.count, 0);
+
+  const rows = sorted.map(([cat, g]) => `
+    <tr>
+      <td>${cat}</td>
+      <td class="num">${g.count}</td>
+      <td class="num">${g.totalStock}</td>
+      <td class="num">${fmt(g.totalValue)} kr</td>
+    </tr>`).join('');
+
+  document.getElementById('acc-report-content').innerHTML = sorted.length ? `
+    <table class="report-table">
+      <thead><tr><th>Kategori</th><th class="num">Antall varer</th><th class="num">Totalt på lager</th><th class="num">Total verdi (pris × antall)</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div class="report-total">
+      <span>Totalt (${grandCount} varetyper)</span>
+      <span>${fmt(grandValue)} kr</span>
+    </div>
+    <p style="font-size:11px;color:var(--text-faint);margin-top:8px;">* Varer uten registrert pris teller som 0 kr.</p>`
+    : '<p class="empty" style="padding:1.5rem 0;">Ingen varer registrert ennå.</p>';
+
+  openModal('acc-report-modal');
 }
 
 // --- DASHBOARD ---
@@ -1311,40 +2011,430 @@ function renderDashboard() {
   const lowAcc = state.accessories.filter(a => a.stock <= a.min_level).length;
   const tilHenting = state.service.filter(s => getServiceStatus(s).key === 'til_henting').length;
 
-  document.getElementById('metrics').innerHTML = `
-    <div class="metric"><div class="label">Instrumenter totalt</div><div class="value">${state.instruments.length}</div></div>
-    <div class="metric"><div class="label">Musikanter</div><div class="value">${state.players.length}</div></div>
-    <div class="metric"><div class="label">Tildelte</div><div class="value">${assigned}</div></div>
-    <div class="metric"><div class="label">Trenger service</div><div class="value" style="color:${needsService>0?'#c0392b':'inherit'}">${needsService}</div></div>
-    <div class="metric"><div class="label">Til henting</div><div class="value" style="color:${tilHenting>0?'#7040a0':'inherit'}">${tilHenting}</div></div>
-    <div class="metric"><div class="label">Lavt lager</div><div class="value" style="color:${lowAcc>0?'#b8740a':'inherit'}">${lowAcc}</div></div>`;
+  // Update nav badges — service badge = "til henting" (krever aktiv handling)
+  const tilHentingCount = state.service.filter(s => getServiceStatus(s).key === 'til_henting').length;
+  const svcBadge = document.getElementById('nav-badge-service');
+  const accBadge = document.getElementById('nav-badge-acc');
+  if (tilHentingCount > 0) { svcBadge.textContent = tilHentingCount; svcBadge.style.display = ''; } else svcBadge.style.display = 'none';
+  if (lowAcc > 0) { accBadge.textContent = lowAcc; accBadge.style.display = ''; } else accBadge.style.display = 'none';
 
+  // Metric cards
+  const mkIcon = (cls, svgPath) => `<div class="metric-icon ${cls}"><svg viewBox="0 0 20 20" fill="currentColor">${svgPath}</svg></div>`;
+  const mkTrend = (cls, txt) => `<span class="metric-trend ${cls}">${txt}</span>`;
+  document.getElementById('metrics').innerHTML = `
+    <div class="metric-card" onclick="navigateTo('instrumenter')" style="cursor:pointer;">
+      <div class="metric-top">${mkIcon('indigo','<path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5z" clip-rule="evenodd"/>')}</div>
+      <div class="metric-value">${state.instruments.length}</div><div class="metric-label">Instrumenter totalt</div>
+    </div>
+    <div class="metric-card" onclick="navigateTo('musikanter')" style="cursor:pointer;">
+      <div class="metric-top">${mkIcon('green','<path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>')}</div>
+      <div class="metric-value">${state.players.length}</div><div class="metric-label">Musikanter</div>
+    </div>
+    <div class="metric-card" onclick="navigateTo('musikanter')" style="cursor:pointer;">
+      <div class="metric-top">${mkIcon('sky','<path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>')}</div>
+      <div class="metric-value">${assigned}</div><div class="metric-label">Tildelte instr.</div>
+    </div>
+    <div class="metric-card" onclick="navigateTo('instrumenter');setInstCondFilter(['Trenger service']);" style="cursor:pointer;">
+      <div class="metric-top">${mkIcon('red','<path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>')}${needsService>0?mkTrend('trend-bad','Krever tiltak'):''}</div>
+      <div class="metric-value"${needsService>0?' style="color:#dc2626;"':''}>${needsService}</div><div class="metric-label">Trenger service</div>
+    </div>
+    <div class="metric-card" onclick="navigateTo('service')" style="cursor:pointer;">
+      <div class="metric-top">${mkIcon('purple','<path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/><path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3z"/><path d="M14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1v-5a1 1 0 00-.293-.707l-2-2A1 1 0 0015 7h-1z"/>')}${tilHenting>0?mkTrend('trend-warn','Hent snarest'):''}</div>
+      <div class="metric-value"${tilHenting>0?' style="color:#7c3aed;"':''}>${tilHenting}</div><div class="metric-label">Til henting</div>
+    </div>
+    <div class="metric-card" onclick="navigateTo('tilbehor');setAccStatusFilter(['Lavt','Tomt']);" style="cursor:pointer;">
+      <div class="metric-top">${mkIcon('amber','<path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3z"/>')}${lowAcc>0?mkTrend('trend-warn','Lavt lager'):''}</div>
+      <div class="metric-value"${lowAcc>0?' style="color:#d97706;"':''}>${lowAcc}</div><div class="metric-label">Tilbehørsvarsler</div>
+    </div>`;
+
+  // Alerts for right panel
   const today = new Date().toISOString().split('T')[0];
   const overdue = state.service.filter(s => s.next_due && s.next_due < today && getServiceStatus(s).key === 'ferdig');
   const tilHentingItems = state.service.filter(s => getServiceStatus(s).key === 'til_henting');
   const lowAccItems = state.accessories.filter(a => a.stock <= a.min_level);
+  const alertCount = tilHentingItems.length + overdue.length + lowAccItems.length;
+  const iconSvg = {
+    truck: '<path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/><path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3z"/><path d="M14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1v-5a1 1 0 00-.293-.707l-2-2A1 1 0 0015 7h-1z"/>',
+    warn: '<path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>',
+    cart: '<path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3z"/>'
+  };
+  const mkAlertItem = (wrapCls, svgBody, title, sub) =>
+    `<div class="alert-item"><div class="alert-dot-wrap ${wrapCls}"><svg viewBox="0 0 20 20" fill="currentColor">${svgBody}</svg></div><div style="flex:1;"><div class="alert-title">${title}</div><div class="alert-sub">${sub}</div></div></div>`;
 
-  document.getElementById('alerts-area').innerHTML = [
-    ...tilHentingItems.map(s => {
-      const i=state.instruments.find(x=>x.id===s.inst_id);
-      const ws=state.workshops.find(w=>w.id===s.workshop_id);
-      return `<div class="alert-box-purple">Klar til henting: <strong>${i?.name||'ukjent'}${i?.korps_id?' ('+i.korps_id+')':''}</strong> — ${ws?.name||'ukjent verksted'}</div>`;
-    }),
-    ...overdue.map(s => { const i=state.instruments.find(x=>x.id===s.inst_id);
-      return `<div class="alert-box">Service forfalt for <strong>${i?.name||'ukjent'}${i?.korps_id?' ('+i.korps_id+')':''}</strong> — frist var ${s.next_due}</div>`; }),
-    ...lowAccItems.map(a=>`<div class="alert-box">Lavt lager: <strong>${a.name}</strong> — ${a.stock} stk igjen (minimum: ${a.min_level})</div>`)
+  const alertHtml = [
+    ...tilHentingItems.map(s => { const i=state.instruments.find(x=>x.id===s.inst_id); const ws=state.workshops.find(w=>w.id===s.workshop_id); return mkAlertItem('purple', iconSvg.truck, `${i?.name||'Ukjent'} klar til henting`, `${ws?.name||'Ukjent verksted'}${s.date_finished?' · Ferdig '+s.date_finished:''}`); }),
+    ...overdue.map(s => { const i=state.instruments.find(x=>x.id===s.inst_id); return mkAlertItem('red', iconSvg.warn, 'Service forfalt', `${i?.name||'Ukjent'}${i?.korps_id?' ('+i.korps_id+')':''} — frist: ${s.next_due}`); }),
+    ...lowAccItems.map(a => mkAlertItem('amber', iconSvg.cart, `${a.stock===0?'Tomt':'Lavt lager'}: ${a.name}`, `${a.stock} stk igjen · Minimum: ${a.min_level}`))
   ].join('');
 
+  // Recent service
   const recent = state.service.slice(0,5);
-  document.getElementById('dash-service').innerHTML = recent.length
-    ? recent.map(s => { const i=state.instruments.find(x=>x.id===s.inst_id); const st=getServiceStatus(s);
-        return `<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:0.5px solid var(--border);font-size:13px;">
-          <span>${i?.name||'?'} ${idbadge(i?.korps_id)} — ${s.type} <span class="badge ${st.cls}" style="font-size:10px;">${st.label}</span></span>
-          <span style="color:var(--text-muted);font-size:12px;">${s.date}</span></div>`; }).join('')
-    : '<p class="empty">Ingen serviceoppføringer ennå</p>';
+  const serviceHtml = recent.length ? recent.map(s => {
+    const i=state.instruments.find(x=>x.id===s.inst_id); const st=getServiceStatus(s); const ws=state.workshops.find(w=>w.id===s.workshop_id);
+    return `<div class="activity-item"><div style="flex:1;"><div class="activity-title">${i?.name||'?'} ${idbadge(i?.korps_id)}</div><div class="activity-sub">${s.type}${ws?' · '+ws.name:''}</div></div><div style="display:flex;align-items:center;gap:8px;"><span class="badge ${st.cls}">${st.label}</span><span class="activity-time">${s.date}</span></div></div>`;
+  }).join('') : '<p class="empty">Ingen serviceoppføringer ennå</p>';
+
+  document.getElementById('dash-content-grid').innerHTML = `
+    <div class="content-grid">
+      <div class="card">
+        <div class="card-header"><div><div class="card-title">Siste serviceoppføringer</div></div></div>
+        <div class="card-body">${serviceHtml}</div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div><div class="card-title">Aktive varsler</div><div class="card-subtitle">Krever oppfølging</div></div>
+          <span class="badge ${alertCount>0?'badge-red':'badge-ok'}">${alertCount>0?alertCount:'OK'}</span>
+        </div>
+        <div class="alert-list card-body">${alertHtml||'<p class="empty">Ingen aktive varsler</p>'}</div>
+      </div>
+    </div>`;
 }
 
-function render() { renderDashboard(); renderInstTable(); renderPlayerTable(); renderServiceTable(); renderAccessories(); }
+// --- SEARCH ---
+function filterActiveSection(q) {
+  const active = document.querySelector('.section.active');
+  if (!active) return;
+  const lower = q.trim().toLowerCase();
+
+  if (active.id === 'dashboard') {
+    // Global search på tvers av alle data
+    if (!lower) { renderDashboard(); return; }
+    showGlobalSearch(lower);
+    return;
+  }
+
+  active.querySelectorAll('tbody tr').forEach(row => {
+    row.style.display = (!lower || row.textContent.toLowerCase().includes(lower)) ? '' : 'none';
+  });
+}
+
+function showGlobalSearch(q) {
+  const inst = state.instruments.filter(i => [i.name,i.korps_id,i.category,i.serial,i.notes].some(v => (v||'').toLowerCase().includes(q)));
+  const players = state.players.filter(p => [p.name,p.section,p.contact].some(v => (v||'').toLowerCase().includes(q)));
+  const services = state.service.filter(s => {
+    const i = state.instruments.find(x => x.id === s.inst_id);
+    const ws = state.workshops.find(w => w.id === s.workshop_id);
+    return [i?.name,s.type,s.desc,ws?.name,s.invoice_no].some(v => (v||'').toLowerCase().includes(q));
+  });
+  const accessories = state.accessories.filter(a => [a.name,a.category,a.notes,a.barcode].some(v => (v||'').toLowerCase().includes(q)));
+  const total = inst.length + players.length + services.length + accessories.length;
+
+  const mkSection = (title, count, tableHtml) => count ? `
+    <div class="card card-mb">
+      <div class="card-header"><div class="card-title">${title} <span class="badge badge-gray" style="margin-left:6px;">${count}</span></div></div>
+      <div class="table-wrap">${tableHtml}</div>
+    </div>` : '';
+
+  const instHtml = mkSection('Instrumenter', inst.length, `<table><thead><tr><th>ID</th><th>Navn</th><th>Kategori</th><th>Stand</th><th>Tildelt</th></tr></thead><tbody>
+    ${inst.map(i => { const p = state.players.find(p => (p.instruments||[]).includes(i.id)); return `<tr><td>${idbadge(i.korps_id)}</td><td><strong>${i.name}</strong></td><td><span class="badge badge-gray">${i.category}</span></td><td>${condBadge(i.condition)}</td><td style="color:${p?'var(--text)':'var(--text-faint)'};">${p?p.name:'Ikke tildelt'}</td></tr>`; }).join('')}
+  </tbody></table>`);
+
+  const playersHtml = mkSection('Musikanter', players.length, `<table><thead><tr><th>Navn</th><th>Seksjon</th><th>Kontakt</th></tr></thead><tbody>
+    ${players.map(p => `<tr><td><strong>${p.name}</strong></td><td><span class="badge badge-info">${p.section}</span></td><td style="color:var(--text-muted);">${p.contact||'—'}</td></tr>`).join('')}
+  </tbody></table>`);
+
+  const svcHtml = mkSection('Servicelogg', services.length, `<table><thead><tr><th>Dato</th><th>Instrument</th><th>Type</th><th>Status</th><th>Kostnad</th></tr></thead><tbody>
+    ${services.map(s => { const i=state.instruments.find(x=>x.id===s.inst_id); const st=getServiceStatus(s); return `<tr><td style="font-size:12px;">${s.date}</td><td>${i?i.name+' '+idbadge(i.korps_id):'?'}</td><td><span class="badge badge-gray">${s.type}</span></td><td><span class="badge ${st.cls}">${st.label}</span></td><td style="white-space:nowrap;">${fmtKr(s.cost)}</td></tr>`; }).join('')}
+  </tbody></table>`);
+
+  const accHtml = mkSection('Tilbehør', accessories.length, `<table><thead><tr><th>Vare</th><th>Kategori</th><th>På lager</th><th>Status</th></tr></thead><tbody>
+    ${accessories.map(a => { const sc=a.stock===0?'badge-bad':a.stock<=a.min_level?'badge-warn':'badge-ok'; return `<tr><td><strong>${a.name}</strong></td><td><span class="badge badge-gray">${a.category||'—'}</span></td><td style="font-weight:600;">${a.stock}</td><td><span class="badge ${sc}">${a.stock===0?'Tomt':a.stock<=a.min_level?'Lavt':'OK'}</span></td></tr>`; }).join('')}
+  </tbody></table>`);
+
+  document.getElementById('dash-content-grid').innerHTML = `<div style="grid-column:1/-1;">
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">${total} treff for «${q}»${total===0?' — prøv et annet søkeord':''}</p>
+    ${instHtml}${playersHtml}${svcHtml}${accHtml}
+    ${total===0?'<p class="empty">Ingen resultater</p>':''}
+  </div>`;
+}
+
+// --- VARSLER DROPDOWN ---
+function toggleVarslerDropdown() {
+  const dd = document.getElementById('varsler-dropdown');
+  const isOpen = dd.classList.contains('open');
+  if (isOpen) { dd.classList.remove('open'); return; }
+  renderVarslerDropdown();
+  dd.classList.add('open');
+}
+document.addEventListener('click', e => {
+  const wrap = document.querySelector('.varsler-wrap');
+  if (wrap && !wrap.contains(e.target)) {
+    document.getElementById('varsler-dropdown')?.classList.remove('open');
+  }
+});
+function renderVarslerDropdown() {
+  const today = new Date().toISOString().split('T')[0];
+  const tilHenting = state.service.filter(s => getServiceStatus(s).key === 'til_henting');
+  const overdue = state.service.filter(s => s.next_due && s.next_due < today && getServiceStatus(s).key === 'ferdig');
+  const lowAcc = state.accessories.filter(a => a.stock <= a.min_level);
+  const total = tilHenting.length + overdue.length + lowAcc.length;
+
+  const countEl = document.getElementById('varsler-dropdown-count');
+  if (countEl) { countEl.textContent = total > 0 ? total + ' varsler' : ''; countEl.style.display = total > 0 ? '' : 'none'; }
+
+  const mkSvg = path => `<svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">${path}</svg>`;
+  const truck = mkSvg('<path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/><path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3z"/><path d="M14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1v-5a1 1 0 00-.293-.707l-2-2A1 1 0 0015 7h-1z"/>');
+  const warn = mkSvg('<path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>');
+  const cart = mkSvg('<path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3z"/>');
+
+  const mkItem = (dotCls, icon, title, sub, onclick) =>
+    `<div class="varsler-item" onclick="${onclick};document.getElementById('varsler-dropdown').classList.remove('open');">
+      <div class="varsler-item-dot ${dotCls}">${icon}</div>
+      <div><div class="varsler-item-title">${title}</div><div class="varsler-item-sub">${sub}</div></div>
+    </div>`;
+
+  let html = '';
+  tilHenting.forEach(s => {
+    const inst = state.instruments.find(i => i.id === s.inst_id);
+    const ws = state.workshops.find(w => w.id === s.workshop_id);
+    html += mkItem('purple', truck,
+      `${inst?.name || 'Ukjent instrument'} klar til henting`,
+      `${ws?.name || 'Ukjent verksted'}${s.date_finished ? ' · Ferdig ' + s.date_finished : ''}`,
+      "navigateTo('service')");
+  });
+  overdue.forEach(s => {
+    const inst = state.instruments.find(i => i.id === s.inst_id);
+    html += mkItem('red', warn,
+      `Service forfalt: ${inst?.name || 'Ukjent'}`,
+      `Frist: ${s.next_due}${inst?.korps_id ? ' · ' + inst.korps_id : ''}`,
+      "navigateTo('service')");
+  });
+  lowAcc.forEach(a => {
+    html += mkItem('amber', cart,
+      `${a.stock === 0 ? 'Tomt lager' : 'Lavt lager'}: ${a.name}`,
+      `${a.stock} stk igjen · Minimum: ${a.min_level}`,
+      "navigateTo('tilbehor')");
+  });
+
+  const body = document.getElementById('varsler-dropdown-body');
+  if (body) body.innerHTML = html || '<div class="varsler-empty">Ingen aktive varsler</div>';
+}
+
+// --- RAPPORTER ---
+function renderReports() {
+  const grid = document.getElementById('reports-grid');
+  if (!grid) return;
+
+  // Service per verksted
+  const svcGroups = {};
+  state.service.forEach(s => {
+    const ws = state.workshops.find(w => w.id === s.workshop_id);
+    const key = ws ? ws.name : 'Intern service';
+    if (!svcGroups[key]) svcGroups[key] = { count: 0, total: 0 };
+    svcGroups[key].count++; svcGroups[key].total += s.cost || 0;
+  });
+  const svcRows = Object.entries(svcGroups).sort((a,b) => b[1].total - a[1].total);
+  const svcTotal = svcRows.reduce((s,[,g]) => s+g.total, 0);
+  const svcCount = svcRows.reduce((s,[,g]) => s+g.count, 0);
+
+  // Tilbehør per kategori
+  const accGroups = {};
+  state.accessories.forEach(a => {
+    const cat = a.category || 'Ukategorisert';
+    if (!accGroups[cat]) accGroups[cat] = { count: 0, stock: 0, value: 0 };
+    accGroups[cat].count++; accGroups[cat].stock += a.stock||0; accGroups[cat].value += (a.price||0)*(a.stock||0);
+  });
+  const accRows = Object.entries(accGroups).sort((a,b) => b[1].value - a[1].value);
+  const accValue = accRows.reduce((s,[,g]) => s+g.value, 0);
+  const accCount = accRows.reduce((s,[,g]) => s+g.count, 0);
+
+  const dlIcon = `<svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>`;
+  const exportBtns = (c, x) => `<div style="display:flex;gap:6px;">${
+    `<button class="btn-export" onclick="${c}()">${dlIcon} CSV</button>`+
+    `<button class="btn-sm" style="background:#f0fdf4;color:#15803d;border-color:#bbf7d0;" onclick="${x}()">${dlIcon} Excel</button>`}</div>`;
+
+  const footer = (label, val) => `<div style="display:flex;justify-content:space-between;padding:12px 20px;background:var(--surface2);border-top:1px solid var(--border);font-size:13px;">
+    <span style="color:var(--text-muted);font-weight:500;">${label}</span><span style="font-weight:700;font-size:15px;">${val}</span></div>`;
+
+  grid.innerHTML = `
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Servicekostnad per verksted</div><div class="card-subtitle">Total kostnad fordelt på utfører</div></div>
+        ${exportBtns('exportSvcReportCSV','exportSvcReportXLS')}
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Verksted / Utfører</th><th style="text-align:right;">Antall</th><th style="text-align:right;">Total kostnad</th></tr></thead>
+        <tbody>${svcRows.length ? svcRows.map(([n,g]) =>
+          `<tr><td style="font-weight:500;">${n}</td><td style="text-align:right;color:var(--text-muted);">${g.count}</td><td style="text-align:right;font-weight:600;">${fmt(g.total)} kr</td></tr>`
+        ).join('') : `<tr><td colspan="3" class="empty">Ingen serviceoppføringer</td></tr>`}</tbody>
+      </table></div>
+      ${svcRows.length ? footer(`Totalt (${svcCount} servicer)`, fmt(svcTotal)+' kr') : ''}
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Varekostnad per kategori</div><div class="card-subtitle">Total lagerverdi (pris × antall)</div></div>
+        ${exportBtns('exportAccReportCSV','exportAccReportXLS')}
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Kategori</th><th style="text-align:right;">Varetyper</th><th style="text-align:right;">Lager</th><th style="text-align:right;">Verdi</th></tr></thead>
+        <tbody>${accRows.length ? accRows.map(([c,g]) =>
+          `<tr><td style="font-weight:500;">${c}</td><td style="text-align:right;color:var(--text-muted);">${g.count}</td><td style="text-align:right;color:var(--text-muted);">${g.stock}</td><td style="text-align:right;font-weight:600;">${fmt(g.value)} kr</td></tr>`
+        ).join('') : `<tr><td colspan="4" class="empty">Ingen varer registrert</td></tr>`}</tbody>
+      </table></div>
+      ${accRows.length ? footer(`Totalt (${accCount} varetyper)`, fmt(accValue)+' kr') : ''}
+    </div>`;
+}
+
+// --- RAPPORTER EKSPORT ---
+function dlCSV(filename, headers, rows) {
+  const csv = [headers, ...rows].map(r => r.map(v => `"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,\uFEFF' + encodeURIComponent(csv);
+  a.download = filename; a.click();
+}
+async function dlXLS(filename, headers, rows) {
+  const res = await fetch('/api/export/report', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ filename, headers, rows }) });
+  if (!res.ok) { toast('Eksport feilet'); return; }
+  const blob = await res.blob();
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename + '.xlsx';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+function getSvcReportData() {
+  const g = {};
+  state.service.forEach(s => { const ws=state.workshops.find(w=>w.id===s.workshop_id); const k=ws?ws.name:'Intern service'; if(!g[k])g[k]={count:0,total:0}; g[k].count++;g[k].total+=s.cost||0; });
+  return Object.entries(g).sort((a,b)=>b[1].total-a[1].total).map(([n,v])=>[n,v.count,v.total]);
+}
+function getAccReportData() {
+  const g = {};
+  state.accessories.forEach(a => { const c=a.category||'Ukategorisert'; if(!g[c])g[c]={count:0,stock:0,value:0}; g[c].count++;g[c].stock+=a.stock||0;g[c].value+=(a.price||0)*(a.stock||0); });
+  return Object.entries(g).sort((a,b)=>b[1].value-a[1].value).map(([c,v])=>[c,v.count,v.stock,v.value]);
+}
+function exportSvcReportCSV() { dlCSV('servicekostnad-per-verksted.csv', ['Verksted/Utfører','Antall servicer','Total kostnad (kr)'], getSvcReportData()); }
+async function exportSvcReportXLS() { await dlXLS('servicekostnad-per-verksted', ['Verksted/Utfører','Antall servicer','Total kostnad (kr)'], getSvcReportData()); }
+function exportAccReportCSV() { dlCSV('varekostnad-per-kategori.csv', ['Kategori','Antall varetyper','Totalt på lager','Total verdi (kr)'], getAccReportData()); }
+async function exportAccReportXLS() { await dlXLS('varekostnad-per-kategori', ['Kategori','Antall varetyper','Totalt på lager','Total verdi (kr)'], getAccReportData()); }
+
+function updateVarslerBadge() {
+  const today = new Date().toISOString().split('T')[0];
+  const count =
+    state.service.filter(s => getServiceStatus(s).key === 'til_henting').length +
+    state.service.filter(s => s.next_due && s.next_due < today && getServiceStatus(s).key === 'ferdig').length +
+    state.accessories.filter(a => a.stock <= a.min_level).length;
+  const el = document.getElementById('varsler-count');
+  if (el) { el.textContent = count; el.style.display = count > 0 ? '' : 'none'; }
+}
+
+// --- CSV IMPORT ---
+let importType = '';
+let importParsedRows = [];
+
+const importConfig = {
+  instruments: {
+    title: 'Importer instrumenter fra CSV',
+    instructions: '<strong>Kolonner (første rad er overskrift og hoppes over):</strong><br>Navn*, Kategori, Stand (God/Akseptabel/Trenger service), Serienummer, Kjøpsdato (ÅÅÅÅ-MM-DD), Merknader<br><em>Instrument-ID genereres automatisk.</em>',
+    placeholder: 'Navn,Kategori,Stand,Serienummer,Kjøpsdato,Merknader\nTrompet i Bb,Messingblåser,God,,,\nAltsaxofon,Treblåser,Akseptabel,SN12345,,',
+    headers: ['Navn', 'Kategori', 'Stand', 'Serienummer', 'Kjøpsdato', 'Merknader'],
+    parse: (cols) => ({ name: cols[0], category: cols[1]||'Annet', condition: cols[2]||'God', serial: cols[3]||'', purchase: cols[4]||'', notes: cols[5]||'' })
+  },
+  accessories: {
+    title: 'Importer tilbehør fra CSV',
+    instructions: '<strong>Kolonner (første rad er overskrift og hoppes over):</strong><br>Varenavn*, Kategori, Antall på lager, Minimumsgrense, Pris per enhet (kr), Merknader',
+    placeholder: 'Varenavn,Kategori,Antall,Minimum,Pris,Merknader\nRørblad str. 2,Rørblad,10,3,25,\nVentilolje,Oljer og fett,5,2,89,',
+    headers: ['Varenavn', 'Kategori', 'Antall', 'Minimum', 'Pris (kr)', 'Merknader'],
+    parse: (cols) => ({ name: cols[0], category: cols[1]||'', stock: cols[2]||0, min_level: cols[3]||2, price: cols[4]||'', notes: cols[5]||'' })
+  }
+};
+
+function openImportModal(type) {
+  importType = type;
+  importParsedRows = [];
+  const cfg = importConfig[type];
+  document.getElementById('import-modal-title').textContent = cfg.title;
+  document.getElementById('import-instructions').innerHTML = cfg.instructions;
+  document.getElementById('import-text').placeholder = cfg.placeholder;
+  document.getElementById('import-text').value = '';
+  document.getElementById('import-file').value = '';
+  document.getElementById('import-preview').innerHTML = '';
+  document.getElementById('import-confirm-btn').style.display = 'none';
+  openModal('import-modal');
+}
+
+function parseCSV(text) {
+  const lines = text.trim().split(/\r?\n/).filter(l => l.trim());
+  if (lines.length < 2) return [];
+  return lines.slice(1).map(line => {
+    const cols = [];
+    let cur = '', inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      const c = line[i];
+      if (c === '"') { inQ = !inQ; }
+      else if (c === ',' && !inQ) { cols.push(cur.trim()); cur = ''; }
+      else cur += c;
+    }
+    cols.push(cur.trim());
+    return cols;
+  });
+}
+
+function handleImportFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => { document.getElementById('import-text').value = e.target.result; };
+  reader.readAsText(file, 'UTF-8');
+}
+
+function generateImportInstIds(rows) {
+  const tempTaken = state.instruments.map(i => i.korps_id).filter(Boolean);
+  return rows.map(row => {
+    const prefix = nameToPrefix(row.name);
+    const nums = tempTaken.filter(k => k && k.startsWith(prefix+'-')).map(k => parseInt(k.split('-')[1])||0);
+    const next = (nums.length ? Math.max(...nums) : 0) + 1;
+    const kid = `${prefix}-${String(next).padStart(3,'0')}`;
+    tempTaken.push(kid);
+    return kid;
+  });
+}
+
+function previewImport() {
+  const text = document.getElementById('import-text').value.trim();
+  if (!text) { toast('Ingen data å forhåndsvise'); return; }
+  const cfg = importConfig[importType];
+  const rawRows = parseCSV(text);
+  if (!rawRows.length) { document.getElementById('import-preview').innerHTML = '<p class="empty">Ingen gyldige rader funnet. Sjekk at filen har minst én datarad (etter overskriftrad).</p>'; return; }
+
+  importParsedRows = rawRows.map(cfg.parse).filter(r => r.name);
+
+  if (importType === 'instruments') {
+    const ids = generateImportInstIds(importParsedRows);
+    importParsedRows.forEach((r, i) => r.korps_id = ids[i]);
+  }
+
+  const hdrs = importType === 'instruments'
+    ? ['ID', 'Navn', 'Kategori', 'Stand', 'Serienummer', 'Kjøpsdato', 'Merknader']
+    : ['Varenavn', 'Kategori', 'Antall', 'Minimum', 'Pris (kr)', 'Merknader'];
+
+  const rowsHtml = importParsedRows.map(r => importType === 'instruments'
+    ? `<tr><td>${idbadge(r.korps_id)}</td><td><strong>${r.name}</strong></td><td>${r.category}</td><td>${condBadge(r.condition)}</td><td style="color:var(--text-muted);font-size:12px;">${r.serial||'—'}</td><td style="color:var(--text-muted);font-size:12px;">${r.purchase||'—'}</td><td style="color:var(--text-muted);font-size:12px;">${r.notes||'—'}</td></tr>`
+    : `<tr><td><strong>${r.name}</strong></td><td>${r.category||'—'}</td><td>${r.stock}</td><td>${r.min_level}</td><td>${r.price?r.price+' kr':'—'}</td><td style="color:var(--text-muted);font-size:12px;">${r.notes||'—'}</td></tr>`
+  ).join('');
+
+  document.getElementById('import-preview').innerHTML = `
+    <p style="font-size:13px;font-weight:600;margin-bottom:8px;">${importParsedRows.length} rader klar til import:</p>
+    <div class="table-wrap" style="max-height:260px;overflow-y:auto;border:1px solid var(--border);border-radius:var(--radius);">
+      <table><thead><tr>${hdrs.map(h=>`<th>${h}</th>`).join('')}</tr></thead>
+      <tbody>${rowsHtml}</tbody></table>
+    </div>`;
+
+  document.getElementById('import-confirm-btn').style.display = importParsedRows.length ? '' : 'none';
+}
+
+async function confirmImport() {
+  if (!importParsedRows.length) return;
+  const btn = document.getElementById('import-confirm-btn');
+  btn.textContent = 'Importerer…'; btn.disabled = true;
+  const endpoint = importType === 'instruments' ? '/api/import/instruments' : '/api/import/accessories';
+  const result = await api('POST', endpoint, { rows: importParsedRows });
+  btn.textContent = 'Importer'; btn.disabled = false;
+  closeModal('import-modal');
+  toast(`${result.imported} ${importType === 'instruments' ? 'instrumenter' : 'varer'} importert!`);
+  await loadAll();
+}
+
+function render() { renderDashboard(); renderInstTable(); renderPlayerTable(); renderServiceTable(); renderAccessories(); renderReports(); updateVarslerBadge(); }
 loadAll();
 </script>
 </body>

@@ -11,3 +11,21 @@ Servicelogg fanen:
 
 
 FEIL:
+
+
+
+Endringer 2:
+* Legge til leverandørliste i databasen slik at leverandør kan velges ved nedtrekkliste.
+* Legge til pris-felt og fakturanummer-felt på varer.
+* Legge til rapport på total kostnad på varer per kategori.
+* Legge til knapp for å opprette service på instrumenter med status "Trenger service".
+* Gjøre om alle dato-felt til å kunne skrive inn eller å velge dato ved å klikke med musen.
+* Legge til faktura-nummer felt på Servicelogg.
+* Legge til rapport for på total kostnad av service per leverandør.
+
+
+Endringer 3: 
+* Legge til mulighet for eksport av Rapportene.
+
+Endringer 4:
+* Mulighet for import av instrumenter og varer fra csv-fil. 

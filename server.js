@@ -21,9 +21,13 @@ function uid() {
 try { db.exec('ALTER TABLE instruments ADD COLUMN korps_id TEXT'); } catch(e) {}
 try { db.exec('ALTER TABLE accessories ADD COLUMN supplier TEXT'); } catch(e) {}
 try { db.exec('ALTER TABLE accessories ADD COLUMN barcode TEXT'); } catch(e) {}
+try { db.exec('ALTER TABLE accessories ADD COLUMN price REAL'); } catch(e) {}
+try { db.exec('ALTER TABLE accessories ADD COLUMN invoice_no TEXT'); } catch(e) {}
+try { db.exec('ALTER TABLE accessories ADD COLUMN supplier_id TEXT'); } catch(e) {}
 try { db.exec('ALTER TABLE service ADD COLUMN date_finished TEXT'); } catch(e) {}
 try { db.exec('ALTER TABLE service ADD COLUMN workshop_id TEXT'); } catch(e) {}
 try { db.exec('ALTER TABLE service ADD COLUMN picked_up INTEGER DEFAULT 0'); } catch(e) {}
+try { db.exec('ALTER TABLE service ADD COLUMN invoice_no TEXT'); } catch(e) {}
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS instruments (
@@ -58,7 +62,8 @@ db.exec(`
     next_due TEXT,
     date_finished TEXT,
     workshop_id TEXT,
-    picked_up INTEGER DEFAULT 0
+    picked_up INTEGER DEFAULT 0,
+    invoice_no TEXT
   );
   CREATE TABLE IF NOT EXISTS accessories (
     id TEXT PRIMARY KEY,
@@ -68,9 +73,19 @@ db.exec(`
     min_level INTEGER DEFAULT 2,
     notes TEXT,
     supplier TEXT,
-    barcode TEXT
+    barcode TEXT,
+    price REAL,
+    invoice_no TEXT,
+    supplier_id TEXT
   );
   CREATE TABLE IF NOT EXISTS workshops (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    contact TEXT,
+    address TEXT,
+    notes TEXT
+  );
+  CREATE TABLE IF NOT EXISTS suppliers (
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
     contact TEXT,
@@ -89,7 +104,7 @@ db.exec(`
 });
 
 // --- INSTRUMENTS ---
-app.get('/api/instruments', (req, res) => {
+app.get('/api/instruments', (_req, res) => {
   res.json(db.prepare('SELECT * FROM instruments ORDER BY name').all());
 });
 
@@ -116,7 +131,7 @@ app.delete('/api/instruments/:id', (req, res) => {
 });
 
 // --- PLAYERS ---
-app.get('/api/players', (req, res) => {
+app.get('/api/players', (_req, res) => {
   const players = db.prepare('SELECT * FROM players ORDER BY name').all();
   const links = db.prepare('SELECT * FROM player_instruments').all();
   players.forEach(p => {
@@ -129,8 +144,10 @@ app.post('/api/players', (req, res) => {
   const { name, section, contact, instruments } = req.body;
   const id = uid();
   db.prepare('INSERT INTO players VALUES (?,?,?,?)').run(id, name, section, contact);
-  const ins = db.prepare('INSERT INTO player_instruments VALUES (?,?)');
-  (instruments || []).forEach(iid => ins.run(id, iid));
+  // Enforce 1 instrument = 1 player: remove instrument from any other player before assigning
+  const delFromOther = db.prepare('DELETE FROM player_instruments WHERE instrument_id=? AND player_id!=?');
+  const ins = db.prepare('INSERT OR IGNORE INTO player_instruments VALUES (?,?)');
+  (instruments || []).forEach(iid => { delFromOther.run(iid, id); ins.run(id, iid); });
   res.json({ id });
 });
 
@@ -138,8 +155,10 @@ app.put('/api/players/:id', (req, res) => {
   const { name, section, contact, instruments } = req.body;
   db.prepare('UPDATE players SET name=?,section=?,contact=? WHERE id=?').run(name, section, contact, req.params.id);
   db.prepare('DELETE FROM player_instruments WHERE player_id=?').run(req.params.id);
+  // Enforce 1 instrument = 1 player
+  const delFromOther = db.prepare('DELETE FROM player_instruments WHERE instrument_id=? AND player_id!=?');
   const ins = db.prepare('INSERT INTO player_instruments VALUES (?,?)');
-  (instruments || []).forEach(iid => ins.run(req.params.id, iid));
+  (instruments || []).forEach(iid => { delFromOther.run(iid, req.params.id); ins.run(req.params.id, iid); });
   res.json({ ok: true });
 });
 
@@ -150,22 +169,22 @@ app.delete('/api/players/:id', (req, res) => {
 });
 
 // --- SERVICE ---
-app.get('/api/service', (req, res) => {
+app.get('/api/service', (_req, res) => {
   res.json(db.prepare('SELECT * FROM service ORDER BY date DESC').all());
 });
 
 app.post('/api/service', (req, res) => {
-  const { date, inst_id, type, cost, by_whom, desc, next_due, date_finished, workshop_id } = req.body;
+  const { date, inst_id, type, cost, by_whom, desc, next_due, date_finished, workshop_id, invoice_no } = req.body;
   const id = uid();
-  db.prepare('INSERT INTO service VALUES (?,?,?,?,?,?,?,?,?,?,0)')
-    .run(id, date, inst_id, type, cost, by_whom||null, desc||null, next_due||null, date_finished||null, workshop_id||null);
+  db.prepare('INSERT INTO service VALUES (?,?,?,?,?,?,?,?,?,?,0,?)')
+    .run(id, date, inst_id, type, cost, by_whom||null, desc||null, next_due||null, date_finished||null, workshop_id||null, invoice_no||null);
   res.json({ id });
 });
 
 app.put('/api/service/:id', (req, res) => {
-  const { date, inst_id, type, cost, by_whom, desc, next_due, date_finished, workshop_id } = req.body;
-  db.prepare('UPDATE service SET date=?,inst_id=?,type=?,cost=?,by_whom=?,desc=?,next_due=?,date_finished=?,workshop_id=? WHERE id=?')
-    .run(date, inst_id, type, cost, by_whom||null, desc||null, next_due||null, date_finished||null, workshop_id||null, req.params.id);
+  const { date, inst_id, type, cost, by_whom, desc, next_due, date_finished, workshop_id, invoice_no } = req.body;
+  db.prepare('UPDATE service SET date=?,inst_id=?,type=?,cost=?,by_whom=?,desc=?,next_due=?,date_finished=?,workshop_id=?,invoice_no=? WHERE id=?')
+    .run(date, inst_id, type, cost, by_whom||null, desc||null, next_due||null, date_finished||null, workshop_id||null, invoice_no||null, req.params.id);
   res.json({ ok: true });
 });
 
@@ -180,7 +199,7 @@ app.post('/api/service/:id/pickup', (req, res) => {
 });
 
 // --- WORKSHOPS ---
-app.get('/api/workshops', (req, res) => {
+app.get('/api/workshops', (_req, res) => {
   res.json(db.prepare('SELECT * FROM workshops ORDER BY name').all());
 });
 
@@ -203,8 +222,32 @@ app.delete('/api/workshops/:id', (req, res) => {
   res.json({ ok: true });
 });
 
+// --- SUPPLIERS ---
+app.get('/api/suppliers', (_req, res) => {
+  res.json(db.prepare('SELECT * FROM suppliers ORDER BY name').all());
+});
+
+app.post('/api/suppliers', (req, res) => {
+  const { name, contact, address, notes } = req.body;
+  const id = uid();
+  db.prepare('INSERT INTO suppliers VALUES (?,?,?,?,?)').run(id, name, contact||null, address||null, notes||null);
+  res.json({ id });
+});
+
+app.put('/api/suppliers/:id', (req, res) => {
+  const { name, contact, address, notes } = req.body;
+  db.prepare('UPDATE suppliers SET name=?,contact=?,address=?,notes=? WHERE id=?')
+    .run(name, contact||null, address||null, notes||null, req.params.id);
+  res.json({ ok: true });
+});
+
+app.delete('/api/suppliers/:id', (req, res) => {
+  db.prepare('DELETE FROM suppliers WHERE id=?').run(req.params.id);
+  res.json({ ok: true });
+});
+
 // --- ACC CATEGORIES ---
-app.get('/api/acc-categories', (req, res) => {
+app.get('/api/acc-categories', (_req, res) => {
   res.json(db.prepare('SELECT * FROM acc_categories ORDER BY name').all());
 });
 
@@ -226,21 +269,22 @@ app.delete('/api/acc-categories/:id', (req, res) => {
 });
 
 // --- ACCESSORIES ---
-app.get('/api/accessories', (req, res) => {
+app.get('/api/accessories', (_req, res) => {
   res.json(db.prepare('SELECT * FROM accessories ORDER BY name').all());
 });
 
 app.post('/api/accessories', (req, res) => {
-  const { name, category, stock, min_level, notes, supplier, barcode } = req.body;
+  const { name, category, stock, min_level, notes, barcode, price, invoice_no, supplier_id } = req.body;
   const id = uid();
-  db.prepare('INSERT INTO accessories VALUES (?,?,?,?,?,?,?,?)').run(id, name, category, stock, min_level, notes||null, supplier||null, barcode||null);
+  db.prepare('INSERT INTO accessories (id,name,category,stock,min_level,notes,barcode,price,invoice_no,supplier_id) VALUES (?,?,?,?,?,?,?,?,?,?)')
+    .run(id, name, category, stock, min_level, notes||null, barcode||null, price||null, invoice_no||null, supplier_id||null);
   res.json({ id });
 });
 
 app.put('/api/accessories/:id', (req, res) => {
-  const { name, category, stock, min_level, notes, supplier, barcode } = req.body;
-  db.prepare('UPDATE accessories SET name=?,category=?,stock=?,min_level=?,notes=?,supplier=?,barcode=? WHERE id=?')
-    .run(name, category, stock, min_level, notes||null, supplier||null, barcode||null, req.params.id);
+  const { name, category, stock, min_level, notes, barcode, price, invoice_no, supplier_id } = req.body;
+  db.prepare('UPDATE accessories SET name=?,category=?,stock=?,min_level=?,notes=?,barcode=?,price=?,invoice_no=?,supplier_id=? WHERE id=?')
+    .run(name, category, stock, min_level, notes||null, barcode||null, price||null, invoice_no||null, supplier_id||null, req.params.id);
   res.json({ ok: true });
 });
 
@@ -289,22 +333,25 @@ app.get('/api/export/:type/:format', (req, res) => {
     const instruments = db.prepare('SELECT * FROM instruments').all();
     const workshops = db.prepare('SELECT * FROM workshops').all();
 
-    rows.push(['Innlevert dato', 'Ferdig dato', 'Instrument-ID', 'Instrument', 'Type', 'Beskrivelse', 'Utført av', 'Verksted', 'Status', 'Kostnad (kr)', 'Neste servicefrist']);
+    rows.push(['Innlevert dato', 'Ferdig dato', 'Instrument-ID', 'Instrument', 'Type', 'Beskrivelse', 'Utført av', 'Verksted', 'Status', 'Kostnad (kr)', 'Fakturanummer', 'Neste servicefrist']);
     service.forEach(s => {
       const inst = instruments.find(i => i.id === s.inst_id);
       const ws = workshops.find(w => w.id === s.workshop_id);
       const status = !s.date_finished ? 'Under service' : (s.workshop_id && !s.picked_up) ? 'Til henting' : 'Ferdig';
-      rows.push([s.date, s.date_finished || '', inst?.korps_id || '', inst?.name || '', s.type, s.desc || '', s.by_whom || '', ws?.name || '', status, s.cost || 0, s.next_due || '']);
+      rows.push([s.date, s.date_finished || '', inst?.korps_id || '', inst?.name || '', s.type, s.desc || '', s.by_whom || '', ws?.name || '', status, s.cost || 0, s.invoice_no || '', s.next_due || '']);
     });
 
   } else if (type === 'accessories') {
     sheetName = 'Tilbehør';
     const accessories = db.prepare('SELECT * FROM accessories ORDER BY name').all();
+    const suppliers = db.prepare('SELECT * FROM suppliers').all();
 
-    rows.push(['Varenavn', 'Kategori', 'Leverandør', 'Strekkode', 'På lager', 'Minimum', 'Status', 'Merknader']);
+    rows.push(['Varenavn', 'Kategori', 'Leverandør', 'Strekkode', 'Pris (kr)', 'Fakturanummer', 'På lager', 'Minimum', 'Total verdi (kr)', 'Status', 'Merknader']);
     accessories.forEach(a => {
+      const sup = suppliers.find(s => s.id === a.supplier_id);
       const status = a.stock === 0 ? 'Tomt' : a.stock <= a.min_level ? 'Lavt' : 'OK';
-      rows.push([a.name, a.category, a.supplier || '', a.barcode || '', a.stock, a.min_level, status, a.notes || '']);
+      const totalVal = (a.price || 0) * (a.stock || 0);
+      rows.push([a.name, a.category, sup?.name || a.supplier || '', a.barcode || '', a.price || 0, a.invoice_no || '', a.stock, a.min_level, totalVal, status, a.notes || '']);
     });
 
   } else if (type === 'til-henting') {
@@ -319,6 +366,52 @@ app.get('/api/export/:type/:format', (req, res) => {
       const ws = workshops.find(w => w.id === s.workshop_id);
       rows.push([s.date, s.date_finished, inst?.korps_id || '', inst?.name || '', s.type, s.desc || '', ws?.name || '', s.cost || 0]);
     });
+
+  } else if (type === 'rapport-service') {
+    sheetName = 'Servicerapport';
+    const service = db.prepare('SELECT * FROM service').all();
+    const workshops = db.prepare('SELECT * FROM workshops').all();
+
+    const groups = {};
+    service.forEach(s => {
+      const ws = workshops.find(w => w.id === s.workshop_id);
+      const key = ws ? ws.name : 'Intern service';
+      if (!groups[key]) groups[key] = { count: 0, totalCost: 0 };
+      groups[key].count += 1;
+      groups[key].totalCost += s.cost || 0;
+    });
+
+    rows.push(['Verksted / Utfører', 'Antall servicer', 'Total kostnad (kr)']);
+    let grandCount = 0, grandCost = 0;
+    Object.entries(groups).sort((a, b) => a[0].localeCompare(b[0])).forEach(([name, g]) => {
+      rows.push([name, g.count, g.totalCost]);
+      grandCount += g.count;
+      grandCost += g.totalCost;
+    });
+    rows.push(['TOTALT', grandCount, grandCost]);
+
+  } else if (type === 'rapport-tilbehor') {
+    sheetName = 'Tilbehørsrapport';
+    const accessories = db.prepare('SELECT * FROM accessories').all();
+
+    const groups = {};
+    accessories.forEach(a => {
+      const key = a.category || 'Ukategorisert';
+      if (!groups[key]) groups[key] = { count: 0, totalStock: 0, totalValue: 0 };
+      groups[key].count += 1;
+      groups[key].totalStock += a.stock || 0;
+      groups[key].totalValue += (a.price || 0) * (a.stock || 0);
+    });
+
+    rows.push(['Kategori', 'Antall varetyper', 'Totalt på lager', 'Total verdi (kr)']);
+    let grandCount = 0, grandStock = 0, grandValue = 0;
+    Object.entries(groups).sort((a, b) => a[0].localeCompare(b[0])).forEach(([name, g]) => {
+      rows.push([name, g.count, g.totalStock, g.totalValue]);
+      grandCount += g.count;
+      grandStock += g.totalStock;
+      grandValue += g.totalValue;
+    });
+    rows.push(['TOTALT', grandCount, grandStock, grandValue]);
 
   } else {
     return res.status(400).json({ error: 'Ukjent type' });
@@ -356,6 +449,47 @@ app.get('/api/export/:type/:format', (req, res) => {
   } else {
     res.status(400).json({ error: 'Ukjent format' });
   }
+});
+
+// --- IMPORT ---
+app.post('/api/import/instruments', (req, res) => {
+  const { rows } = req.body;
+  const ins = db.prepare('INSERT INTO instruments VALUES (?,?,?,?,?,?,?,?)');
+  let imported = 0;
+  for (const r of (rows || [])) {
+    if (!r.name) continue;
+    ins.run(uid(), r.name, r.category || 'Annet', r.condition || 'God', r.serial || null, r.purchase || null, r.notes || null, r.korps_id || null);
+    imported++;
+  }
+  res.json({ imported });
+});
+
+app.post('/api/import/accessories', (req, res) => {
+  const { rows } = req.body;
+  const ins = db.prepare('INSERT INTO accessories (id,name,category,stock,min_level,notes,price) VALUES (?,?,?,?,?,?,?)');
+  let imported = 0;
+  for (const r of (rows || [])) {
+    if (!r.name) continue;
+    ins.run(uid(), r.name, r.category || null, parseInt(r.stock) || 0, parseInt(r.min_level) || 2, r.notes || null, parseFloat(r.price) || null);
+    imported++;
+  }
+  res.json({ imported });
+});
+
+app.post('/api/export/report', (req, res) => {
+  const { filename, headers, rows } = req.body;
+  if (!headers || !rows) return res.status(400).json({ error: 'Mangler data' });
+  const aoa = [headers, ...rows];
+  const ws = XLSX.utils.aoa_to_sheet(aoa);
+  ws['!cols'] = headers.map((_, ci) =>
+    ({ wch: Math.min(50, Math.max(12, ...aoa.map(r => String(r[ci] ?? '').length))) })
+  );
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Rapport');
+  const buf = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
+  res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+  res.setHeader('Content-Disposition', `attachment; filename="${(filename||'rapport').replace(/[^a-zA-Z0-9æøåÆØÅ._-]/g,'_')}.xlsx"`);
+  res.send(buf);
 });
 
 app.listen(PORT, () => console.log(`Korpsinventar kjører på port ${PORT}`));
