@@ -116,6 +116,15 @@
     .filter-date-input::placeholder { color: var(--text-faint); }
     .filter-date-input.filter-active { border-color: var(--accent); background: rgba(79,70,229,0.08); font-weight: 600; }
     [data-theme="dark"] .filter-date-input.filter-active { background: rgba(129,140,248,0.12); }
+    .logo-korpsname { font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.5); letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
+    .logo-img-wrap { width: 34px; height: 34px; flex-shrink: 0; border-radius: 9px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+    .logo-img-wrap img { width: 100%; height: 100%; object-fit: contain; }
+    /* SETTINGS */
+    .settings-card { background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); border: 1px solid var(--border); overflow: hidden; margin-bottom: 18px; max-width: 520px; }
+    .settings-card-header { padding: 16px 20px; border-bottom: 1px solid var(--border); font-size: 14px; font-weight: 650; }
+    .settings-card-body { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+    .logo-preview-box { width: 64px; height: 64px; border-radius: 12px; background: var(--surface2); border: 1px dashed var(--border-md); display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; }
+    .logo-preview-box img { width: 100%; height: 100%; object-fit: contain; }
 
     /* VARSLER DROPDOWN */
     .varsler-wrap { position: relative; }
@@ -321,14 +330,16 @@
 <!-- SIDEBAR -->
 <aside class="sidebar">
   <div class="sidebar-logo">
-    <div class="logo-icon">
-      <svg viewBox="0 0 28 28" fill="none">
+    <div id="sidebar-logo-icon" class="logo-icon">
+      <img id="sidebar-logo-img" style="display:none;width:100%;height:100%;object-fit:contain;">
+      <svg id="sidebar-logo-svg" viewBox="0 0 28 28" fill="none">
         <path d="M8 17 Q11 11 14 11 Q17 11 20 17" stroke="white" stroke-width="1.8" fill="none" stroke-linecap="round"/>
         <circle cx="8" cy="17" r="2.2" fill="white"/>
         <circle cx="20" cy="17" r="2.2" fill="white"/>
       </svg>
     </div>
-    <div>
+    <div style="min-width:0;">
+      <div id="sidebar-korpsname" class="logo-korpsname" style="display:none;"></div>
       <div class="logo-text">Korpsinventar</div>
       <div class="logo-sub">v2.0</div>
     </div>
@@ -372,6 +383,10 @@
     </button>
   </nav>
   <div class="sidebar-footer">
+    <button class="nav-item" data-section="innstillinger" style="width:100%;margin-bottom:4px;">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/></svg>
+      Innstillinger
+    </button>
     <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">
       <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>
       Mørk modus
@@ -517,7 +532,7 @@
           <summary id="svc-workshop-summary">Verksted: Alle</summary>
           <div class="multiselect-options" id="svc-workshop-options"></div>
         </details>
-        <input type="text" id="svc-date-search" class="filter-date-input" placeholder="Søk dato (f.eks. 2025-03)" oninput="onSvcDateSearch(this)">
+        <input type="date" id="svc-date-search" class="filter-date-input" title="Filtrer på innlevert dato" onchange="onSvcDateSearch(this)">
       </div>
       <div class="card">
         <div class="table-wrap">
@@ -567,6 +582,36 @@
             <thead><tr><th data-sort="name">Vare</th><th data-sort="category">Kategori</th><th data-sort="supplier">Leverandør</th><th data-sort="price">Pris</th><th data-sort="stock">På lager</th><th data-sort="min_level">Min.</th><th data-sort="status">Status</th><th>Handlinger</th></tr></thead>
             <tbody id="acc-table"></tbody>
           </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- INNSTILLINGER -->
+    <div id="innstillinger" class="section">
+      <div class="section-header"><h2>Innstillinger</h2></div>
+      <div class="settings-card">
+        <div class="settings-card-header">Korpsidentitet</div>
+        <div class="settings-card-body">
+          <div class="field">
+            <label>Korpsens navn</label>
+            <input id="settings-korpsname" placeholder="f.eks. Blindern Studenterkameraderi">
+          </div>
+          <div class="field">
+            <label>Logo (vises i sidepanelet og nettleserfanen)</label>
+            <div style="display:flex;align-items:center;gap:14px;margin-top:2px;">
+              <div class="logo-preview-box" id="settings-logo-preview">
+                <span style="font-size:11px;color:var(--text-faint);">Ingen</span>
+              </div>
+              <div style="flex:1;">
+                <input type="file" id="settings-logo-file" accept="image/*" onchange="handleLogoUpload(this)">
+                <div style="font-size:11px;color:var(--text-faint);margin-top:5px;">PNG, JPG, SVG — anbefalt kvadratisk format</div>
+                <button class="btn btn-sm btn-danger" id="settings-remove-logo-btn" onclick="removeSettingsLogo()" style="display:none;margin-top:8px;">Fjern logo</button>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:flex-end;padding-top:4px;">
+            <button class="btn btn-primary" onclick="saveSettings()">Lagre innstillinger</button>
+          </div>
         </div>
       </div>
     </div>
@@ -965,7 +1010,7 @@ async function loadAll() {
   render();
 }
 
-const sectionTitles = { dashboard: 'Oversikt', instrumenter: 'Instrumenter', musikanter: 'Musikanter', service: 'Servicelogg', tilbehor: 'Tilbehør og lager', rapporter: 'Rapporter' };
+const sectionTitles = { dashboard: 'Oversikt', instrumenter: 'Instrumenter', musikanter: 'Musikanter', service: 'Servicelogg', tilbehor: 'Tilbehør og lager', rapporter: 'Rapporter', innstillinger: 'Innstillinger' };
 function navigateTo(sid) {
   document.querySelectorAll('.nav-item[data-section]').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -977,6 +1022,7 @@ function navigateTo(sid) {
   if (titleEl) titleEl.textContent = sectionTitles[sid] || '';
   const inp = document.getElementById('topbar-search');
   if (inp) inp.value = '';
+  if (sid === 'innstillinger') populateSettingsForm();
 }
 document.querySelectorAll('.nav-item[data-section]').forEach(btn => {
   btn.addEventListener('click', () => navigateTo(btn.dataset.section));
@@ -1449,7 +1495,7 @@ function toggleAccSupplierFilter(cb) {
   renderAccessories();
 }
 function onSvcDateSearch(inp) {
-  svcDateSearch = inp.value.trim();
+  svcDateSearch = inp.value;
   inp.classList.toggle('filter-active', svcDateSearch.length > 0);
   renderServiceTable();
 }
@@ -1658,7 +1704,7 @@ function renderServiceTable() {
       return svcWorkshopFilter.has(name);
     });
   }
-  if (svcDateSearch) filtered = filtered.filter(s => s.date && s.date.includes(svcDateSearch));
+  if (svcDateSearch) filtered = filtered.filter(s => s.date === svcDateSearch);
   const list = applySort('service', filtered);
   if (!list.length) { tb.innerHTML=`<tr><td colspan="10" class="empty">${state.service.length ? 'Ingen oppføringer matcher filteret' : 'Ingen serviceoppføringer ennå'}</td></tr>`; syncSortHeaders('service'); return; }
   const today = new Date().toISOString().split('T')[0];
@@ -2434,7 +2480,70 @@ async function confirmImport() {
   await loadAll();
 }
 
-function render() { renderDashboard(); renderInstTable(); renderPlayerTable(); renderServiceTable(); renderAccessories(); renderReports(); updateVarslerBadge(); }
+// --- SETTINGS ---
+function applySettings(korpsname, logo) {
+  // Korpsname in sidebar
+  const nameEl = document.getElementById('sidebar-korpsname');
+  if (nameEl) { nameEl.textContent = korpsname; nameEl.style.display = korpsname ? '' : 'none'; }
+  // Logo in sidebar
+  const imgEl = document.getElementById('sidebar-logo-img');
+  const svgEl = document.getElementById('sidebar-logo-svg');
+  if (imgEl && svgEl) {
+    if (logo) { imgEl.src = logo; imgEl.style.display = ''; svgEl.style.display = 'none'; }
+    else { imgEl.style.display = 'none'; svgEl.style.display = ''; }
+  }
+  // Favicon
+  let favicon = document.querySelector("link[rel~='icon']");
+  if (!favicon) { favicon = document.createElement('link'); favicon.rel = 'icon'; document.head.appendChild(favicon); }
+  favicon.href = logo || '';
+  // Page title
+  document.title = korpsname ? korpsname + ' — Korpsinventar' : 'Korpsinventar';
+}
+function loadSettings() {
+  applySettings(localStorage.getItem('korps-name') || '', localStorage.getItem('korps-logo') || '');
+}
+function populateSettingsForm() {
+  const korpsname = localStorage.getItem('korps-name') || '';
+  const logo = localStorage.getItem('korps-logo') || '';
+  const inp = document.getElementById('settings-korpsname');
+  if (inp) inp.value = korpsname;
+  updateLogoPreview(logo);
+}
+function updateLogoPreview(src) {
+  const box = document.getElementById('settings-logo-preview');
+  const btn = document.getElementById('settings-remove-logo-btn');
+  if (!box) return;
+  if (src) {
+    box.innerHTML = `<img src="${src}" style="width:100%;height:100%;object-fit:contain;">`;
+    if (btn) btn.style.display = '';
+  } else {
+    box.innerHTML = '<span style="font-size:11px;color:var(--text-faint);">Ingen</span>';
+    if (btn) btn.style.display = 'none';
+  }
+}
+function handleLogoUpload(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => updateLogoPreview(e.target.result);
+  reader.readAsDataURL(file);
+}
+function removeSettingsLogo() {
+  document.getElementById('settings-logo-file').value = '';
+  updateLogoPreview('');
+}
+function saveSettings() {
+  const korpsname = document.getElementById('settings-korpsname').value.trim();
+  const img = document.querySelector('#settings-logo-preview img');
+  const logo = img ? img.src : '';
+  localStorage.setItem('korps-name', korpsname);
+  if (logo) localStorage.setItem('korps-logo', logo);
+  else localStorage.removeItem('korps-logo');
+  applySettings(korpsname, logo);
+  toast('Innstillinger lagret!');
+}
+
+function render() { renderDashboard(); renderInstTable(); renderPlayerTable(); renderServiceTable(); renderAccessories(); renderReports(); updateVarslerBadge(); loadSettings(); }
 loadAll();
 </script>
 </body>
