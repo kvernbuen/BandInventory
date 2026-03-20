@@ -2154,19 +2154,19 @@ function showGlobalSearch(q) {
     </div>` : '';
 
   const instHtml = mkSection('Instrumenter', inst.length, `<table><thead><tr><th>ID</th><th>Navn</th><th>Kategori</th><th>Stand</th><th>Tildelt</th></tr></thead><tbody>
-    ${inst.map(i => { const p = state.players.find(p => (p.instruments||[]).includes(i.id)); return `<tr><td>${idbadge(i.korps_id)}</td><td><strong>${i.name}</strong></td><td><span class="badge badge-gray">${i.category}</span></td><td>${condBadge(i.condition)}</td><td style="color:${p?'var(--text)':'var(--text-faint)'};">${p?p.name:'Ikke tildelt'}</td></tr>`; }).join('')}
+    ${inst.map(i => { const p = state.players.find(p => (p.instruments||[]).includes(i.id)); return `<tr style="cursor:pointer;" title="Klikk for å redigere" onclick="openInstModal('${i.id}')"><td>${idbadge(i.korps_id)}</td><td><strong>${i.name}</strong></td><td><span class="badge badge-gray">${i.category}</span></td><td>${condBadge(i.condition)}</td><td style="color:${p?'var(--text)':'var(--text-faint)'};">${p?p.name:'Ikke tildelt'}</td></tr>`; }).join('')}
   </tbody></table>`);
 
   const playersHtml = mkSection('Musikanter', players.length, `<table><thead><tr><th>Navn</th><th>Seksjon</th><th>Kontakt</th></tr></thead><tbody>
-    ${players.map(p => `<tr><td><strong>${p.name}</strong></td><td><span class="badge badge-info">${p.section}</span></td><td style="color:var(--text-muted);">${p.contact||'—'}</td></tr>`).join('')}
+    ${players.map(p => `<tr style="cursor:pointer;" title="Klikk for å redigere" onclick="openPlayerModal('${p.id}')"><td><strong>${p.name}</strong></td><td><span class="badge badge-info">${p.section}</span></td><td style="color:var(--text-muted);">${p.contact||'—'}</td></tr>`).join('')}
   </tbody></table>`);
 
   const svcHtml = mkSection('Servicelogg', services.length, `<table><thead><tr><th>Dato</th><th>Instrument</th><th>Type</th><th>Status</th><th>Kostnad</th></tr></thead><tbody>
-    ${services.map(s => { const i=state.instruments.find(x=>x.id===s.inst_id); const st=getServiceStatus(s); return `<tr><td style="font-size:12px;">${s.date}</td><td>${i?i.name+' '+idbadge(i.korps_id):'?'}</td><td><span class="badge badge-gray">${s.type}</span></td><td><span class="badge ${st.cls}">${st.label}</span></td><td style="white-space:nowrap;">${fmtKr(s.cost)}</td></tr>`; }).join('')}
+    ${services.map(s => { const i=state.instruments.find(x=>x.id===s.inst_id); const st=getServiceStatus(s); return `<tr style="cursor:pointer;" title="Klikk for å redigere" onclick="openServiceModal('${s.id}')"><td style="font-size:12px;">${s.date}</td><td>${i?i.name+' '+idbadge(i.korps_id):'?'}</td><td><span class="badge badge-gray">${s.type}</span></td><td><span class="badge ${st.cls}">${st.label}</span></td><td style="white-space:nowrap;">${fmtKr(s.cost)}</td></tr>`; }).join('')}
   </tbody></table>`);
 
   const accHtml = mkSection('Tilbehør', accessories.length, `<table><thead><tr><th>Vare</th><th>Kategori</th><th>På lager</th><th>Status</th></tr></thead><tbody>
-    ${accessories.map(a => { const sc=a.stock===0?'badge-bad':a.stock<=a.min_level?'badge-warn':'badge-ok'; return `<tr><td><strong>${a.name}</strong></td><td><span class="badge badge-gray">${a.category||'—'}</span></td><td style="font-weight:600;">${a.stock}</td><td><span class="badge ${sc}">${a.stock===0?'Tomt':a.stock<=a.min_level?'Lavt':'OK'}</span></td></tr>`; }).join('')}
+    ${accessories.map(a => { const sc=a.stock===0?'badge-bad':a.stock<=a.min_level?'badge-warn':'badge-ok'; return `<tr style="cursor:pointer;" title="Klikk for å redigere" onclick="openAccModal('${a.id}')"><td><strong>${a.name}</strong></td><td><span class="badge badge-gray">${a.category||'—'}</span></td><td style="font-weight:600;">${a.stock}</td><td><span class="badge ${sc}">${a.stock===0?'Tomt':a.stock<=a.min_level?'Lavt':'OK'}</span></td></tr>`; }).join('')}
   </tbody></table>`);
 
   document.getElementById('dash-content-grid').innerHTML = `<div style="grid-column:1/-1;">
