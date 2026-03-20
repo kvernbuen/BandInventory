@@ -373,11 +373,11 @@
       <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm2 10a1 1 0 10-2 0v3a1 1 0 102 0v-3zm4-1a1 1 0 011 1v3a1 1 0 11-2 0v-3a1 1 0 011-1zm-2-6a1 1 0 10-2 0v3a1 1 0 102 0V5z" clip-rule="evenodd"/></svg>
       Rapporter
     </button>
-    <button class="nav-item" onclick="openWorkshopsModal()">
+    <button class="nav-item" data-section="verksteder">
       <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4z" clip-rule="evenodd"/></svg>
       Verksteder
     </button>
-    <button class="nav-item" onclick="openSuppliersModal()">
+    <button class="nav-item" data-section="leverandorer">
       <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5z" clip-rule="evenodd"/></svg>
       Leverandører
     </button>
@@ -581,6 +581,42 @@
           <table>
             <thead><tr><th data-sort="name">Vare</th><th data-sort="category">Kategori</th><th data-sort="supplier">Leverandør</th><th data-sort="price">Pris</th><th data-sort="stock">På lager</th><th data-sort="min_level">Min.</th><th data-sort="status">Status</th><th>Handlinger</th></tr></thead>
             <tbody id="acc-table"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- VERKSTEDER -->
+    <div id="verksteder" class="section">
+      <div class="section-header">
+        <h2>Verksteder</h2>
+        <div class="section-header-actions">
+          <button class="btn btn-primary" onclick="openWorkshopModal()">+ Legg til verksted</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th data-sort="name">Navn</th><th data-sort="contact">Kontakt</th><th data-sort="address">Adresse</th><th data-sort="notes">Merknader</th><th>Handlinger</th></tr></thead>
+            <tbody id="workshops-table"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- LEVERANDØRER -->
+    <div id="leverandorer" class="section">
+      <div class="section-header">
+        <h2>Leverandører</h2>
+        <div class="section-header-actions">
+          <button class="btn btn-primary" onclick="openSupplierModal()">+ Legg til leverandør</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th data-sort="name">Navn</th><th data-sort="contact">Kontakt</th><th data-sort="address">Adresse</th><th data-sort="notes">Merknader</th><th>Handlinger</th></tr></thead>
+            <tbody id="suppliers-table"></tbody>
           </table>
         </div>
       </div>
@@ -802,31 +838,10 @@
   </div>
 </div>
 
-<!-- Modal: Verksteder -->
-<div id="workshops-modal" class="modal-overlay">
-  <div class="modal modal-wide">
-    <h3>Verksteder</h3>
-    <div id="workshops-list" style="margin-bottom:1rem;max-height:260px;overflow-y:auto;"></div>
-    <div style="border-top:0.5px solid var(--border);padding-top:1rem;">
-      <p style="font-size:12px;font-weight:500;color:var(--text-muted);margin-bottom:8px;">Legg til verksted</p>
-      <div class="form-grid">
-        <div class="field full"><label>Navn *</label><input id="ws-name" placeholder="f.eks. Musikk & Service AS"></div>
-        <div class="field"><label>Kontakt</label><input id="ws-contact" placeholder="Telefon eller e-post"></div>
-        <div class="field"><label>Adresse</label><input id="ws-address" placeholder="Gateadresse"></div>
-        <div class="field full"><label>Merknader</label><input id="ws-notes" placeholder="Åpningstider, spesialiteter, osv."></div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn" onclick="closeModal('workshops-modal')">Lukk</button>
-      <button class="btn btn-primary" onclick="saveWorkshop()">Lagre verksted</button>
-    </div>
-  </div>
-</div>
-
-<!-- Modal: Rediger verksted -->
+<!-- Modal: Verksted (add/edit) -->
 <div id="ws-edit-modal" class="modal-overlay">
   <div class="modal" style="max-width:440px;">
-    <h3>Rediger verksted</h3>
+    <h3 id="ws-modal-title">Legg til verksted</h3>
     <div class="form-grid">
       <div class="field full"><label>Navn *</label><input id="ws-edit-name"></div>
       <div class="field"><label>Kontakt</label><input id="ws-edit-contact"></div>
@@ -840,31 +855,10 @@
   </div>
 </div>
 
-<!-- Modal: Leverandører -->
-<div id="suppliers-modal" class="modal-overlay">
-  <div class="modal modal-wide">
-    <h3>Leverandører</h3>
-    <div id="suppliers-list" style="margin-bottom:1rem;max-height:260px;overflow-y:auto;"></div>
-    <div style="border-top:0.5px solid var(--border);padding-top:1rem;">
-      <p style="font-size:12px;font-weight:500;color:var(--text-muted);margin-bottom:8px;">Legg til leverandør</p>
-      <div class="form-grid">
-        <div class="field full"><label>Navn *</label><input id="sup-name" placeholder="f.eks. Norges Musikk AS"></div>
-        <div class="field"><label>Kontakt</label><input id="sup-contact" placeholder="Telefon eller e-post"></div>
-        <div class="field"><label>Adresse</label><input id="sup-address" placeholder="Gateadresse"></div>
-        <div class="field full"><label>Merknader</label><input id="sup-notes" placeholder="Nettside, kontaktperson, osv."></div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn" onclick="closeModal('suppliers-modal')">Lukk</button>
-      <button class="btn btn-primary" onclick="saveSupplier()">Lagre leverandør</button>
-    </div>
-  </div>
-</div>
-
-<!-- Modal: Rediger leverandør -->
+<!-- Modal: Leverandør (add/edit) -->
 <div id="sup-edit-modal" class="modal-overlay">
   <div class="modal" style="max-width:440px;">
-    <h3>Rediger leverandør</h3>
+    <h3 id="sup-modal-title">Legg til leverandør</h3>
     <div class="form-grid">
       <div class="field full"><label>Navn *</label><input id="sup-edit-name"></div>
       <div class="field"><label>Kontakt</label><input id="sup-edit-contact"></div>
@@ -1010,8 +1004,8 @@ async function loadAll() {
   render();
 }
 
-const sectionTitles = { dashboard: 'Oversikt', instrumenter: 'Instrumenter', musikanter: 'Musikanter', service: 'Servicelogg', tilbehor: 'Tilbehør og lager', rapporter: 'Rapporter', innstillinger: 'Innstillinger' };
-function navigateTo(sid) {
+const sectionTitles = { dashboard: 'Oversikt', instrumenter: 'Instrumenter', musikanter: 'Musikanter', service: 'Servicelogg', tilbehor: 'Tilbehør og lager', verksteder: 'Verksteder', leverandorer: 'Leverandører', rapporter: 'Rapporter', innstillinger: 'Innstillinger' };
+function navigateTo(sid, addHistory = true) {
   document.querySelectorAll('.nav-item[data-section]').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   const btn = document.querySelector(`.nav-item[data-section="${sid}"]`);
@@ -1023,6 +1017,7 @@ function navigateTo(sid) {
   const inp = document.getElementById('topbar-search');
   if (inp) inp.value = '';
   if (sid === 'innstillinger') populateSettingsForm();
+  if (addHistory) history.pushState({ section: sid }, '', '#' + sid);
 }
 document.querySelectorAll('.nav-item[data-section]').forEach(btn => {
   btn.addEventListener('click', () => navigateTo(btn.dataset.section));
@@ -1325,9 +1320,11 @@ const sortState = {
   instruments: { col: null, dir: 1 },
   players:     { col: null, dir: 1 },
   service:     { col: null, dir: 1 },
-  accessories: { col: null, dir: 1 }
+  accessories: { col: null, dir: 1 },
+  workshops:   { col: null, dir: 1 },
+  suppliers:   { col: null, dir: 1 }
 };
-const tbodyIds = { instruments: 'inst-table', players: 'player-table', service: 'service-table', accessories: 'acc-table' };
+const tbodyIds = { instruments: 'inst-table', players: 'player-table', service: 'service-table', accessories: 'acc-table', workshops: 'workshops-table', suppliers: 'suppliers-table' };
 
 function getSortVal(tableKey, item, col) {
   switch (tableKey) {
@@ -1364,6 +1361,13 @@ function getSortVal(tableKey, item, col) {
       if (col === 'min_level') return item.min_level || 0;
       if (col === 'status')    return getAccStatus(item);
       break;
+    case 'workshops':
+    case 'suppliers':
+      if (col === 'name')    return item.name?.toLowerCase() || '';
+      if (col === 'contact') return item.contact?.toLowerCase() || '';
+      if (col === 'address') return item.address?.toLowerCase() || '';
+      if (col === 'notes')   return item.notes?.toLowerCase() || '';
+      break;
   }
   return '';
 }
@@ -1393,7 +1397,7 @@ function syncSortHeaders(tableKey) {
   });
 }
 // Wire up sort clicks — runs inline after DOM is ready
-[['inst-table','instruments'],['player-table','players'],['service-table','service'],['acc-table','accessories']].forEach(([tbId, key]) => {
+[['inst-table','instruments'],['player-table','players'],['service-table','service'],['acc-table','accessories'],['workshops-table','workshops'],['suppliers-table','suppliers']].forEach(([tbId, key]) => {
   const table = document.getElementById(tbId)?.closest('table');
   if (!table) return;
   table.querySelector('thead')?.querySelectorAll('th[data-sort]').forEach(th => {
@@ -1771,107 +1775,85 @@ function openServiceReport() {
 }
 
 // --- WORKSHOPS ---
-function openWorkshopsModal() {
-  editingId.ws = null;
-  document.getElementById('ws-name').value = '';
-  document.getElementById('ws-contact').value = '';
-  document.getElementById('ws-address').value = '';
-  document.getElementById('ws-notes').value = '';
-  renderWorkshopsList();
-  openModal('workshops-modal');
-}
-function renderWorkshopsList() {
-  const el = document.getElementById('workshops-list');
-  if (!state.workshops.length) { el.innerHTML = '<p style="color:var(--text-faint);font-size:13px;padding:8px 0;">Ingen verksteder registrert ennå.</p>'; return; }
-  el.innerHTML = state.workshops.map(w => `
-    <div class="entity-item">
-      <div class="entity-item-info">
-        <div class="entity-item-name">${w.name}</div>
-        <div class="entity-item-meta">${[w.contact, w.address].filter(Boolean).join(' · ') || '—'}</div>
-      </div>
-      <div style="display:flex;gap:6px;">
-        <button class="btn-sm" onclick="openWorkshopEdit('${w.id}')">Rediger</button>
-        <button class="btn-sm btn-danger" onclick="deleteWorkshop('${w.id}')">Slett</button>
-      </div>
-    </div>`).join('');
-}
-async function saveWorkshop() {
-  const name = document.getElementById('ws-name').value.trim();
-  if (!name) { toast('Navn er påkrevd'); return; }
-  await api('POST', '/api/workshops', { name, contact: document.getElementById('ws-contact').value.trim(), address: document.getElementById('ws-address').value.trim(), notes: document.getElementById('ws-notes').value.trim() });
-  document.getElementById('ws-name').value = ''; document.getElementById('ws-contact').value = '';
-  document.getElementById('ws-address').value = ''; document.getElementById('ws-notes').value = '';
-  toast('Verksted lagret!'); await loadAll(); renderWorkshopsList();
-}
-function openWorkshopEdit(id) {
-  const w = state.workshops.find(x => x.id === id); if (!w) return;
-  editingId.ws = id;
-  document.getElementById('ws-edit-name').value = w.name;
-  document.getElementById('ws-edit-contact').value = w.contact || '';
-  document.getElementById('ws-edit-address').value = w.address || '';
-  document.getElementById('ws-edit-notes').value = w.notes || '';
+function openWorkshopModal(id) {
+  editingId.ws = id || null;
+  const w = id ? state.workshops.find(x => x.id === id) : null;
+  document.getElementById('ws-modal-title').textContent = w ? 'Rediger verksted' : 'Legg til verksted';
+  document.getElementById('ws-edit-name').value = w?.name || '';
+  document.getElementById('ws-edit-contact').value = w?.contact || '';
+  document.getElementById('ws-edit-address').value = w?.address || '';
+  document.getElementById('ws-edit-notes').value = w?.notes || '';
   openModal('ws-edit-modal');
+}
+function renderVerkstederTable() {
+  const tb = document.getElementById('workshops-table');
+  if (!tb) return;
+  const list = applySort('workshops', state.workshops);
+  if (!list.length) { tb.innerHTML = '<tr><td colspan="5" class="empty">Ingen verksteder registrert ennå</td></tr>'; syncSortHeaders('workshops'); return; }
+  tb.innerHTML = list.map(w => `<tr>
+    <td><strong style="font-weight:600">${w.name}</strong></td>
+    <td style="font-size:13px;color:var(--text-muted);">${w.contact||'—'}</td>
+    <td style="font-size:13px;color:var(--text-muted);">${w.address||'—'}</td>
+    <td style="font-size:13px;color:var(--text-muted);">${w.notes||'—'}</td>
+    <td><div style="display:flex;gap:6px;">
+      <button class="btn-sm" onclick="openWorkshopModal('${w.id}')">Rediger</button>
+      <button class="btn-sm btn-danger" onclick="deleteWorkshop('${w.id}')">Slett</button>
+    </div></td></tr>`).join('');
+  syncSortHeaders('workshops');
 }
 async function saveWorkshopEdit() {
   const name = document.getElementById('ws-edit-name').value.trim(); if (!name) return;
-  await api('PUT', '/api/workshops/'+editingId.ws, { name, contact: document.getElementById('ws-edit-contact').value.trim(), address: document.getElementById('ws-edit-address').value.trim(), notes: document.getElementById('ws-edit-notes').value.trim() });
-  closeModal('ws-edit-modal'); toast('Verksted oppdatert!'); await loadAll(); renderWorkshopsList();
+  const body = { name, contact: document.getElementById('ws-edit-contact').value.trim(), address: document.getElementById('ws-edit-address').value.trim(), notes: document.getElementById('ws-edit-notes').value.trim() };
+  if (editingId.ws) await api('PUT', '/api/workshops/'+editingId.ws, body);
+  else await api('POST', '/api/workshops', body);
+  closeModal('ws-edit-modal');
+  toast(editingId.ws ? 'Verksted oppdatert!' : 'Verksted lagret!');
+  await loadAll();
 }
 async function deleteWorkshop(id) {
   if (!confirm('Slette dette verkstedet?')) return;
-  await api('DELETE', '/api/workshops/'+id); toast('Slettet'); await loadAll(); renderWorkshopsList();
+  await api('DELETE', '/api/workshops/'+id); toast('Slettet'); await loadAll();
 }
 
 // --- SUPPLIERS ---
-function openSuppliersModal() {
-  editingId.sup = null;
-  document.getElementById('sup-name').value = '';
-  document.getElementById('sup-contact').value = '';
-  document.getElementById('sup-address').value = '';
-  document.getElementById('sup-notes').value = '';
-  renderSuppliersList();
-  openModal('suppliers-modal');
-}
-function renderSuppliersList() {
-  const el = document.getElementById('suppliers-list');
-  if (!state.suppliers.length) { el.innerHTML = '<p style="color:var(--text-faint);font-size:13px;padding:8px 0;">Ingen leverandører registrert ennå.</p>'; return; }
-  el.innerHTML = state.suppliers.map(s => `
-    <div class="entity-item">
-      <div class="entity-item-info">
-        <div class="entity-item-name">${s.name}</div>
-        <div class="entity-item-meta">${[s.contact, s.address].filter(Boolean).join(' · ') || '—'}</div>
-      </div>
-      <div style="display:flex;gap:6px;">
-        <button class="btn-sm" onclick="openSupplierEdit('${s.id}')">Rediger</button>
-        <button class="btn-sm btn-danger" onclick="deleteSupplier('${s.id}')">Slett</button>
-      </div>
-    </div>`).join('');
-}
-async function saveSupplier() {
-  const name = document.getElementById('sup-name').value.trim();
-  if (!name) { toast('Navn er påkrevd'); return; }
-  await api('POST', '/api/suppliers', { name, contact: document.getElementById('sup-contact').value.trim(), address: document.getElementById('sup-address').value.trim(), notes: document.getElementById('sup-notes').value.trim() });
-  document.getElementById('sup-name').value = ''; document.getElementById('sup-contact').value = '';
-  document.getElementById('sup-address').value = ''; document.getElementById('sup-notes').value = '';
-  toast('Leverandør lagret!'); await loadAll(); renderSuppliersList();
-}
-function openSupplierEdit(id) {
-  const s = state.suppliers.find(x => x.id === id); if (!s) return;
-  editingId.sup = id;
-  document.getElementById('sup-edit-name').value = s.name;
-  document.getElementById('sup-edit-contact').value = s.contact || '';
-  document.getElementById('sup-edit-address').value = s.address || '';
-  document.getElementById('sup-edit-notes').value = s.notes || '';
+function openSupplierModal(id) {
+  editingId.sup = id || null;
+  const s = id ? state.suppliers.find(x => x.id === id) : null;
+  document.getElementById('sup-modal-title').textContent = s ? 'Rediger leverandør' : 'Legg til leverandør';
+  document.getElementById('sup-edit-name').value = s?.name || '';
+  document.getElementById('sup-edit-contact').value = s?.contact || '';
+  document.getElementById('sup-edit-address').value = s?.address || '';
+  document.getElementById('sup-edit-notes').value = s?.notes || '';
   openModal('sup-edit-modal');
+}
+function renderLeverandorerTable() {
+  const tb = document.getElementById('suppliers-table');
+  if (!tb) return;
+  const list = applySort('suppliers', state.suppliers);
+  if (!list.length) { tb.innerHTML = '<tr><td colspan="5" class="empty">Ingen leverandører registrert ennå</td></tr>'; syncSortHeaders('suppliers'); return; }
+  tb.innerHTML = list.map(s => `<tr>
+    <td><strong style="font-weight:600">${s.name}</strong></td>
+    <td style="font-size:13px;color:var(--text-muted);">${s.contact||'—'}</td>
+    <td style="font-size:13px;color:var(--text-muted);">${s.address||'—'}</td>
+    <td style="font-size:13px;color:var(--text-muted);">${s.notes||'—'}</td>
+    <td><div style="display:flex;gap:6px;">
+      <button class="btn-sm" onclick="openSupplierModal('${s.id}')">Rediger</button>
+      <button class="btn-sm btn-danger" onclick="deleteSupplier('${s.id}')">Slett</button>
+    </div></td></tr>`).join('');
+  syncSortHeaders('suppliers');
 }
 async function saveSupplierEdit() {
   const name = document.getElementById('sup-edit-name').value.trim(); if (!name) return;
-  await api('PUT', '/api/suppliers/'+editingId.sup, { name, contact: document.getElementById('sup-edit-contact').value.trim(), address: document.getElementById('sup-edit-address').value.trim(), notes: document.getElementById('sup-edit-notes').value.trim() });
-  closeModal('sup-edit-modal'); toast('Leverandør oppdatert!'); await loadAll(); renderSuppliersList();
+  const body = { name, contact: document.getElementById('sup-edit-contact').value.trim(), address: document.getElementById('sup-edit-address').value.trim(), notes: document.getElementById('sup-edit-notes').value.trim() };
+  if (editingId.sup) await api('PUT', '/api/suppliers/'+editingId.sup, body);
+  else await api('POST', '/api/suppliers', body);
+  closeModal('sup-edit-modal');
+  toast(editingId.sup ? 'Leverandør oppdatert!' : 'Leverandør lagret!');
+  await loadAll();
 }
 async function deleteSupplier(id) {
   if (!confirm('Slette denne leverandøren?')) return;
-  await api('DELETE', '/api/suppliers/'+id); toast('Slettet'); await loadAll(); renderSuppliersList();
+  await api('DELETE', '/api/suppliers/'+id); toast('Slettet'); await loadAll();
 }
 
 // --- TIL HENTING MODAL ---
@@ -2543,8 +2525,22 @@ function saveSettings() {
   toast('Innstillinger lagret!');
 }
 
-function render() { renderDashboard(); renderInstTable(); renderPlayerTable(); renderServiceTable(); renderAccessories(); renderReports(); updateVarslerBadge(); loadSettings(); }
+function render() { renderDashboard(); renderInstTable(); renderPlayerTable(); renderServiceTable(); renderAccessories(); renderVerkstederTable(); renderLeverandorerTable(); renderReports(); updateVarslerBadge(); loadSettings(); }
 loadAll();
+
+// --- HISTORY API ---
+{
+  const _initSid = location.hash.slice(1);
+  if (_initSid && document.getElementById(_initSid) && sectionTitles[_initSid]) {
+    navigateTo(_initSid, false);
+    history.replaceState({ section: _initSid }, '', '#' + _initSid);
+  } else {
+    history.replaceState({ section: 'dashboard' }, '', location.pathname + location.search);
+  }
+  window.addEventListener('popstate', e => {
+    navigateTo(e.state?.section || 'dashboard', false);
+  });
+}
 </script>
 </body>
 </html>
