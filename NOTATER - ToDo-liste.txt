@@ -1,8 +1,0 @@
-Endringer til utføring:
-
-
-
-
-NYE ENDRINGER:
-* Datofelt for neste sjekk av instrumentets stand. Dersom dato er fylt ut og datoen er nådd, legg den til i varsler.
-* Ett ToDo-liste view der man kan scanne inn enten Instrument eller vare og skrive inn merknad på hva som må gjøres med den. Når punktet er utført, trengs en måte å kvittere ut punktet som utført med dato og hvem som fullførte punktet.
