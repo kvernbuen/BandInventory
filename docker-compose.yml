@@ -2,7 +2,7 @@ services:
   korpsinventar:
     build: .
     expose:
-      - "3000"
+      - "3001"
     volumes:
       - korpsinventar-data:/data
     restart: unless-stopped

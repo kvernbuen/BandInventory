@@ -205,12 +205,14 @@
     .badge-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
     .badge-ok, .badge-green { background: #dcfce7; color: #15803d; }
     .badge-warn, .badge-amber { background: #fef3c7; color: #92400e; }
+    .badge-yellow { background: #fef08a; color: #713f12; }
     .badge-bad, .badge-red { background: #fee2e2; color: #991b1b; }
     .badge-info, .badge-indigo { background: #eef2ff; color: #3730a3; }
     .badge-purple { background: #ede9fe; color: #5b21b6; }
     .badge-gray { background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border); }
     [data-theme="dark"] .badge-ok, [data-theme="dark"] .badge-green { background: #052e16; color: #4ade80; }
     [data-theme="dark"] .badge-warn, [data-theme="dark"] .badge-amber { background: #431407; color: #fb923c; }
+    [data-theme="dark"] .badge-yellow { background: #422006; color: #fde047; }
     [data-theme="dark"] .badge-bad, [data-theme="dark"] .badge-red { background: #450a0a; color: #f87171; }
     [data-theme="dark"] .badge-info, [data-theme="dark"] .badge-indigo { background: #1e1b4b; color: #a5b4fc; }
     [data-theme="dark"] .badge-purple { background: #2e1065; color: #c084fc; }
@@ -368,6 +370,11 @@
       Tilbehør
       <span class="nav-badge amber" id="nav-badge-acc" style="display:none">0</span>
     </button>
+    <button class="nav-item" data-section="gjoremal">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h3a1 1 0 100-2H6zm0 4a1 1 0 100 2h3a1 1 0 100-2H6zm5-4a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1zm0 4a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1z" clip-rule="evenodd"/></svg>
+      Gjøremål
+      <span class="nav-badge" id="nav-badge-todos" style="display:none">0</span>
+    </button>
     <div class="nav-section-label" style="margin-top:8px;">Administrasjon</div>
     <button class="nav-item" data-section="rapporter">
       <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm2 10a1 1 0 10-2 0v3a1 1 0 102 0v-3zm4-1a1 1 0 011 1v3a1 1 0 11-2 0v-3a1 1 0 011-1zm-2-6a1 1 0 10-2 0v3a1 1 0 102 0V5z" clip-rule="evenodd"/></svg>
@@ -461,7 +468,7 @@
       <div class="card">
         <div class="table-wrap">
           <table>
-            <thead><tr><th data-sort="korps_id">Instrument-ID</th><th data-sort="name">Navn</th><th data-sort="category">Kategori</th><th data-sort="condition">Stand</th><th data-sort="player">Tildelt</th><th>Handlinger</th></tr></thead>
+            <thead><tr><th data-sort="korps_id">Instrument-ID</th><th data-sort="name">Navn</th><th data-sort="category">Kategori</th><th data-sort="condition">Stand</th><th data-sort="next_check">Neste sjekk</th><th data-sort="player">Tildelt</th><th>Handlinger</th></tr></thead>
             <tbody id="inst-table"></tbody>
           </table>
         </div>
@@ -586,6 +593,32 @@
       </div>
     </div>
 
+    <!-- GJØREMÅL -->
+    <div id="gjoremal" class="section">
+      <div class="section-header">
+        <h2>Gjøremål</h2>
+        <div class="section-header-actions">
+          <button class="btn btn-primary" onclick="openTodoModal()">+ Legg til gjøremål</button>
+        </div>
+      </div>
+      <div class="filter-bar">
+        <span class="filter-bar-label">Vis:</span>
+        <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;color:var(--text-muted);white-space:nowrap;"><input type="radio" name="todo-filter" value="active" onchange="setTodoFilter('active')" checked> Aktive</label>
+        <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;color:var(--text-muted);white-space:nowrap;"><input type="radio" name="todo-filter" value="open" onchange="setTodoFilter('open')"> Åpne</label>
+        <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;color:var(--text-muted);white-space:nowrap;"><input type="radio" name="todo-filter" value="in_progress" onchange="setTodoFilter('in_progress')"> Under arbeid</label>
+        <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;color:var(--text-muted);white-space:nowrap;"><input type="radio" name="todo-filter" value="done" onchange="setTodoFilter('done')"> Fullførte</label>
+        <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;color:var(--text-muted);white-space:nowrap;"><input type="radio" name="todo-filter" value="all" onchange="setTodoFilter('all')"> Alle</label>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Gjelder</th><th>Oppgave</th><th>Registrert</th><th>Registrert av</th><th>Status</th><th>Ansvarlig</th><th>Kvittert av</th><th>Handlinger</th></tr></thead>
+            <tbody id="todos-table"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
     <!-- VERKSTEDER -->
     <div id="verksteder" class="section">
       <div class="section-header">
@@ -685,6 +718,7 @@
       </div>
       <div class="field"><label>Serienummer (valgfritt)</label><input id="inst-serial" placeholder="Produsentens serienr."></div>
       <div class="field"><label>Kjøpsdato</label><input type="date" id="inst-purchase"></div>
+      <div class="field"><label>Neste sjekk (dato)</label><input type="date" id="inst-next-check"></div>
       <div class="field full"><label>Merknader</label><textarea id="inst-notes" placeholder="Oppbevaringssted, osv."></textarea></div>
     </div>
     <div class="modal-footer">
@@ -944,6 +978,92 @@
   </div>
 </div>
 
+<!-- Modal: Gjøremål - Legg til / rediger -->
+<div id="todo-modal" class="modal-overlay">
+  <div class="modal">
+    <h3 id="todo-modal-title">Legg til gjøremål</h3>
+    <div class="form-grid">
+      <div class="field full">
+        <label>Gjelder (valgfritt)</label>
+        <div style="display:flex;gap:12px;align-items:center;margin-bottom:6px;">
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;"><input type="radio" name="todo-type" value="general" onchange="onTodoTypeChange()" checked> Generell</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;"><input type="radio" name="todo-type" value="instrument" onchange="onTodoTypeChange()"> Instrument</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;"><input type="radio" name="todo-type" value="accessory" onchange="onTodoTypeChange()"> Vare</label>
+        </div>
+        <div id="todo-item-picker" style="display:none;">
+          <div style="display:flex;gap:6px;align-items:center;">
+            <input id="todo-item-search" list="todo-item-datalist" placeholder="Søk etter navn eller ID…" oninput="onTodoItemSearch(this.value)" style="flex:1;">
+            <datalist id="todo-item-datalist"></datalist>
+            <button type="button" class="btn btn-sm" onclick="toggleTodoScanner()" id="todo-scan-btn" title="Skann QR/strekkode">📷 Skann</button>
+          </div>
+          <div id="todo-scanner-wrap" style="display:none;margin-top:8px;">
+            <div style="position:relative;width:100%;max-width:320px;background:#000;border-radius:8px;overflow:hidden;">
+              <video id="todo-scanner-video" autoplay playsinline muted style="width:100%;display:block;max-height:180px;object-fit:cover;"></video>
+            </div>
+            <p class="scanner-hint" style="margin-top:4px;">Pek kameraet mot QR-kode eller strekkode</p>
+          </div>
+        </div>
+        <div id="todo-item-found" style="display:none;margin-top:6px;padding:8px 12px;background:var(--surface2);border-radius:8px;font-size:13px;align-items:center;gap:6px;"></div>
+      </div>
+      <div class="field full">
+        <label>Beskrivelse / oppgave *</label>
+        <textarea id="todo-note" placeholder="Hva må gjøres?"></textarea>
+      </div>
+      <div class="field">
+        <label>Registrert av (valgfritt)</label>
+        <input id="todo-created-by" placeholder="Navn">
+      </div>
+      <div class="field">
+        <label>Ansvarlig (valgfritt)</label>
+        <input id="todo-edit-assigned-to" placeholder="Navn på den som har oppgaven">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-service" id="todo-modal-done-btn" style="display:none;margin-right:auto;" onclick="closeTodoModal();openTodoDoneModal(editingTodoId)">Kvitter ut</button>
+      <button class="btn" onclick="closeTodoModal()">Avbryt</button>
+      <button class="btn btn-primary" onclick="saveTodo()">Lagre</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Gjøremål - Kvitter ut -->
+<div id="todo-done-modal" class="modal-overlay">
+  <div class="modal" style="max-width:400px;">
+    <h3>Kvitter ut gjøremål</h3>
+    <div class="form-grid">
+      <div class="field">
+        <label>Fullført dato</label>
+        <input type="date" id="todo-done-date">
+      </div>
+      <div class="field">
+        <label>Fullført av</label>
+        <input id="todo-done-by" placeholder="Navn">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('todo-done-modal')">Avbryt</button>
+      <button class="btn btn-primary" onclick="markTodoDone()">Kvitter ut</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Gjøremål - Under arbeid -->
+<div id="todo-start-modal" class="modal-overlay">
+  <div class="modal" style="max-width:400px;">
+    <h3>Sett under arbeid</h3>
+    <div class="form-grid">
+      <div class="field full">
+        <label>Ansvarlig</label>
+        <input id="todo-assigned-to" placeholder="Navn på den som tar på seg oppgaven">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('todo-start-modal')">Avbryt</button>
+      <button class="btn btn-primary" onclick="markTodoInProgress()">Sett under arbeid</button>
+    </div>
+  </div>
+</div>
+
 <!-- Hidden print area -->
 <div id="qr-print-area">
   <div style="text-align:center;">
@@ -969,7 +1089,7 @@ function toggleTheme() { applyTheme(localStorage.getItem('korps-theme') === 'dar
 applyTheme(localStorage.getItem('korps-theme') || 'light');
 
 // --- STATE ---
-let state = { instruments: [], players: [], service: [], accessories: [], workshops: [], suppliers: [], accCategories: [] };
+let state = { instruments: [], players: [], service: [], accessories: [], workshops: [], suppliers: [], accCategories: [], settings: {}, todos: [] };
 let editingId = { inst: null, player: null, service: null, acc: null, ws: null, sup: null };
 let scannerActive = false;
 let barcodeScannerActive = false;
@@ -994,17 +1114,18 @@ async function api(method, path, body) {
 }
 
 async function loadAll() {
-  const [instruments, players, service, accessories, workshops, suppliers, accCategories] = await Promise.all([
+  const [instruments, players, service, accessories, workshops, suppliers, accCategories, settings, todos] = await Promise.all([
     api('GET', '/api/instruments'), api('GET', '/api/players'),
     api('GET', '/api/service'), api('GET', '/api/accessories'),
     api('GET', '/api/workshops'), api('GET', '/api/suppliers'),
-    api('GET', '/api/acc-categories')
+    api('GET', '/api/acc-categories'), api('GET', '/api/settings'),
+    api('GET', '/api/todos')
   ]);
-  state = { instruments, players, service, accessories, workshops, suppliers, accCategories };
+  state = { instruments, players, service, accessories, workshops, suppliers, accCategories, settings, todos };
   render();
 }
 
-const sectionTitles = { dashboard: 'Oversikt', instrumenter: 'Instrumenter', musikanter: 'Musikanter', service: 'Servicelogg', tilbehor: 'Tilbehør og lager', verksteder: 'Verksteder', leverandorer: 'Leverandører', rapporter: 'Rapporter', innstillinger: 'Innstillinger' };
+const sectionTitles = { dashboard: 'Oversikt', instrumenter: 'Instrumenter', musikanter: 'Musikanter', service: 'Servicelogg', tilbehor: 'Tilbehør og lager', gjoremal: 'Gjøremål', verksteder: 'Verksteder', leverandorer: 'Leverandører', rapporter: 'Rapporter', innstillinger: 'Innstillinger' };
 function navigateTo(sid, addHistory = true) {
   document.querySelectorAll('.nav-item[data-section]').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -1027,7 +1148,7 @@ function openModal(id) { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 document.querySelectorAll('.modal-overlay').forEach(o => {
   o.addEventListener('click', e => {
-    if (e.target === o) { stopScanner(); stopBarcodeScanner(); o.classList.remove('open'); }
+    if (e.target === o) { stopScanner(); stopBarcodeScanner(); stopTodoScanner(); o.classList.remove('open'); }
   });
 });
 
@@ -1259,6 +1380,7 @@ function openInstModal(id) {
   document.getElementById('inst-cond').value = inst?.condition || 'God';
   document.getElementById('inst-serial').value = inst?.serial || '';
   document.getElementById('inst-purchase').value = inst?.purchase || '';
+  document.getElementById('inst-next-check').value = inst?.next_check || '';
   document.getElementById('inst-notes').value = inst?.notes || '';
   document.getElementById('id-preview-wrap').style.display = 'none';
   openModal('inst-modal');
@@ -1273,6 +1395,7 @@ async function saveInstrument() {
     condition: document.getElementById('inst-cond').value,
     serial: document.getElementById('inst-serial').value.trim(),
     purchase: document.getElementById('inst-purchase').value,
+    next_check: document.getElementById('inst-next-check').value || null,
     notes: document.getElementById('inst-notes').value.trim() };
   if (editingId.inst) await api('PUT', '/api/instruments/'+editingId.inst, body);
   else await api('POST', '/api/instruments', body);
@@ -1329,11 +1452,12 @@ const tbodyIds = { instruments: 'inst-table', players: 'player-table', service: 
 function getSortVal(tableKey, item, col) {
   switch (tableKey) {
     case 'instruments':
-      if (col === 'korps_id')  return item.korps_id || '';
-      if (col === 'name')      return item.name?.toLowerCase() || '';
-      if (col === 'category')  return item.category?.toLowerCase() || '';
-      if (col === 'condition') return item.condition?.toLowerCase() || '';
-      if (col === 'player')    { const p = state.players.find(p => (p.instruments||[]).includes(item.id)); return p?.name?.toLowerCase() || ''; }
+      if (col === 'korps_id')   return item.korps_id || '';
+      if (col === 'name')       return item.name?.toLowerCase() || '';
+      if (col === 'category')   return item.category?.toLowerCase() || '';
+      if (col === 'condition')  return item.condition?.toLowerCase() || '';
+      if (col === 'next_check') return item.next_check || '';
+      if (col === 'player')     { const p = state.players.find(p => (p.instruments||[]).includes(item.id)); return p?.name?.toLowerCase() || ''; }
       break;
     case 'players':
       if (col === 'name')       return item.name?.toLowerCase() || '';
@@ -1523,16 +1647,25 @@ function renderInstTable() {
     });
   }
   const list = applySort('instruments', filtered);
-  if (!list.length) { tb.innerHTML=`<tr><td colspan="6" class="empty">${state.instruments.length ? 'Ingen instrumenter matcher filteret' : 'Ingen instrumenter registrert ennå'}</td></tr>`; syncSortHeaders('instruments'); return; }
+  if (!list.length) { tb.innerHTML=`<tr><td colspan="7" class="empty">${state.instruments.length ? 'Ingen instrumenter matcher filteret' : 'Ingen instrumenter registrert ennå'}</td></tr>`; syncSortHeaders('instruments'); return; }
+  const today = new Date().toISOString().split('T')[0];
   tb.innerHTML = list.map(inst => {
     const player = state.players.find(p => (p.instruments||[]).includes(inst.id));
     const serviceBtn = inst.condition === 'Trenger service'
       ? `<button class="btn-service" onclick="openServiceForInstrument('${inst.id}')">+ Service</button>` : '';
+    let checkCell = '<span style="color:var(--text-faint);">—</span>';
+    if (inst.next_check) {
+      const overdue = inst.next_check <= today;
+      checkCell = overdue
+        ? `<span class="badge badge-bad">${inst.next_check} — forfalt</span>`
+        : `<span style="color:var(--text-muted);">${inst.next_check}</span>`;
+    }
     return `<tr>
       <td>${idbadge(inst.korps_id)}${inst.serial?`<br><span style="font-size:11px;color:var(--text-faint)">Ser: ${inst.serial}</span>`:''}</td>
       <td><strong style="font-weight:600">${inst.name}</strong>${inst.purchase?`<br><span style="font-size:11px;color:var(--text-faint)">Kjøpt: ${inst.purchase}</span>`:''}</td>
       <td><span class="badge badge-gray">${inst.category}</span></td>
       <td>${condBadge(inst.condition)}</td>
+      <td>${checkCell}</td>
       <td style="color:${player?'var(--text)':'var(--text-faint)'};">${player?player.name:'Ikke tildelt'}</td>
       <td><div style="display:flex;gap:6px;flex-wrap:wrap;">
         <button class="btn-sm" onclick="openQrModal('${inst.id}')" title="Vis QR-kode">QR</button>
@@ -2080,19 +2213,28 @@ function renderDashboard() {
   const overdue = state.service.filter(s => s.next_due && s.next_due < today && getServiceStatus(s).key === 'ferdig');
   const tilHentingItems = state.service.filter(s => getServiceStatus(s).key === 'til_henting');
   const lowAccItems = state.accessories.filter(a => a.stock <= a.min_level);
-  const alertCount = tilHentingItems.length + overdue.length + lowAccItems.length;
+  const checkDueItems = state.instruments.filter(i => i.next_check && i.next_check <= today);
+  const openTodos = state.todos.filter(t => !t.done && !t.in_progress);
+  const inProgressTodos = state.todos.filter(t => t.in_progress && !t.done);
+  const activeTodoCount = openTodos.length + inProgressTodos.length;
+  const alertCount = tilHentingItems.length + overdue.length + lowAccItems.length + checkDueItems.length + (activeTodoCount > 0 ? 1 : 0);
   const iconSvg = {
     truck: '<path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/><path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3z"/><path d="M14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1v-5a1 1 0 00-.293-.707l-2-2A1 1 0 0015 7h-1z"/>',
     warn: '<path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>',
-    cart: '<path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3z"/>'
+    cart: '<path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3z"/>',
+    check: '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>',
+    todo: '<path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h3a1 1 0 100-2H6zm0 4a1 1 0 100 2h3a1 1 0 100-2H6zm5-4a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1zm0 4a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1z" clip-rule="evenodd"/>'
   };
-  const mkAlertItem = (wrapCls, svgBody, title, sub) =>
-    `<div class="alert-item"><div class="alert-dot-wrap ${wrapCls}"><svg viewBox="0 0 20 20" fill="currentColor">${svgBody}</svg></div><div style="flex:1;"><div class="alert-title">${title}</div><div class="alert-sub">${sub}</div></div></div>`;
+  const mkAlertItem = (wrapCls, svgBody, title, sub, onclick) =>
+    `<div class="alert-item"${onclick ? ` style="cursor:pointer;" onclick="${onclick}"` : ''}><div class="alert-dot-wrap ${wrapCls}"><svg viewBox="0 0 20 20" fill="currentColor">${svgBody}</svg></div><div style="flex:1;"><div class="alert-title">${title}</div><div class="alert-sub">${sub}</div></div></div>`;
 
+  const todoAlertSub = [openTodos.length ? `${openTodos.length} åpen` : '', inProgressTodos.length ? `${inProgressTodos.length} under arbeid` : ''].filter(Boolean).join(' · ');
   const alertHtml = [
     ...tilHentingItems.map(s => { const i=state.instruments.find(x=>x.id===s.inst_id); const ws=state.workshops.find(w=>w.id===s.workshop_id); return mkAlertItem('purple', iconSvg.truck, `${i?.name||'Ukjent'} klar til henting`, `${ws?.name||'Ukjent verksted'}${s.date_finished?' · Ferdig '+s.date_finished:''}`); }),
     ...overdue.map(s => { const i=state.instruments.find(x=>x.id===s.inst_id); return mkAlertItem('red', iconSvg.warn, 'Service forfalt', `${i?.name||'Ukjent'}${i?.korps_id?' ('+i.korps_id+')':''} — frist: ${s.next_due}`); }),
-    ...lowAccItems.map(a => mkAlertItem('amber', iconSvg.cart, `${a.stock===0?'Tomt':'Lavt lager'}: ${a.name}`, `${a.stock} stk igjen · Minimum: ${a.min_level}`))
+    ...checkDueItems.map(i => mkAlertItem('amber', iconSvg.check, `Sjekk forfalt: ${i.name}`, `${i.korps_id?' ('+i.korps_id+') ':''}Neste sjekk: ${i.next_check}`)),
+    ...lowAccItems.map(a => mkAlertItem('amber', iconSvg.cart, `${a.stock===0?'Tomt':'Lavt lager'}: ${a.name}`, `${a.stock} stk igjen · Minimum: ${a.min_level}`)),
+    activeTodoCount > 0 ? mkAlertItem('indigo', iconSvg.todo, `${activeTodoCount} aktive gjøremål`, todoAlertSub, "navigateTo('gjoremal')") : ''
   ].join('');
 
   // Recent service
@@ -2195,7 +2337,9 @@ function renderVarslerDropdown() {
   const tilHenting = state.service.filter(s => getServiceStatus(s).key === 'til_henting');
   const overdue = state.service.filter(s => s.next_due && s.next_due < today && getServiceStatus(s).key === 'ferdig');
   const lowAcc = state.accessories.filter(a => a.stock <= a.min_level);
-  const total = tilHenting.length + overdue.length + lowAcc.length;
+  const checkDue = state.instruments.filter(i => i.next_check && i.next_check <= today);
+  const activeTodos = state.todos.filter(t => !t.done);
+  const total = tilHenting.length + overdue.length + lowAcc.length + checkDue.length + (activeTodos.length > 0 ? 1 : 0);
 
   const countEl = document.getElementById('varsler-dropdown-count');
   if (countEl) { countEl.textContent = total > 0 ? total + ' varsler' : ''; countEl.style.display = total > 0 ? '' : 'none'; }
@@ -2204,6 +2348,8 @@ function renderVarslerDropdown() {
   const truck = mkSvg('<path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/><path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3z"/><path d="M14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1v-5a1 1 0 00-.293-.707l-2-2A1 1 0 0015 7h-1z"/>');
   const warn = mkSvg('<path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>');
   const cart = mkSvg('<path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3z"/>');
+  const clock = mkSvg('<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>');
+  const todo = mkSvg('<path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm2 0a1 1 0 011-1h2a1 1 0 110 2H10a1 1 0 01-1-1zm-2 4a1 1 0 000 2h.01a1 1 0 100-2H7zm2 0a1 1 0 011-1h2a1 1 0 110 2H10a1 1 0 01-1-1z" clip-rule="evenodd"/>');
 
   const mkItem = (dotCls, icon, title, sub, onclick) =>
     `<div class="varsler-item" onclick="${onclick};document.getElementById('varsler-dropdown').classList.remove('open');">
@@ -2227,12 +2373,30 @@ function renderVarslerDropdown() {
       `Frist: ${s.next_due}${inst?.korps_id ? ' · ' + inst.korps_id : ''}`,
       "navigateTo('service')");
   });
+  checkDue.forEach(i => {
+    html += mkItem('amber', clock,
+      `Sjekk forfalt: ${i.name}`,
+      `${i.korps_id ? i.korps_id + ' · ' : ''}Neste sjekk: ${i.next_check}`,
+      "navigateTo('instrumenter')");
+  });
   lowAcc.forEach(a => {
     html += mkItem('amber', cart,
       `${a.stock === 0 ? 'Tomt lager' : 'Lavt lager'}: ${a.name}`,
       `${a.stock} stk igjen · Minimum: ${a.min_level}`,
       "navigateTo('tilbehor')");
   });
+
+  if (activeTodos.length > 0) {
+    const openCount = activeTodos.filter(t => !t.in_progress).length;
+    const inProgressCount = activeTodos.filter(t => t.in_progress).length;
+    const parts = [];
+    if (openCount) parts.push(`${openCount} åpne`);
+    if (inProgressCount) parts.push(`${inProgressCount} under arbeid`);
+    html += mkItem('indigo', todo,
+      `${activeTodos.length} aktive gjøremål`,
+      parts.join(' · '),
+      "navigateTo('gjoremal')");
+  }
 
   const body = document.getElementById('varsler-dropdown-body');
   if (body) body.innerHTML = html || '<div class="varsler-empty">Ingen aktive varsler</div>';
@@ -2340,9 +2504,14 @@ function updateVarslerBadge() {
   const count =
     state.service.filter(s => getServiceStatus(s).key === 'til_henting').length +
     state.service.filter(s => s.next_due && s.next_due < today && getServiceStatus(s).key === 'ferdig').length +
-    state.accessories.filter(a => a.stock <= a.min_level).length;
+    state.accessories.filter(a => a.stock <= a.min_level).length +
+    state.instruments.filter(i => i.next_check && i.next_check <= today).length +
+    (state.todos.filter(t => !t.done).length > 0 ? 1 : 0);
   const el = document.getElementById('varsler-count');
   if (el) { el.textContent = count; el.style.display = count > 0 ? '' : 'none'; }
+  const openTodos = state.todos.filter(t => !t.done).length;
+  const tbEl = document.getElementById('nav-badge-todos');
+  if (tbEl) { tbEl.textContent = openTodos; tbEl.style.display = openTodos > 0 ? '' : 'none'; }
 }
 
 // --- CSV IMPORT ---
@@ -2482,11 +2651,11 @@ function applySettings(korpsname, logo) {
   document.title = korpsname ? korpsname + ' — Korpsinventar' : 'Korpsinventar';
 }
 function loadSettings() {
-  applySettings(localStorage.getItem('korps-name') || '', localStorage.getItem('korps-logo') || '');
+  applySettings(state.settings['korps-name'] || '', state.settings['korps-logo'] || '');
 }
 function populateSettingsForm() {
-  const korpsname = localStorage.getItem('korps-name') || '';
-  const logo = localStorage.getItem('korps-logo') || '';
+  const korpsname = state.settings['korps-name'] || '';
+  const logo = state.settings['korps-logo'] || '';
   const inp = document.getElementById('settings-korpsname');
   if (inp) inp.value = korpsname;
   updateLogoPreview(logo);
@@ -2514,18 +2683,313 @@ function removeSettingsLogo() {
   document.getElementById('settings-logo-file').value = '';
   updateLogoPreview('');
 }
-function saveSettings() {
+async function saveSettings() {
   const korpsname = document.getElementById('settings-korpsname').value.trim();
   const img = document.querySelector('#settings-logo-preview img');
   const logo = img ? img.src : '';
-  localStorage.setItem('korps-name', korpsname);
-  if (logo) localStorage.setItem('korps-logo', logo);
-  else localStorage.removeItem('korps-logo');
+  await api('PUT', '/api/settings', { 'korps-name': korpsname, 'korps-logo': logo });
+  state.settings['korps-name'] = korpsname;
+  state.settings['korps-logo'] = logo;
   applySettings(korpsname, logo);
   toast('Innstillinger lagret!');
 }
 
-function render() { renderDashboard(); renderInstTable(); renderPlayerTable(); renderServiceTable(); renderAccessories(); renderVerkstederTable(); renderLeverandorerTable(); renderReports(); updateVarslerBadge(); loadSettings(); }
+// --- GJØREMÅL ---
+let todoFilter = 'active';
+let editingTodoId = null;
+let todoScannerActive = false;
+let _todoScanStream = null;
+let _todoScanFrame = null;
+let todoSelectedItem = null; // { type, id, label }
+
+function setTodoFilter(val) {
+  todoFilter = val;
+  renderTodos();
+}
+
+function renderTodos() {
+  const tb = document.getElementById('todos-table');
+  if (!tb) return;
+  let list = state.todos;
+  if (todoFilter === 'active') list = list.filter(t => !t.done);
+  else if (todoFilter === 'open') list = list.filter(t => !t.done && !t.in_progress);
+  else if (todoFilter === 'in_progress') list = list.filter(t => t.in_progress && !t.done);
+  else if (todoFilter === 'done') list = list.filter(t => t.done);
+  // Sort: "Under arbeid" first, then "Åpen"
+  list = [...list].sort((a, b) => (b.in_progress || 0) - (a.in_progress || 0));
+  if (!list.length) {
+    tb.innerHTML = `<tr><td colspan="8" class="empty">${state.todos.length ? 'Ingen gjøremål matcher filteret' : 'Ingen gjøremål registrert ennå'}</td></tr>`;
+    return;
+  }
+  tb.innerHTML = list.map(t => {
+    let refLabel = '<span class="badge badge-gray">Generell</span>';
+    if (t.type === 'instrument' && t.ref_id) {
+      const i = state.instruments.find(x => x.id === t.ref_id);
+      refLabel = i ? `<span class="badge badge-gray">Instrument</span> ${i.name}${i.korps_id?' '+idbadge(i.korps_id):''}` : `<span class="badge badge-gray">Instrument</span> <span style="color:var(--text-faint)">Ukjent</span>`;
+    } else if (t.type === 'accessory' && t.ref_id) {
+      const a = state.accessories.find(x => x.id === t.ref_id);
+      refLabel = a ? `<span class="badge badge-ok">Vare</span> ${a.name}` : `<span class="badge badge-ok">Vare</span> <span style="color:var(--text-faint)">Ukjent</span>`;
+    }
+    let statusBadge;
+    if (t.done) statusBadge = `<span class="badge badge-ok">Fullført</span>`;
+    else if (t.in_progress) statusBadge = `<span class="badge badge-yellow">Under arbeid</span>`;
+    else statusBadge = `<span class="badge badge-info">Åpen</span>`;
+    const doneInfo = t.done ? `${t.done_date||''}${t.done_by?' · '+t.done_by:''}` : '—';
+    const assignedInfo = t.assigned_to || (t.done ? '—' : '<span style="color:var(--text-faint);">—</span>');
+    let actionBtns;
+    if (t.done) {
+      actionBtns = `<button class="btn-sm" onclick="reopenTodo('${t.id}')">Gjenåpne</button>
+         <button class="btn-sm btn-danger" onclick="deleteTodo('${t.id}')">Slett</button>`;
+    } else if (t.in_progress) {
+      actionBtns = `<button class="btn-sm" onclick="openTodoModal('${t.id}')">Rediger</button>
+         <button class="btn-sm btn-service" onclick="openTodoDoneModal('${t.id}')">Kvitter ut</button>
+         <button class="btn-sm" onclick="reopenTodo('${t.id}')">Tilbake til åpen</button>
+         <button class="btn-sm btn-danger" onclick="deleteTodo('${t.id}')">Slett</button>`;
+    } else {
+      actionBtns = `<button class="btn-sm" onclick="openTodoModal('${t.id}')">Rediger</button>
+         <button class="btn-sm" onclick="openTodoStartModal('${t.id}')">Under arbeid</button>
+         <button class="btn-sm btn-service" onclick="openTodoDoneModal('${t.id}')">Kvitter ut</button>
+         <button class="btn-sm btn-danger" onclick="deleteTodo('${t.id}')">Slett</button>`;
+    }
+    return `<tr>
+      <td>${refLabel}</td>
+      <td>${t.note||'—'}</td>
+      <td>${t.created||'—'}</td>
+      <td style="color:var(--text-muted);">${t.created_by||'—'}</td>
+      <td>${statusBadge}</td>
+      <td style="color:var(--text-muted);">${assignedInfo}</td>
+      <td style="color:var(--text-muted);">${doneInfo}</td>
+      <td><div style="display:flex;gap:6px;flex-wrap:wrap;">${actionBtns}</div></td>
+    </tr>`;
+  }).join('');
+}
+
+function openTodoModal(id) {
+  editingTodoId = id || null;
+  const todo = id ? state.todos.find(t => t.id === id) : null;
+  todoSelectedItem = null;
+  document.getElementById('todo-modal-title').textContent = todo ? 'Rediger gjøremål' : 'Legg til gjøremål';
+  document.getElementById('todo-modal-done-btn').style.display = (todo && !todo.done) ? '' : 'none';
+  document.getElementById('todo-note').value = todo?.note || '';
+  document.getElementById('todo-created-by').value = todo?.created_by || '';
+  document.getElementById('todo-edit-assigned-to').value = todo?.assigned_to || '';
+
+  // Set radio first, then call onTodoTypeChange to build datalist + show/hide picker
+  const type = todo?.type || 'general';
+  document.querySelector(`input[name="todo-type"][value="${type}"]`).checked = true;
+  onTodoTypeChange(); // resets search/found — pre-fill comes after
+
+  // Pre-fill registered item when editing
+  if (todo && todo.type && todo.type !== 'general' && todo.ref_id) {
+    const item = todo.type === 'instrument'
+      ? state.instruments.find(i => i.id === todo.ref_id)
+      : state.accessories.find(a => a.id === todo.ref_id);
+    if (item) {
+      todoSelectedItem = { type: todo.type, id: todo.ref_id };
+      const label = todo.type === 'instrument'
+        ? `${item.name}${item.korps_id ? ' (' + item.korps_id + ')' : ''}`
+        : item.name;
+      document.getElementById('todo-item-search').value = label;
+      showTodoItemFound(label, todo.type, item.id);
+    }
+  }
+
+  openModal('todo-modal');
+}
+
+function closeTodoModal() {
+  stopTodoScanner();
+  closeModal('todo-modal');
+}
+
+function onTodoTypeChange() {
+  const type = document.querySelector('input[name="todo-type"]:checked')?.value || 'general';
+  const picker = document.getElementById('todo-item-picker');
+  picker.style.display = type === 'general' ? 'none' : '';
+  const dl = document.getElementById('todo-item-datalist');
+  if (type === 'instrument') {
+    dl.innerHTML = state.instruments.map(i => `<option value="${i.name}${i.korps_id?' ('+i.korps_id+')':''}">`).join('');
+  } else if (type === 'accessory') {
+    dl.innerHTML = state.accessories.map(a => `<option value="${a.name}">`).join('');
+  }
+  // Clear selection when type changes
+  todoSelectedItem = null;
+  document.getElementById('todo-item-search').value = '';
+  document.getElementById('todo-item-found').style.display = 'none';
+  if (type === 'general') stopTodoScanner();
+}
+
+function onTodoItemSearch(val) {
+  if (!val.trim()) { todoSelectedItem = null; document.getElementById('todo-item-found').style.display = 'none'; return; }
+  const type = document.querySelector('input[name="todo-type"]:checked')?.value || 'instrument';
+  const q = val.trim().toLowerCase();
+  let found = null;
+  if (type === 'instrument') {
+    found = state.instruments.find(i =>
+      i.name.toLowerCase() === q ||
+      (i.korps_id && i.name.toLowerCase() + ' (' + i.korps_id.toLowerCase() + ')' === q) ||
+      (i.korps_id && i.korps_id.toLowerCase() === q)
+    );
+    if (!found) found = state.instruments.find(i => i.name.toLowerCase().startsWith(q));
+  } else {
+    found = state.accessories.find(a => a.name.toLowerCase() === q);
+    if (!found) found = state.accessories.find(a => a.name.toLowerCase().startsWith(q));
+  }
+  if (found) {
+    todoSelectedItem = { type, id: found.id };
+    const label = type === 'instrument' ? `${found.name}${found.korps_id?' ('+found.korps_id+')':''}` : found.name;
+    showTodoItemFound(label, type, found.id);
+  }
+}
+
+function showTodoItemFound(text, type, itemId) {
+  const el = document.getElementById('todo-item-found');
+  const clickable = type && itemId;
+  const openFn = type === 'instrument' ? `openInstModal('${itemId}')` : `openAccModal('${itemId}')`;
+  el.innerHTML = clickable
+    ? `<span style="color:var(--text-muted);margin-right:4px;">${type === 'instrument' ? 'Instrument:' : 'Vare:'}</span>
+       <button type="button" onclick="closeTodoModal();${openFn}" style="font-size:13px;font-weight:600;color:var(--accent);background:none;border:none;cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:2px;">${text}</button>`
+    : `<span>${text}</span>`;
+  el.style.display = 'flex';
+}
+
+function todoResolveScanCode(code) {
+  // Try instrument by korps_id or id
+  const inst = state.instruments.find(i => i.korps_id === code || i.id === code);
+  if (inst) {
+    document.querySelector('input[name="todo-type"][value="instrument"]').checked = true;
+    onTodoTypeChange();
+    const label = `${inst.name}${inst.korps_id?' ('+inst.korps_id+')':''}`;
+    todoSelectedItem = { type: 'instrument', id: inst.id };
+    document.getElementById('todo-item-search').value = label;
+    showTodoItemFound(label, 'instrument', inst.id);
+    stopTodoScanner();
+    return;
+  }
+  // Try accessory by barcode
+  const acc = state.accessories.find(a => a.barcode === code);
+  if (acc) {
+    document.querySelector('input[name="todo-type"][value="accessory"]').checked = true;
+    onTodoTypeChange();
+    todoSelectedItem = { type: 'accessory', id: acc.id };
+    document.getElementById('todo-item-search').value = acc.name;
+    showTodoItemFound(acc.name, 'accessory', acc.id);
+    stopTodoScanner();
+    return;
+  }
+  // Not found
+  const el = document.getElementById('todo-item-found');
+  el.innerHTML = `<span>Ingen treff for: ${code}</span>`;
+  el.style.display = 'flex';
+}
+
+function toggleTodoScanner() { todoScannerActive ? stopTodoScanner() : startTodoScanner(); }
+
+async function startTodoScanner() {
+  const wrap = document.getElementById('todo-scanner-wrap');
+  const video = document.getElementById('todo-scanner-video');
+  const btn = document.getElementById('todo-scan-btn');
+  wrap.style.display = '';
+  if (btn) btn.textContent = '■ Stopp';
+  try {
+    _todoScanStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+    video.srcObject = _todoScanStream;
+    await video.play();
+    todoScannerActive = true;
+    if ('BarcodeDetector' in window) {
+      let det; try { det = new BarcodeDetector({ formats: ['qr_code','ean_13','ean_8','upc_a','code_128','code_39'] }); } catch(e) { det = new BarcodeDetector(); }
+      const tick = async () => {
+        if (!todoScannerActive) return;
+        _todoScanFrame = requestAnimationFrame(tick);
+        try {
+          const codes = await det.detect(video);
+          if (codes.length) { todoResolveScanCode(codes[0].rawValue); }
+        } catch(e) {}
+      };
+      _todoScanFrame = requestAnimationFrame(tick);
+    }
+  } catch(e) {
+    wrap.style.display = 'none';
+    if (btn) btn.textContent = '📷 Skann';
+    toast('Kamera ikke tilgjengelig');
+  }
+}
+
+function stopTodoScanner() {
+  todoScannerActive = false;
+  if (_todoScanFrame) { cancelAnimationFrame(_todoScanFrame); _todoScanFrame = null; }
+  if (_todoScanStream) { _todoScanStream.getTracks().forEach(t => t.stop()); _todoScanStream = null; }
+  const wrap = document.getElementById('todo-scanner-wrap');
+  if (wrap) wrap.style.display = 'none';
+  const btn = document.getElementById('todo-scan-btn');
+  if (btn) btn.textContent = '📷 Skann';
+}
+
+async function saveTodo() {
+  const note = document.getElementById('todo-note').value.trim();
+  if (!note) { toast('Skriv inn en beskrivelse'); return; }
+  const type = document.querySelector('input[name="todo-type"]:checked')?.value || 'general';
+  if (type !== 'none' && !todoSelectedItem) { toast('Velg et instrument eller en vare, eller velg "Ingen"'); return; }
+  const created_by = document.getElementById('todo-created-by').value.trim();
+  const assigned_to = document.getElementById('todo-edit-assigned-to').value.trim();
+  if (editingTodoId) {
+    await api('PUT', '/api/todos/' + editingTodoId, { note, created_by, assigned_to });
+  } else {
+    const today = new Date().toISOString().split('T')[0];
+    const body = { note, created: today, created_by, assigned_to,
+      type: todoSelectedItem ? todoSelectedItem.type : null,
+      ref_id: todoSelectedItem ? todoSelectedItem.id : null };
+    await api('POST', '/api/todos', body);
+  }
+  closeTodoModal();
+  toast(editingTodoId ? 'Gjøremål oppdatert!' : 'Gjøremål lagret!');
+  await loadAll();
+}
+
+async function deleteTodo(id) {
+  if (!confirm('Slette dette gjøremålet?')) return;
+  await api('DELETE', '/api/todos/' + id);
+  toast('Slettet');
+  await loadAll();
+}
+
+function openTodoDoneModal(id) {
+  editingTodoId = id;
+  document.getElementById('todo-done-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('todo-done-by').value = '';
+  openModal('todo-done-modal');
+}
+
+async function markTodoDone() {
+  const done_date = document.getElementById('todo-done-date').value;
+  const done_by = document.getElementById('todo-done-by').value.trim();
+  await api('POST', '/api/todos/' + editingTodoId + '/done', { done_date, done_by });
+  closeModal('todo-done-modal');
+  toast('Gjøremål kvittert ut!');
+  await loadAll();
+}
+
+function openTodoStartModal(id) {
+  editingTodoId = id;
+  document.getElementById('todo-assigned-to').value = '';
+  openModal('todo-start-modal');
+}
+
+async function markTodoInProgress() {
+  const assigned_to = document.getElementById('todo-assigned-to').value.trim();
+  await api('POST', '/api/todos/' + editingTodoId + '/start', { assigned_to });
+  closeModal('todo-start-modal');
+  toast('Gjøremål satt under arbeid!');
+  await loadAll();
+}
+
+async function reopenTodo(id) {
+  await api('POST', '/api/todos/' + id + '/reopen', {});
+  toast('Gjøremål satt tilbake til åpen');
+  await loadAll();
+}
+
+function render() { renderDashboard(); renderInstTable(); renderPlayerTable(); renderServiceTable(); renderAccessories(); renderTodos(); renderVerkstederTable(); renderLeverandorerTable(); renderReports(); updateVarslerBadge(); loadSettings(); }
 loadAll();
 
 // --- HISTORY API ---

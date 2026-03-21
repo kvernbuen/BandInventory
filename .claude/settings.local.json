@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -n \"=== ''none''\\\\|=== \"\"none\"\"\\\\||| ''none''\\\\|| ''none''\" \"c:/Github/korpsinventar/public/index.html\")"
+    ]
+  }
+}

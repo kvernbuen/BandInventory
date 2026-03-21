@@ -1,31 +1,8 @@
 Endringer til utføring:
 
-Tilbehør fanen:
-* Mulighet til å legge til custom varekategorier
-* Mulighet for å scanne og skrive inn strekkode på varer
-* Mulighet til å registrere leverandører
-
-Servicelogg fanen:
-* Mulighet til å legge til verksted og registrere hvilket verksted som utfører service på hver enkelt service
-* Dato for innlevert til service og dator for service ferdig, samt satt i status "Under service" dersom ferdig dato ikke. Dersom ekstern service er brukt, legg til status "Til henting" og knapp for å kvittere ut "Hentet". Lage også en knapp for å vise alle servicer "Til Henting" med mulighet for å skrive den ut til Excel eller CSV.
-
-
-FEIL:
 
 
 
-Endringer 2:
-* Legge til leverandørliste i databasen slik at leverandør kan velges ved nedtrekkliste.
-* Legge til pris-felt og fakturanummer-felt på varer.
-* Legge til rapport på total kostnad på varer per kategori.
-* Legge til knapp for å opprette service på instrumenter med status "Trenger service".
-* Gjøre om alle dato-felt til å kunne skrive inn eller å velge dato ved å klikke med musen.
-* Legge til faktura-nummer felt på Servicelogg.
-* Legge til rapport for på total kostnad av service per leverandør.
-
-
-Endringer 3: 
-* Legge til mulighet for eksport av Rapportene.
-
-Endringer 4:
-* Mulighet for import av instrumenter og varer fra csv-fil. 
+NYE ENDRINGER:
+* Datofelt for neste sjekk av instrumentets stand. Dersom dato er fylt ut og datoen er nådd, legg den til i varsler.
+* Ett ToDo-liste view der man kan scanne inn enten Instrument eller vare og skrive inn merknad på hva som må gjøres med den. Når punktet er utført, trengs en måte å kvittere ut punktet som utført med dato og hvem som fullførte punktet.

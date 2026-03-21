@@ -19,6 +19,7 @@ function uid() {
 
 // Migrations for existing databases
 try { db.exec('ALTER TABLE instruments ADD COLUMN korps_id TEXT'); } catch(e) {}
+try { db.exec('ALTER TABLE instruments ADD COLUMN next_check TEXT'); } catch(e) {}
 try { db.exec('ALTER TABLE accessories ADD COLUMN supplier TEXT'); } catch(e) {}
 try { db.exec('ALTER TABLE accessories ADD COLUMN barcode TEXT'); } catch(e) {}
 try { db.exec('ALTER TABLE accessories ADD COLUMN price REAL'); } catch(e) {}
@@ -28,6 +29,8 @@ try { db.exec('ALTER TABLE service ADD COLUMN date_finished TEXT'); } catch(e) {
 try { db.exec('ALTER TABLE service ADD COLUMN workshop_id TEXT'); } catch(e) {}
 try { db.exec('ALTER TABLE service ADD COLUMN picked_up INTEGER DEFAULT 0'); } catch(e) {}
 try { db.exec('ALTER TABLE service ADD COLUMN invoice_no TEXT'); } catch(e) {}
+try { db.exec('ALTER TABLE todos ADD COLUMN in_progress INTEGER DEFAULT 0'); } catch(e) {}
+try { db.exec('ALTER TABLE todos ADD COLUMN assigned_to TEXT'); } catch(e) {}
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS instruments (
@@ -38,7 +41,8 @@ db.exec(`
     serial TEXT,
     purchase TEXT,
     notes TEXT,
-    korps_id TEXT
+    korps_id TEXT,
+    next_check TEXT
   );
   CREATE TABLE IF NOT EXISTS players (
     id TEXT PRIMARY KEY,
@@ -96,6 +100,23 @@ db.exec(`
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL UNIQUE
   );
+  CREATE TABLE IF NOT EXISTS settings (
+    key TEXT PRIMARY KEY,
+    value TEXT
+  );
+  CREATE TABLE IF NOT EXISTS todos (
+    id TEXT PRIMARY KEY,
+    type TEXT,
+    ref_id TEXT,
+    note TEXT,
+    created TEXT,
+    created_by TEXT,
+    done INTEGER DEFAULT 0,
+    done_date TEXT,
+    done_by TEXT,
+    in_progress INTEGER DEFAULT 0,
+    assigned_to TEXT
+  );
 `);
 
 // Seed default accessory categories
@@ -109,16 +130,16 @@ app.get('/api/instruments', (_req, res) => {
 });
 
 app.post('/api/instruments', (req, res) => {
-  const { name, category, condition, serial, purchase, notes, korps_id } = req.body;
+  const { name, category, condition, serial, purchase, notes, korps_id, next_check } = req.body;
   const id = uid();
-  db.prepare('INSERT INTO instruments VALUES (?,?,?,?,?,?,?,?)').run(id, name, category, condition, serial, purchase, notes, korps_id||null);
+  db.prepare('INSERT INTO instruments VALUES (?,?,?,?,?,?,?,?,?)').run(id, name, category, condition, serial, purchase, notes, korps_id||null, next_check||null);
   res.json({ id });
 });
 
 app.put('/api/instruments/:id', (req, res) => {
-  const { name, category, condition, serial, purchase, notes, korps_id } = req.body;
-  db.prepare('UPDATE instruments SET name=?,category=?,condition=?,serial=?,purchase=?,notes=?,korps_id=? WHERE id=?')
-    .run(name, category, condition, serial, purchase, notes, korps_id||null, req.params.id);
+  const { name, category, condition, serial, purchase, notes, korps_id, next_check } = req.body;
+  db.prepare('UPDATE instruments SET name=?,category=?,condition=?,serial=?,purchase=?,notes=?,korps_id=?,next_check=? WHERE id=?')
+    .run(name, category, condition, serial, purchase, notes, korps_id||null, next_check||null, req.params.id);
   res.json({ ok: true });
 });
 
@@ -246,6 +267,64 @@ app.delete('/api/suppliers/:id', (req, res) => {
   res.json({ ok: true });
 });
 
+// --- TODOS ---
+app.get('/api/todos', (_req, res) => {
+  res.json(db.prepare('SELECT * FROM todos ORDER BY created DESC').all());
+});
+
+app.post('/api/todos', (req, res) => {
+  const { type, ref_id, note, created, created_by } = req.body;
+  const id = uid();
+  db.prepare('INSERT INTO todos (id,type,ref_id,note,created,created_by,done) VALUES (?,?,?,?,?,?,0)')
+    .run(id, type, ref_id, note||null, created||null, created_by||null);
+  res.json({ id });
+});
+
+app.put('/api/todos/:id', (req, res) => {
+  const { note, created_by, assigned_to } = req.body;
+  db.prepare('UPDATE todos SET note=?,created_by=?,assigned_to=? WHERE id=?').run(note||null, created_by||null, assigned_to||null, req.params.id);
+  res.json({ ok: true });
+});
+
+app.post('/api/todos/:id/done', (req, res) => {
+  const { done_date, done_by } = req.body;
+  db.prepare('UPDATE todos SET done=1,done_date=?,done_by=? WHERE id=?').run(done_date||null, done_by||null, req.params.id);
+  res.json({ ok: true });
+});
+
+app.post('/api/todos/:id/reopen', (req, res) => {
+  db.prepare('UPDATE todos SET done=0,done_date=NULL,done_by=NULL,in_progress=0,assigned_to=NULL WHERE id=?').run(req.params.id);
+  res.json({ ok: true });
+});
+
+app.post('/api/todos/:id/start', (req, res) => {
+  const { assigned_to } = req.body;
+  db.prepare('UPDATE todos SET in_progress=1,assigned_to=? WHERE id=?').run(assigned_to||null, req.params.id);
+  res.json({ ok: true });
+});
+
+app.delete('/api/todos/:id', (req, res) => {
+  db.prepare('DELETE FROM todos WHERE id=?').run(req.params.id);
+  res.json({ ok: true });
+});
+
+// --- SETTINGS ---
+app.get('/api/settings', (_req, res) => {
+  const rows = db.prepare('SELECT key, value FROM settings').all();
+  const obj = {};
+  rows.forEach(r => { obj[r.key] = r.value; });
+  res.json(obj);
+});
+
+app.put('/api/settings', (req, res) => {
+  const upsert = db.prepare('INSERT INTO settings (key, value) VALUES (?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value');
+  const tx = db.transaction(data => {
+    Object.entries(data).forEach(([k, v]) => upsert.run(k, v ?? ''));
+  });
+  tx(req.body);
+  res.json({ ok: true });
+});
+
 // --- ACC CATEGORIES ---
 app.get('/api/acc-categories', (_req, res) => {
   res.json(db.prepare('SELECT * FROM acc_categories ORDER BY name').all());
@@ -308,10 +387,10 @@ app.get('/api/export/:type/:format', (req, res) => {
     const links = db.prepare('SELECT * FROM player_instruments').all();
     players.forEach(p => { p.instruments = links.filter(l => l.player_id === p.id).map(l => l.instrument_id); });
 
-    rows.push(['Instrument-ID', 'Navn', 'Kategori', 'Stand', 'Serienummer', 'Kjøpsdato', 'Tildelt musiker', 'Merknader']);
+    rows.push(['Instrument-ID', 'Navn', 'Kategori', 'Stand', 'Serienummer', 'Kjøpsdato', 'Neste sjekk', 'Tildelt musiker', 'Merknader']);
     instruments.forEach(i => {
       const player = players.find(p => p.instruments.includes(i.id));
-      rows.push([i.korps_id || '', i.name, i.category, i.condition, i.serial || '', i.purchase || '', player?.name || '', i.notes || '']);
+      rows.push([i.korps_id || '', i.name, i.category, i.condition, i.serial || '', i.purchase || '', i.next_check || '', player?.name || '', i.notes || '']);
     });
 
   } else if (type === 'players') {
