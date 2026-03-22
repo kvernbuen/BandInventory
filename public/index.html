@@ -1529,6 +1529,15 @@ function syncSortHeaders(tableKey) {
   });
 });
 
+function setSvcStatusFilter(values) {
+  svcStatusFilter.clear();
+  values.forEach(v => svcStatusFilter.add(v));
+  const labels = {under_service:'Under service', til_henting:'Til henting', ferdig:'Ferdig'};
+  document.getElementById('svc-status-summary').textContent = svcStatusFilter.size === 0 ? 'Status: Alle' : 'Status: ' + [...svcStatusFilter].map(k => labels[k]||k).join(', ');
+  document.getElementById('svc-status-multiselect')?.classList.toggle('filter-active', svcStatusFilter.size > 0);
+  document.querySelectorAll('#svc-status-options input[type=checkbox]').forEach(cb => { cb.checked = svcStatusFilter.has(cb.value); });
+  renderServiceTable();
+}
 function toggleSvcFilter(cb) {
   if (cb.checked) svcStatusFilter.add(cb.value); else svcStatusFilter.delete(cb.value);
   const ms = document.getElementById('svc-status-multiselect');
@@ -2230,8 +2239,8 @@ function renderDashboard() {
 
   const todoAlertSub = [openTodos.length ? `${openTodos.length} åpen` : '', inProgressTodos.length ? `${inProgressTodos.length} under arbeid` : ''].filter(Boolean).join(' · ');
   const alertHtml = [
-    ...tilHentingItems.map(s => { const i=state.instruments.find(x=>x.id===s.inst_id); const ws=state.workshops.find(w=>w.id===s.workshop_id); return mkAlertItem('purple', iconSvg.truck, `${i?.name||'Ukjent'} klar til henting`, `${ws?.name||'Ukjent verksted'}${s.date_finished?' · Ferdig '+s.date_finished:''}`); }),
-    ...overdue.map(s => { const i=state.instruments.find(x=>x.id===s.inst_id); return mkAlertItem('red', iconSvg.warn, 'Service forfalt', `${i?.name||'Ukjent'}${i?.korps_id?' ('+i.korps_id+')':''} — frist: ${s.next_due}`); }),
+    ...tilHentingItems.map(s => { const i=state.instruments.find(x=>x.id===s.inst_id); const ws=state.workshops.find(w=>w.id===s.workshop_id); return mkAlertItem('purple', iconSvg.truck, `${i?.name||'Ukjent'} klar til henting`, `${ws?.name||'Ukjent verksted'}${s.date_finished?' · Ferdig '+s.date_finished:''}`, "navigateTo('service');setSvcStatusFilter(['under_service','til_henting'])"); }),
+    ...overdue.map(s => { const i=state.instruments.find(x=>x.id===s.inst_id); return mkAlertItem('red', iconSvg.warn, 'Service forfalt', `${i?.name||'Ukjent'}${i?.korps_id?' ('+i.korps_id+')':''} — frist: ${s.next_due}`, "navigateTo('service');setSvcStatusFilter(['under_service','til_henting'])"); }),
     ...checkDueItems.map(i => mkAlertItem('amber', iconSvg.check, `Sjekk forfalt: ${i.name}`, `${i.korps_id?' ('+i.korps_id+') ':''}Neste sjekk: ${i.next_check}`)),
     ...lowAccItems.map(a => mkAlertItem('amber', iconSvg.cart, `${a.stock===0?'Tomt':'Lavt lager'}: ${a.name}`, `${a.stock} stk igjen · Minimum: ${a.min_level}`)),
     activeTodoCount > 0 ? mkAlertItem('indigo', iconSvg.todo, `${activeTodoCount} aktive gjøremål`, todoAlertSub, "navigateTo('gjoremal')") : ''
@@ -2251,7 +2260,7 @@ function renderDashboard() {
   const recent = state.service.filter(s => getServiceStatus(s).key !== 'ferdig').slice(0,5);
   const serviceHtml = recent.length ? recent.map(s => {
     const i=state.instruments.find(x=>x.id===s.inst_id); const st=getServiceStatus(s); const ws=state.workshops.find(w=>w.id===s.workshop_id);
-    return `<div class="activity-item"><div style="flex:1;"><div class="activity-title">${i?.name||'?'} ${idbadge(i?.korps_id)}</div><div class="activity-sub">${s.type}${ws?' · '+ws.name:''}</div></div><div style="display:flex;align-items:center;gap:8px;"><span class="badge ${st.cls}">${st.label}</span><span class="activity-time">${s.date}</span></div></div>`;
+    return `<div class="activity-item" style="cursor:pointer;" onclick="navigateTo('service');setSvcStatusFilter(['under_service','til_henting'])"><div style="flex:1;"><div class="activity-title">${i?.name||'?'} ${idbadge(i?.korps_id)}</div><div class="activity-sub">${s.type}${ws?' · '+ws.name:''}</div></div><div style="display:flex;align-items:center;gap:8px;"><span class="badge ${st.cls}">${st.label}</span><span class="activity-time">${s.date}</span></div></div>`;
   }).join('') : '<p class="empty">Ingen aktive serviceoppføringer</p>';
 
   document.getElementById('dash-content-grid').innerHTML = `
@@ -2393,14 +2402,14 @@ function renderVarslerDropdown() {
     html += mkItem('purple', truck,
       `${inst?.name || 'Ukjent instrument'} klar til henting`,
       `${ws?.name || 'Ukjent verksted'}${s.date_finished ? ' · Ferdig ' + s.date_finished : ''}`,
-      "navigateTo('service')");
+      "navigateTo('service');setSvcStatusFilter(['under_service','til_henting'])");
   });
   overdue.forEach(s => {
     const inst = state.instruments.find(i => i.id === s.inst_id);
     html += mkItem('red', warn,
       `Service forfalt: ${inst?.name || 'Ukjent'}`,
       `Frist: ${s.next_due}${inst?.korps_id ? ' · ' + inst.korps_id : ''}`,
-      "navigateTo('service')");
+      "navigateTo('service');setSvcStatusFilter(['under_service','til_henting'])");
   });
   checkDue.forEach(i => {
     html += mkItem('amber', clock,
