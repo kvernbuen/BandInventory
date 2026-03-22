@@ -31,6 +31,7 @@ try { db.exec('ALTER TABLE service ADD COLUMN picked_up INTEGER DEFAULT 0'); } c
 try { db.exec('ALTER TABLE service ADD COLUMN invoice_no TEXT'); } catch(e) {}
 try { db.exec('ALTER TABLE todos ADD COLUMN in_progress INTEGER DEFAULT 0'); } catch(e) {}
 try { db.exec('ALTER TABLE todos ADD COLUMN assigned_to TEXT'); } catch(e) {}
+try { db.exec("UPDATE todos SET type='general' WHERE type IS NULL"); } catch(e) {}
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS instruments (

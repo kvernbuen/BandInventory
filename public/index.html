@@ -1166,6 +1166,10 @@ async function api(method, path, body) {
     headers: body ? { 'Content-Type': 'application/json' } : {},
     body: body ? JSON.stringify(body) : undefined
   });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`API ${method} ${path} feilet (${res.status}): ${text.slice(0, 200)}`);
+  }
   return res.json();
 }
 
@@ -3032,17 +3036,23 @@ async function saveTodo() {
   const note = document.getElementById('todo-note').value.trim();
   if (!note) { toast('Skriv inn en beskrivelse'); return; }
   const type = document.querySelector('input[name="todo-type"]:checked')?.value || 'general';
-  if (type !== 'none' && !todoSelectedItem) { toast('Velg et instrument eller en vare, eller velg "Ingen"'); return; }
+  if (type !== 'general' && !todoSelectedItem) { toast('Velg et instrument eller en vare'); return; }
   const created_by = document.getElementById('todo-created-by').value.trim();
   const assigned_to = document.getElementById('todo-edit-assigned-to').value.trim();
-  if (editingTodoId) {
-    await api('PUT', '/api/todos/' + editingTodoId, { note, created_by, assigned_to });
-  } else {
-    const today = new Date().toISOString().split('T')[0];
-    const body = { note, created: today, created_by, assigned_to,
-      type: todoSelectedItem ? todoSelectedItem.type : null,
-      ref_id: todoSelectedItem ? todoSelectedItem.id : null };
-    await api('POST', '/api/todos', body);
+  try {
+    if (editingTodoId) {
+      await api('PUT', '/api/todos/' + editingTodoId, { note, created_by, assigned_to });
+    } else {
+      const today = new Date().toISOString().split('T')[0];
+      const body = { note, created: today, created_by, assigned_to,
+        type: todoSelectedItem ? todoSelectedItem.type : 'general',
+        ref_id: todoSelectedItem ? todoSelectedItem.id : '' };
+      await api('POST', '/api/todos', body);
+    }
+  } catch (e) {
+    toast('Feil ved lagring: ' + e.message);
+    console.error(e);
+    return;
   }
   closeTodoModal();
   toast(editingTodoId ? 'Gjøremål oppdatert!' : 'Gjøremål lagret!');
