@@ -1164,7 +1164,7 @@ function getServiceStatus(s) {
 
 function condBadge(c) {
   return c === 'God' ? '<span class="badge badge-ok">God</span>'
-    : c === 'Akseptabel' ? '<span class="badge badge-warn">Akseptabel</span>'
+    : c === 'Akseptabel' ? '<span class="badge badge-yellow">Akseptabel</span>'
     : '<span class="badge badge-bad">Trenger service</span>';
 }
 function idbadge(kid) { return kid ? `<span class="idbadge">${kid}</span>` : ''; }
@@ -2237,18 +2237,28 @@ function renderDashboard() {
     activeTodoCount > 0 ? mkAlertItem('indigo', iconSvg.todo, `${activeTodoCount} aktive gjøremål`, todoAlertSub, "navigateTo('gjoremal')") : ''
   ].join('');
 
-  // Recent service
-  const recent = state.service.slice(0,5);
+  // Active todos list
+  const activeTodosList = state.todos.filter(t => !t.done).sort((a,b) => (b.in_progress||0)-(a.in_progress||0));
+  const todosListHtml = activeTodosList.length ? activeTodosList.slice(0,8).map(t => {
+    const statusBadge = t.in_progress ? '<span class="badge badge-yellow">Under arbeid</span>' : '<span class="badge badge-info">Åpen</span>';
+    let refLabel = '';
+    if (t.type === 'instrument' && t.ref_id) { const inst = state.instruments.find(x=>x.id===t.ref_id); refLabel = inst ? inst.name + (inst.korps_id?' · '+inst.korps_id:'') : ''; }
+    else if (t.type === 'accessory' && t.ref_id) { const acc = state.accessories.find(x=>x.id===t.ref_id); refLabel = acc ? acc.name : ''; }
+    return `<div class="activity-item" style="cursor:pointer;" onclick="navigateTo('gjoremal')"><div style="flex:1;"><div class="activity-title">${t.note||'—'}</div><div class="activity-sub">${refLabel||'Generell'}${t.assigned_to?' · '+t.assigned_to:''}</div></div><div style="display:flex;align-items:center;gap:8px;">${statusBadge}<span class="activity-time">${t.created}</span></div></div>`;
+  }).join('') : '<p class="empty">Ingen aktive gjøremål</p>';
+
+  // Recent service — only non-finished
+  const recent = state.service.filter(s => getServiceStatus(s).key !== 'ferdig').slice(0,5);
   const serviceHtml = recent.length ? recent.map(s => {
     const i=state.instruments.find(x=>x.id===s.inst_id); const st=getServiceStatus(s); const ws=state.workshops.find(w=>w.id===s.workshop_id);
     return `<div class="activity-item"><div style="flex:1;"><div class="activity-title">${i?.name||'?'} ${idbadge(i?.korps_id)}</div><div class="activity-sub">${s.type}${ws?' · '+ws.name:''}</div></div><div style="display:flex;align-items:center;gap:8px;"><span class="badge ${st.cls}">${st.label}</span><span class="activity-time">${s.date}</span></div></div>`;
-  }).join('') : '<p class="empty">Ingen serviceoppføringer ennå</p>';
+  }).join('') : '<p class="empty">Ingen aktive serviceoppføringer</p>';
 
   document.getElementById('dash-content-grid').innerHTML = `
     <div class="content-grid">
       <div class="card">
-        <div class="card-header"><div><div class="card-title">Siste serviceoppføringer</div></div></div>
-        <div class="card-body">${serviceHtml}</div>
+        <div class="card-header"><div><div class="card-title">Aktive gjøremål</div><div class="card-subtitle">${activeTodosList.length} aktive</div></div><button class="btn btn-sm" onclick="navigateTo('gjoremal')">Vis alle</button></div>
+        <div class="card-body">${todosListHtml}</div>
       </div>
       <div class="card">
         <div class="card-header">
@@ -2256,6 +2266,10 @@ function renderDashboard() {
           <span class="badge ${alertCount>0?'badge-red':'badge-ok'}">${alertCount>0?alertCount:'OK'}</span>
         </div>
         <div class="alert-list card-body">${alertHtml||'<p class="empty">Ingen aktive varsler</p>'}</div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div><div class="card-title">Aktive servicer</div><div class="card-subtitle">Ekskl. ferdige</div></div></div>
+        <div class="card-body">${serviceHtml}</div>
       </div>
     </div>`;
 }
@@ -2287,7 +2301,12 @@ function showGlobalSearch(q) {
     return [i?.name,s.type,s.desc,ws?.name,s.invoice_no].some(v => (v||'').toLowerCase().includes(q));
   });
   const accessories = state.accessories.filter(a => [a.name,a.category,a.notes,a.barcode].some(v => (v||'').toLowerCase().includes(q)));
-  const total = inst.length + players.length + services.length + accessories.length;
+  const todos = state.todos.filter(t => {
+    const inst = t.ref_id && t.type==='instrument' ? state.instruments.find(x=>x.id===t.ref_id) : null;
+    const acc = t.ref_id && t.type==='accessory' ? state.accessories.find(x=>x.id===t.ref_id) : null;
+    return [t.note, t.created_by, t.assigned_to, t.done_by, inst?.name, acc?.name].some(v => (v||'').toLowerCase().includes(q));
+  });
+  const total = inst.length + players.length + services.length + accessories.length + todos.length;
 
   const mkSection = (title, count, tableHtml) => count ? `
     <div class="card card-mb">
@@ -2311,9 +2330,19 @@ function showGlobalSearch(q) {
     ${accessories.map(a => { const sc=a.stock===0?'badge-bad':a.stock<=a.min_level?'badge-warn':'badge-ok'; return `<tr style="cursor:pointer;" title="Klikk for å redigere" onclick="openAccModal('${a.id}')"><td><strong>${a.name}</strong></td><td><span class="badge badge-gray">${a.category||'—'}</span></td><td style="font-weight:600;">${a.stock}</td><td><span class="badge ${sc}">${a.stock===0?'Tomt':a.stock<=a.min_level?'Lavt':'OK'}</span></td></tr>`; }).join('')}
   </tbody></table>`);
 
+  const todosHtml = mkSection('Gjøremål', todos.length, `<table><thead><tr><th>Oppgave</th><th>Gjelder</th><th>Status</th><th>Registrert av</th><th>Ansvarlig</th></tr></thead><tbody>
+    ${todos.map(t => {
+      const refInst = t.ref_id && t.type==='instrument' ? state.instruments.find(x=>x.id===t.ref_id) : null;
+      const refAcc = t.ref_id && t.type==='accessory' ? state.accessories.find(x=>x.id===t.ref_id) : null;
+      const refLabel = refInst ? refInst.name : refAcc ? refAcc.name : 'Generell';
+      const st = t.done ? '<span class="badge badge-ok">Fullført</span>' : t.in_progress ? '<span class="badge badge-yellow">Under arbeid</span>' : '<span class="badge badge-info">Åpen</span>';
+      return `<tr style="cursor:pointer;" onclick="navigateTo('gjoremal')"><td><strong>${t.note||'—'}</strong></td><td style="color:var(--text-muted);">${refLabel}</td><td>${st}</td><td style="color:var(--text-muted);">${t.created_by||'—'}</td><td style="color:var(--text-muted);">${t.assigned_to||'—'}</td></tr>`;
+    }).join('')}
+  </tbody></table>`);
+
   document.getElementById('dash-content-grid').innerHTML = `<div style="grid-column:1/-1;">
     <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">${total} treff for «${q}»${total===0?' — prøv et annet søkeord':''}</p>
-    ${instHtml}${playersHtml}${svcHtml}${accHtml}
+    ${instHtml}${playersHtml}${svcHtml}${accHtml}${todosHtml}
     ${total===0?'<p class="empty">Ingen resultater</p>':''}
   </div>`;
 }
