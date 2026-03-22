@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(grep -n \"=== ''none''\\\\|=== \"\"none\"\"\\\\||| ''none''\\\\|| ''none''\" \"c:/Github/korpsinventar/public/index.html\")"
+      "Bash(grep -n \"=== ''none''\\\\|=== \"\"none\"\"\\\\||| ''none''\\\\|| ''none''\" \"c:/Github/korpsinventar/public/index.html\")",
+      "Bash(cmd.exe /c \"node --version 2>&1 & where node 2>&1\")"
     ]
   }
 }

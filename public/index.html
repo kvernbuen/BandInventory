@@ -3,6 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1e1b4b">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Inventar">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/icon-192.png">
   <title>Korpsinventar</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -323,8 +330,53 @@
     #toast.show { opacity: 1; }
     @media print { body * { visibility: hidden; } #qr-print-area, #qr-print-area * { visibility: visible; } #qr-print-area { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: white; } }
     #qr-print-area { display: none; }
-    @media (max-width: 900px) { .metric-grid { grid-template-columns: repeat(3,1fr); } .content-grid { grid-template-columns: 1fr; } }
-    @media (max-width: 600px) { .sidebar { display: none; } .main { margin-left: 0; } .content { padding: 16px; } .topbar { padding: 12px 16px; } .metric-grid { grid-template-columns: repeat(2,1fr); } .form-grid { grid-template-columns: 1fr; } .form-grid .full { grid-column: 1; } th, td { padding: 8px 12px; } }
+
+    /* MOBILE NAV */
+    .mobile-menu-btn { display: none; background: none; border: none; padding: 8px; cursor: pointer; color: var(--text); border-radius: 8px; flex-shrink: 0; }
+    .mobile-menu-btn:hover { background: var(--surface2); }
+    .sidebar-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 9; }
+    .sidebar-backdrop.open { display: block; }
+
+    /* TABLET */
+    @media (max-width: 900px) {
+      .metric-grid { grid-template-columns: repeat(3,1fr); }
+      .content-grid { grid-template-columns: 1fr; }
+    }
+
+    /* MOBILE */
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); transition: transform 0.25s cubic-bezier(0.4,0,0.2,1); display: flex !important; z-index: 11; }
+      .sidebar.open { transform: translateX(0); }
+      .main { margin-left: 0; }
+      .mobile-menu-btn { display: flex; align-items: center; justify-content: center; }
+      .topbar { padding: 10px 14px; gap: 8px; }
+      .topbar-title { font-size: 16px; }
+      .topbar-search-input { width: 150px; transition: width 0.2s; }
+      .topbar-search-input:focus { width: 190px; }
+      .content { padding: 14px; }
+      .metric-grid { grid-template-columns: repeat(3,1fr); gap: 10px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .form-grid .full { grid-column: 1; }
+      th, td { padding: 8px 10px; }
+      .section-header { flex-wrap: wrap; }
+      .modal-overlay { padding: 0; align-items: flex-end; }
+      .modal { border-radius: 20px 20px 0 0; max-height: 92vh; overflow-y: auto; max-width: 100%; padding: 1.25rem; }
+      .varsler-dropdown { position: fixed; top: auto; bottom: 0; left: 0; right: 0; width: 100%; max-width: 100%; border-radius: 16px 16px 0 0; max-height: 75vh; overflow-y: auto; }
+      .filter-bar { gap: 6px; }
+      #toast { bottom: 1rem; right: 1rem; }
+    }
+
+    /* SMALL MOBILE */
+    @media (max-width: 480px) {
+      .metric-grid { grid-template-columns: repeat(2,1fr); gap: 8px; margin-bottom: 16px; }
+      .metric-value { font-size: 22px; }
+      .metric-card { padding: 14px 12px; gap: 7px; }
+      .topbar-search-wrap { display: none; }
+      .section-header-actions { flex-wrap: wrap; }
+      th, td { padding: 7px 8px; font-size: 12px; }
+      .btn { padding: 7px 14px; }
+      .content { padding: 12px; }
+    }
   </style>
 </head>
 <body>
@@ -400,10 +452,14 @@
     </button>
   </div>
 </aside>
+<div class="sidebar-backdrop" id="sidebar-backdrop" onclick="closeMobileMenu()"></div>
 
 <!-- MAIN -->
 <main class="main">
   <div class="topbar">
+    <button class="mobile-menu-btn" onclick="openMobileMenu()" aria-label="Åpne meny">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/></svg>
+    </button>
     <div id="topbar-title" class="topbar-title">Oversikt</div>
     <div class="topbar-search-wrap">
       <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
@@ -1126,6 +1182,14 @@ async function loadAll() {
 }
 
 const sectionTitles = { dashboard: 'Oversikt', instrumenter: 'Instrumenter', musikanter: 'Musikanter', service: 'Servicelogg', tilbehor: 'Tilbehør og lager', gjoremal: 'Gjøremål', verksteder: 'Verksteder', leverandorer: 'Leverandører', rapporter: 'Rapporter', innstillinger: 'Innstillinger' };
+function openMobileMenu() {
+  document.querySelector('.sidebar').classList.add('open');
+  document.getElementById('sidebar-backdrop').classList.add('open');
+}
+function closeMobileMenu() {
+  document.querySelector('.sidebar').classList.remove('open');
+  document.getElementById('sidebar-backdrop').classList.remove('open');
+}
 function navigateTo(sid, addHistory = true) {
   document.querySelectorAll('.nav-item[data-section]').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -1139,6 +1203,7 @@ function navigateTo(sid, addHistory = true) {
   if (inp) inp.value = '';
   if (sid === 'innstillinger') populateSettingsForm();
   if (addHistory) history.pushState({ section: sid }, '', '#' + sid);
+  closeMobileMenu();
 }
 document.querySelectorAll('.nav-item[data-section]').forEach(btn => {
   btn.addEventListener('click', () => navigateTo(btn.dataset.section));
@@ -3029,6 +3094,13 @@ async function reopenTodo(id) {
 
 function render() { renderDashboard(); renderInstTable(); renderPlayerTable(); renderServiceTable(); renderAccessories(); renderTodos(); renderVerkstederTable(); renderLeverandorerTable(); renderReports(); updateVarslerBadge(); loadSettings(); }
 loadAll();
+
+// --- SERVICE WORKER ---
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  });
+}
 
 // --- HISTORY API ---
 {
