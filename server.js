@@ -2,12 +2,25 @@ const express = require('express');
 const Database = require('better-sqlite3');
 const XLSX = require('xlsx');
 const path = require('path');
+const bcrypt = require('bcryptjs');
+const session = require('express-session');
+const SQLiteStore = require('connect-sqlite3')(session);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const DB_PATH = process.env.DB_PATH || path.join(__dirname, 'db', 'korpsinventar.db');
 
 app.use(express.json());
+
+const SESSION_DB_PATH = path.dirname(DB_PATH);
+app.use(session({
+  store: new SQLiteStore({ db: 'sessions.db', dir: SESSION_DB_PATH }),
+  secret: process.env.SESSION_SECRET || 'korpsinventar-hemmelighet-2024',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 }
+}));
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 const db = new Database(DB_PATH);
@@ -17,7 +30,41 @@ function uid() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 }
 
-// Migrations for existing databases
+// --- PERMISSIONS ---
+const ALL_PERMS = [
+  'instruments_read','instruments_write','instruments_delete',
+  'players_read','players_write','players_delete','players_assign',
+  'service_read','service_write','service_delete',
+  'accessories_read','accessories_write','accessories_delete',
+  'todos_read','todos_write','todos_delete',
+  'workshops_admin','suppliers_admin','reports_read','users_admin'
+];
+const ROLE_PERMS = {
+  admin: ALL_PERMS,
+  user: [
+    'instruments_read','instruments_write',
+    'players_read','players_write','players_assign',
+    'service_read','service_write',
+    'accessories_read','accessories_write',
+    'todos_read','todos_write',
+    'reports_read'
+  ]
+};
+
+function requireAuth(req, res, next) {
+  if (!req.session || !req.session.userId) return res.status(401).json({ error: 'Ikke innlogget' });
+  next();
+}
+function requirePerm(perm) {
+  return (req, res, next) => {
+    if (!req.session || !req.session.userId) return res.status(401).json({ error: 'Ikke innlogget' });
+    const perms = req.session.permissions || [];
+    if (!perms.includes(perm)) return res.status(403).json({ error: 'Ingen tilgang' });
+    next();
+  };
+}
+
+// --- MIGRATIONS FOR EXISTING DATABASES ---
 try { db.exec('ALTER TABLE instruments ADD COLUMN korps_id TEXT'); } catch(e) {}
 try { db.exec('ALTER TABLE instruments ADD COLUMN next_check TEXT'); } catch(e) {}
 try { db.exec('ALTER TABLE accessories ADD COLUMN supplier TEXT'); } catch(e) {}
@@ -32,6 +79,12 @@ try { db.exec('ALTER TABLE service ADD COLUMN invoice_no TEXT'); } catch(e) {}
 try { db.exec('ALTER TABLE todos ADD COLUMN in_progress INTEGER DEFAULT 0'); } catch(e) {}
 try { db.exec('ALTER TABLE todos ADD COLUMN assigned_to TEXT'); } catch(e) {}
 try { db.exec("UPDATE todos SET type='general' WHERE type IS NULL"); } catch(e) {}
+try { db.exec('ALTER TABLE users ADD COLUMN disabled INTEGER DEFAULT 0'); } catch(e) {}
+try { db.exec('ALTER TABLE users ADD COLUMN created_by TEXT'); } catch(e) {}
+try { db.exec('ALTER TABLE instruments ADD COLUMN registered_by TEXT'); } catch(e) {}
+try { db.exec('ALTER TABLE players ADD COLUMN registered_by TEXT'); } catch(e) {}
+try { db.exec('ALTER TABLE service ADD COLUMN registered_by TEXT'); } catch(e) {}
+try { db.exec('ALTER TABLE accessories ADD COLUMN registered_by TEXT'); } catch(e) {}
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS instruments (
@@ -118,7 +171,29 @@ db.exec(`
     in_progress INTEGER DEFAULT 0,
     assigned_to TEXT
   );
+  CREATE TABLE IF NOT EXISTS users (
+    id TEXT PRIMARY KEY,
+    username TEXT UNIQUE NOT NULL,
+    display_name TEXT,
+    password_hash TEXT NOT NULL,
+    role TEXT DEFAULT 'user',
+    permissions TEXT,
+    force_password_change INTEGER DEFAULT 0,
+    disabled INTEGER DEFAULT 0,
+    last_login TEXT,
+    created TEXT,
+    created_by TEXT
+  );
 `);
+
+// Seed default admin user
+if (!db.prepare("SELECT id FROM users WHERE username='admin'").get()) {
+  const hash = bcrypt.hashSync('admin123', 10);
+  db.prepare('INSERT INTO users (id,username,display_name,password_hash,role,permissions,force_password_change,disabled,last_login,created,created_by) VALUES (?,?,?,?,?,?,1,0,NULL,?,NULL)').run(
+    uid(), 'admin', 'Administrator', hash, 'admin',
+    JSON.stringify(ALL_PERMS), new Date().toISOString().slice(0, 10)
+  );
+}
 
 // Seed default accessory categories
 ['Rørblad', 'Oljer og fett', 'Munnstykker', 'Stropper og etuier', 'Rengjøring', 'Notemateriell', 'Annet'].forEach(n => {
@@ -126,25 +201,26 @@ db.exec(`
 });
 
 // --- INSTRUMENTS ---
-app.get('/api/instruments', (_req, res) => {
+app.get('/api/instruments', requirePerm('instruments_read'), (_req, res) => {
   res.json(db.prepare('SELECT * FROM instruments ORDER BY name').all());
 });
 
-app.post('/api/instruments', (req, res) => {
-  const { name, category, condition, serial, purchase, notes, korps_id, next_check } = req.body;
+app.post('/api/instruments', requirePerm('instruments_write'), (req, res) => {
+  const { name, category, condition, serial, purchase, notes, korps_id, next_check, registered_by } = req.body;
   const id = uid();
-  db.prepare('INSERT INTO instruments VALUES (?,?,?,?,?,?,?,?,?)').run(id, name, category, condition, serial, purchase, notes, korps_id||null, next_check||null);
+  db.prepare('INSERT INTO instruments (id,name,category,condition,serial,purchase,notes,korps_id,next_check,registered_by) VALUES (?,?,?,?,?,?,?,?,?,?)')
+    .run(id, name, category, condition, serial, purchase, notes, korps_id||null, next_check||null, registered_by||null);
   res.json({ id });
 });
 
-app.put('/api/instruments/:id', (req, res) => {
-  const { name, category, condition, serial, purchase, notes, korps_id, next_check } = req.body;
-  db.prepare('UPDATE instruments SET name=?,category=?,condition=?,serial=?,purchase=?,notes=?,korps_id=?,next_check=? WHERE id=?')
-    .run(name, category, condition, serial, purchase, notes, korps_id||null, next_check||null, req.params.id);
+app.put('/api/instruments/:id', requirePerm('instruments_write'), (req, res) => {
+  const { name, category, condition, serial, purchase, notes, korps_id, next_check, registered_by } = req.body;
+  db.prepare('UPDATE instruments SET name=?,category=?,condition=?,serial=?,purchase=?,notes=?,korps_id=?,next_check=?,registered_by=? WHERE id=?')
+    .run(name, category, condition, serial, purchase, notes, korps_id||null, next_check||null, registered_by||null, req.params.id);
   res.json({ ok: true });
 });
 
-app.delete('/api/instruments/:id', (req, res) => {
+app.delete('/api/instruments/:id', requirePerm('instruments_delete'), (req, res) => {
   const id = req.params.id;
   db.prepare('DELETE FROM instruments WHERE id=?').run(id);
   db.prepare('DELETE FROM player_instruments WHERE instrument_id=?').run(id);
@@ -153,7 +229,7 @@ app.delete('/api/instruments/:id', (req, res) => {
 });
 
 // --- PLAYERS ---
-app.get('/api/players', (_req, res) => {
+app.get('/api/players', requirePerm('players_read'), (_req, res) => {
   const players = db.prepare('SELECT * FROM players ORDER BY name').all();
   const links = db.prepare('SELECT * FROM player_instruments').all();
   players.forEach(p => {
@@ -162,10 +238,10 @@ app.get('/api/players', (_req, res) => {
   res.json(players);
 });
 
-app.post('/api/players', (req, res) => {
-  const { name, section, contact, instruments } = req.body;
+app.post('/api/players', requirePerm('players_write'), (req, res) => {
+  const { name, section, contact, instruments, registered_by } = req.body;
   const id = uid();
-  db.prepare('INSERT INTO players VALUES (?,?,?,?)').run(id, name, section, contact);
+  db.prepare('INSERT INTO players (id,name,section,contact,registered_by) VALUES (?,?,?,?,?)').run(id, name, section, contact, registered_by||null);
   // Enforce 1 instrument = 1 player: remove instrument from any other player before assigning
   const delFromOther = db.prepare('DELETE FROM player_instruments WHERE instrument_id=? AND player_id!=?');
   const ins = db.prepare('INSERT OR IGNORE INTO player_instruments VALUES (?,?)');
@@ -173,9 +249,9 @@ app.post('/api/players', (req, res) => {
   res.json({ id });
 });
 
-app.put('/api/players/:id', (req, res) => {
-  const { name, section, contact, instruments } = req.body;
-  db.prepare('UPDATE players SET name=?,section=?,contact=? WHERE id=?').run(name, section, contact, req.params.id);
+app.put('/api/players/:id', requirePerm('players_write'), (req, res) => {
+  const { name, section, contact, instruments, registered_by } = req.body;
+  db.prepare('UPDATE players SET name=?,section=?,contact=?,registered_by=? WHERE id=?').run(name, section, contact, registered_by||null, req.params.id);
   db.prepare('DELETE FROM player_instruments WHERE player_id=?').run(req.params.id);
   // Enforce 1 instrument = 1 player
   const delFromOther = db.prepare('DELETE FROM player_instruments WHERE instrument_id=? AND player_id!=?');
@@ -184,96 +260,96 @@ app.put('/api/players/:id', (req, res) => {
   res.json({ ok: true });
 });
 
-app.delete('/api/players/:id', (req, res) => {
+app.delete('/api/players/:id', requirePerm('players_delete'), (req, res) => {
   db.prepare('DELETE FROM players WHERE id=?').run(req.params.id);
   db.prepare('DELETE FROM player_instruments WHERE player_id=?').run(req.params.id);
   res.json({ ok: true });
 });
 
 // --- SERVICE ---
-app.get('/api/service', (_req, res) => {
+app.get('/api/service', requirePerm('service_read'), (_req, res) => {
   res.json(db.prepare('SELECT * FROM service ORDER BY date DESC').all());
 });
 
-app.post('/api/service', (req, res) => {
-  const { date, inst_id, type, cost, by_whom, desc, next_due, date_finished, workshop_id, invoice_no } = req.body;
+app.post('/api/service', requirePerm('service_write'), (req, res) => {
+  const { date, inst_id, type, cost, by_whom, desc, next_due, date_finished, workshop_id, invoice_no, registered_by } = req.body;
   const id = uid();
-  db.prepare('INSERT INTO service VALUES (?,?,?,?,?,?,?,?,?,?,0,?)')
-    .run(id, date, inst_id, type, cost, by_whom||null, desc||null, next_due||null, date_finished||null, workshop_id||null, invoice_no||null);
+  db.prepare('INSERT INTO service (id,date,inst_id,type,cost,by_whom,desc,next_due,date_finished,workshop_id,picked_up,invoice_no,registered_by) VALUES (?,?,?,?,?,?,?,?,?,?,0,?,?)')
+    .run(id, date, inst_id, type, cost, by_whom||null, desc||null, next_due||null, date_finished||null, workshop_id||null, invoice_no||null, registered_by||null);
   res.json({ id });
 });
 
-app.put('/api/service/:id', (req, res) => {
-  const { date, inst_id, type, cost, by_whom, desc, next_due, date_finished, workshop_id, invoice_no } = req.body;
-  db.prepare('UPDATE service SET date=?,inst_id=?,type=?,cost=?,by_whom=?,desc=?,next_due=?,date_finished=?,workshop_id=?,invoice_no=? WHERE id=?')
-    .run(date, inst_id, type, cost, by_whom||null, desc||null, next_due||null, date_finished||null, workshop_id||null, invoice_no||null, req.params.id);
+app.put('/api/service/:id', requirePerm('service_write'), (req, res) => {
+  const { date, inst_id, type, cost, by_whom, desc, next_due, date_finished, workshop_id, invoice_no, registered_by } = req.body;
+  db.prepare('UPDATE service SET date=?,inst_id=?,type=?,cost=?,by_whom=?,desc=?,next_due=?,date_finished=?,workshop_id=?,invoice_no=?,registered_by=? WHERE id=?')
+    .run(date, inst_id, type, cost, by_whom||null, desc||null, next_due||null, date_finished||null, workshop_id||null, invoice_no||null, registered_by||null, req.params.id);
   res.json({ ok: true });
 });
 
-app.delete('/api/service/:id', (req, res) => {
+app.delete('/api/service/:id', requirePerm('service_delete'), (req, res) => {
   db.prepare('DELETE FROM service WHERE id=?').run(req.params.id);
   res.json({ ok: true });
 });
 
-app.post('/api/service/:id/pickup', (req, res) => {
+app.post('/api/service/:id/pickup', requirePerm('service_write'), (req, res) => {
   db.prepare('UPDATE service SET picked_up=1 WHERE id=?').run(req.params.id);
   res.json({ ok: true });
 });
 
 // --- WORKSHOPS ---
-app.get('/api/workshops', (_req, res) => {
+app.get('/api/workshops', requireAuth, (_req, res) => {
   res.json(db.prepare('SELECT * FROM workshops ORDER BY name').all());
 });
 
-app.post('/api/workshops', (req, res) => {
+app.post('/api/workshops', requirePerm('workshops_admin'), (req, res) => {
   const { name, contact, address, notes } = req.body;
   const id = uid();
   db.prepare('INSERT INTO workshops VALUES (?,?,?,?,?)').run(id, name, contact||null, address||null, notes||null);
   res.json({ id });
 });
 
-app.put('/api/workshops/:id', (req, res) => {
+app.put('/api/workshops/:id', requirePerm('workshops_admin'), (req, res) => {
   const { name, contact, address, notes } = req.body;
   db.prepare('UPDATE workshops SET name=?,contact=?,address=?,notes=? WHERE id=?')
     .run(name, contact||null, address||null, notes||null, req.params.id);
   res.json({ ok: true });
 });
 
-app.delete('/api/workshops/:id', (req, res) => {
+app.delete('/api/workshops/:id', requirePerm('workshops_admin'), (req, res) => {
   db.prepare('DELETE FROM workshops WHERE id=?').run(req.params.id);
   res.json({ ok: true });
 });
 
 // --- SUPPLIERS ---
-app.get('/api/suppliers', (_req, res) => {
+app.get('/api/suppliers', requireAuth, (_req, res) => {
   res.json(db.prepare('SELECT * FROM suppliers ORDER BY name').all());
 });
 
-app.post('/api/suppliers', (req, res) => {
+app.post('/api/suppliers', requirePerm('suppliers_admin'), (req, res) => {
   const { name, contact, address, notes } = req.body;
   const id = uid();
   db.prepare('INSERT INTO suppliers VALUES (?,?,?,?,?)').run(id, name, contact||null, address||null, notes||null);
   res.json({ id });
 });
 
-app.put('/api/suppliers/:id', (req, res) => {
+app.put('/api/suppliers/:id', requirePerm('suppliers_admin'), (req, res) => {
   const { name, contact, address, notes } = req.body;
   db.prepare('UPDATE suppliers SET name=?,contact=?,address=?,notes=? WHERE id=?')
     .run(name, contact||null, address||null, notes||null, req.params.id);
   res.json({ ok: true });
 });
 
-app.delete('/api/suppliers/:id', (req, res) => {
+app.delete('/api/suppliers/:id', requirePerm('suppliers_admin'), (req, res) => {
   db.prepare('DELETE FROM suppliers WHERE id=?').run(req.params.id);
   res.json({ ok: true });
 });
 
 // --- TODOS ---
-app.get('/api/todos', (_req, res) => {
+app.get('/api/todos', requirePerm('todos_read'), (_req, res) => {
   res.json(db.prepare('SELECT * FROM todos ORDER BY created DESC').all());
 });
 
-app.post('/api/todos', (req, res) => {
+app.post('/api/todos', requirePerm('todos_write'), (req, res) => {
   const { type, ref_id, note, created, created_by } = req.body;
   const id = uid();
   db.prepare('INSERT INTO todos (id,type,ref_id,note,created,created_by,done) VALUES (?,?,?,?,?,?,0)')
@@ -281,43 +357,43 @@ app.post('/api/todos', (req, res) => {
   res.json({ id });
 });
 
-app.put('/api/todos/:id', (req, res) => {
+app.put('/api/todos/:id', requirePerm('todos_write'), (req, res) => {
   const { note, created_by, assigned_to } = req.body;
   db.prepare('UPDATE todos SET note=?,created_by=?,assigned_to=? WHERE id=?').run(note||null, created_by||null, assigned_to||null, req.params.id);
   res.json({ ok: true });
 });
 
-app.post('/api/todos/:id/done', (req, res) => {
+app.post('/api/todos/:id/done', requirePerm('todos_write'), (req, res) => {
   const { done_date, done_by } = req.body;
   db.prepare('UPDATE todos SET done=1,done_date=?,done_by=? WHERE id=?').run(done_date||null, done_by||null, req.params.id);
   res.json({ ok: true });
 });
 
-app.post('/api/todos/:id/reopen', (req, res) => {
+app.post('/api/todos/:id/reopen', requirePerm('todos_write'), (req, res) => {
   db.prepare('UPDATE todos SET done=0,done_date=NULL,done_by=NULL,in_progress=0,assigned_to=NULL WHERE id=?').run(req.params.id);
   res.json({ ok: true });
 });
 
-app.post('/api/todos/:id/start', (req, res) => {
+app.post('/api/todos/:id/start', requirePerm('todos_write'), (req, res) => {
   const { assigned_to } = req.body;
   db.prepare('UPDATE todos SET in_progress=1,assigned_to=? WHERE id=?').run(assigned_to||null, req.params.id);
   res.json({ ok: true });
 });
 
-app.delete('/api/todos/:id', (req, res) => {
+app.delete('/api/todos/:id', requirePerm('todos_delete'), (req, res) => {
   db.prepare('DELETE FROM todos WHERE id=?').run(req.params.id);
   res.json({ ok: true });
 });
 
 // --- SETTINGS ---
-app.get('/api/settings', (_req, res) => {
+app.get('/api/settings', requireAuth, (_req, res) => {
   const rows = db.prepare('SELECT key, value FROM settings').all();
   const obj = {};
   rows.forEach(r => { obj[r.key] = r.value; });
   res.json(obj);
 });
 
-app.put('/api/settings', (req, res) => {
+app.put('/api/settings', requireAuth, (req, res) => {
   const upsert = db.prepare('INSERT INTO settings (key, value) VALUES (?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value');
   const tx = db.transaction(data => {
     Object.entries(data).forEach(([k, v]) => upsert.run(k, v ?? ''));
@@ -326,12 +402,107 @@ app.put('/api/settings', (req, res) => {
   res.json({ ok: true });
 });
 
+// --- AUTH ---
+app.post('/api/auth/login', (req, res) => {
+  const { username, password } = req.body;
+  const user = db.prepare('SELECT * FROM users WHERE username=?').get(username);
+  if (!user || !bcrypt.compareSync(password, user.password_hash))
+    return res.status(401).json({ error: 'Feil brukernavn eller passord' });
+  if (user.disabled) return res.status(401).json({ error: 'Denne brukeren er deaktivert' });
+  const perms = user.permissions ? JSON.parse(user.permissions) : ROLE_PERMS[user.role] || [];
+  req.session.userId = user.id;
+  req.session.username = user.username;
+  req.session.displayName = user.display_name;
+  req.session.role = user.role;
+  req.session.permissions = perms;
+  req.session.forcePasswordChange = !!user.force_password_change;
+  db.prepare('UPDATE users SET last_login=? WHERE id=?').run(new Date().toISOString().slice(0,10), user.id);
+  res.json({ ok: true, forcePasswordChange: !!user.force_password_change });
+});
+
+app.post('/api/auth/logout', (req, res) => {
+  req.session.destroy(() => res.json({ ok: true }));
+});
+
+app.get('/api/auth/me', (req, res) => {
+  if (!req.session || !req.session.userId)
+    return res.status(401).json({ error: 'Ikke innlogget' });
+  res.json({
+    id: req.session.userId,
+    username: req.session.username,
+    displayName: req.session.displayName,
+    role: req.session.role,
+    permissions: req.session.permissions,
+    forcePasswordChange: req.session.forcePasswordChange
+  });
+});
+
+app.post('/api/auth/change-password', requireAuth, (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  const user = db.prepare('SELECT * FROM users WHERE id=?').get(req.session.userId);
+  if (!user) return res.status(404).json({ error: 'Bruker ikke funnet' });
+  if (!req.session.forcePasswordChange && !bcrypt.compareSync(currentPassword, user.password_hash))
+    return res.status(401).json({ error: 'Feil nåværende passord' });
+  if (!newPassword || newPassword.length < 6)
+    return res.status(400).json({ error: 'Nytt passord må være minst 6 tegn' });
+  const hash = bcrypt.hashSync(newPassword, 10);
+  db.prepare('UPDATE users SET password_hash=?,force_password_change=0 WHERE id=?').run(hash, req.session.userId);
+  req.session.forcePasswordChange = false;
+  res.json({ ok: true });
+});
+
+// --- USERS (admin only) ---
+app.get('/api/users', requirePerm('users_admin'), (req, res) => {
+  const users = db.prepare('SELECT id,username,display_name,role,permissions,force_password_change,disabled,last_login,created,created_by FROM users ORDER BY username').all();
+  res.json(users);
+});
+
+app.post('/api/users', requirePerm('users_admin'), (req, res) => {
+  const { username, display_name, password, role, permissions } = req.body;
+  if (!username || !password) return res.status(400).json({ error: 'Brukernavn og passord er påkrevd' });
+  if (password.length < 6) return res.status(400).json({ error: 'Passord må være minst 6 tegn' });
+  const hash = bcrypt.hashSync(password, 10);
+  const id = uid();
+  const permsJson = permissions ? JSON.stringify(permissions) : JSON.stringify(ROLE_PERMS[role] || ROLE_PERMS.user);
+  try {
+    const createdBy = req.session.displayName || req.session.username || null;
+    db.prepare('INSERT INTO users (id,username,display_name,password_hash,role,permissions,force_password_change,disabled,last_login,created,created_by) VALUES (?,?,?,?,?,?,1,0,NULL,?,?)').run(id, username, display_name||null, hash, role||'user', permsJson, new Date().toISOString().slice(0,10), createdBy);
+    res.json({ id });
+  } catch(e) {
+    res.status(409).json({ error: 'Brukernavn er allerede i bruk' });
+  }
+});
+
+app.put('/api/users/:id', requirePerm('users_admin'), (req, res) => {
+  const { display_name, role, permissions, force_password_change, disabled } = req.body;
+  const permsJson = permissions ? JSON.stringify(permissions) : null;
+  const existing = db.prepare('SELECT * FROM users WHERE id=?').get(req.params.id);
+  if (!existing) return res.status(404).json({ error: 'Bruker ikke funnet' });
+  db.prepare('UPDATE users SET display_name=?,role=?,permissions=?,force_password_change=?,disabled=? WHERE id=?')
+    .run(display_name||null, role||existing.role, permsJson||existing.permissions, force_password_change?1:0, disabled?1:0, req.params.id);
+  res.json({ ok: true });
+});
+
+app.post('/api/users/:id/reset-password', requirePerm('users_admin'), (req, res) => {
+  const { newPassword } = req.body;
+  if (!newPassword || newPassword.length < 6) return res.status(400).json({ error: 'Passord må være minst 6 tegn' });
+  const hash = bcrypt.hashSync(newPassword, 10);
+  db.prepare('UPDATE users SET password_hash=?,force_password_change=1 WHERE id=?').run(hash, req.params.id);
+  res.json({ ok: true });
+});
+
+app.delete('/api/users/:id', requirePerm('users_admin'), (req, res) => {
+  if (req.params.id === req.session.userId) return res.status(400).json({ error: 'Kan ikke slette seg selv' });
+  db.prepare('DELETE FROM users WHERE id=?').run(req.params.id);
+  res.json({ ok: true });
+});
+
 // --- ACC CATEGORIES ---
-app.get('/api/acc-categories', (_req, res) => {
+app.get('/api/acc-categories', requireAuth, (_req, res) => {
   res.json(db.prepare('SELECT * FROM acc_categories ORDER BY name').all());
 });
 
-app.post('/api/acc-categories', (req, res) => {
+app.post('/api/acc-categories', requirePerm('accessories_write'), (req, res) => {
   const { name } = req.body;
   const id = uid();
   try {
@@ -343,38 +514,38 @@ app.post('/api/acc-categories', (req, res) => {
   }
 });
 
-app.delete('/api/acc-categories/:id', (req, res) => {
+app.delete('/api/acc-categories/:id', requirePerm('accessories_delete'), (req, res) => {
   db.prepare('DELETE FROM acc_categories WHERE id=?').run(req.params.id);
   res.json({ ok: true });
 });
 
 // --- ACCESSORIES ---
-app.get('/api/accessories', (_req, res) => {
+app.get('/api/accessories', requirePerm('accessories_read'), (_req, res) => {
   res.json(db.prepare('SELECT * FROM accessories ORDER BY name').all());
 });
 
-app.post('/api/accessories', (req, res) => {
-  const { name, category, stock, min_level, notes, barcode, price, invoice_no, supplier_id } = req.body;
+app.post('/api/accessories', requirePerm('accessories_write'), (req, res) => {
+  const { name, category, stock, min_level, notes, barcode, price, invoice_no, supplier_id, registered_by } = req.body;
   const id = uid();
-  db.prepare('INSERT INTO accessories (id,name,category,stock,min_level,notes,barcode,price,invoice_no,supplier_id) VALUES (?,?,?,?,?,?,?,?,?,?)')
-    .run(id, name, category, stock, min_level, notes||null, barcode||null, price||null, invoice_no||null, supplier_id||null);
+  db.prepare('INSERT INTO accessories (id,name,category,stock,min_level,notes,barcode,price,invoice_no,supplier_id,registered_by) VALUES (?,?,?,?,?,?,?,?,?,?,?)')
+    .run(id, name, category, stock, min_level, notes||null, barcode||null, price||null, invoice_no||null, supplier_id||null, registered_by||null);
   res.json({ id });
 });
 
-app.put('/api/accessories/:id', (req, res) => {
-  const { name, category, stock, min_level, notes, barcode, price, invoice_no, supplier_id } = req.body;
-  db.prepare('UPDATE accessories SET name=?,category=?,stock=?,min_level=?,notes=?,barcode=?,price=?,invoice_no=?,supplier_id=? WHERE id=?')
-    .run(name, category, stock, min_level, notes||null, barcode||null, price||null, invoice_no||null, supplier_id||null, req.params.id);
+app.put('/api/accessories/:id', requirePerm('accessories_write'), (req, res) => {
+  const { name, category, stock, min_level, notes, barcode, price, invoice_no, supplier_id, registered_by } = req.body;
+  db.prepare('UPDATE accessories SET name=?,category=?,stock=?,min_level=?,notes=?,barcode=?,price=?,invoice_no=?,supplier_id=?,registered_by=? WHERE id=?')
+    .run(name, category, stock, min_level, notes||null, barcode||null, price||null, invoice_no||null, supplier_id||null, registered_by||null, req.params.id);
   res.json({ ok: true });
 });
 
-app.delete('/api/accessories/:id', (req, res) => {
+app.delete('/api/accessories/:id', requirePerm('accessories_delete'), (req, res) => {
   db.prepare('DELETE FROM accessories WHERE id=?').run(req.params.id);
   res.json({ ok: true });
 });
 
 // --- EXPORT ---
-app.get('/api/export/:type/:format', (req, res) => {
+app.get('/api/export/:type/:format', requireAuth, (req, res) => {
   const { type, format } = req.params;
   const today = new Date().toISOString().slice(0, 10);
 
@@ -532,7 +703,7 @@ app.get('/api/export/:type/:format', (req, res) => {
 });
 
 // --- IMPORT ---
-app.post('/api/import/instruments', (req, res) => {
+app.post('/api/import/instruments', requirePerm('instruments_write'), (req, res) => {
   const { rows } = req.body;
   const ins = db.prepare('INSERT INTO instruments VALUES (?,?,?,?,?,?,?,?)');
   let imported = 0;
@@ -544,7 +715,7 @@ app.post('/api/import/instruments', (req, res) => {
   res.json({ imported });
 });
 
-app.post('/api/import/accessories', (req, res) => {
+app.post('/api/import/accessories', requirePerm('accessories_write'), (req, res) => {
   const { rows } = req.body;
   const ins = db.prepare('INSERT INTO accessories (id,name,category,stock,min_level,notes,price) VALUES (?,?,?,?,?,?,?)');
   let imported = 0;
@@ -556,7 +727,7 @@ app.post('/api/import/accessories', (req, res) => {
   res.json({ imported });
 });
 
-app.post('/api/export/report', (req, res) => {
+app.post('/api/export/report', requireAuth, (req, res) => {
   const { filename, headers, rows } = req.body;
   if (!headers || !rows) return res.status(400).json({ error: 'Mangler data' });
   const aoa = [headers, ...rows];

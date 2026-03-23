@@ -377,9 +377,67 @@
       .btn { padding: 7px 14px; }
       .content { padding: 12px; }
     }
+  /* --- LOGIN --- */
+  #login-overlay { position:fixed;inset:0;background:var(--bg-secondary);display:flex;align-items:center;justify-content:center;z-index:9999; }
+  .login-box { background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:40px 36px;width:360px;max-width:calc(100vw - 32px);box-shadow:0 8px 32px rgba(0,0,0,.25); }
+  .login-logo { display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:28px; }
+  .login-logo svg { width:52px;height:52px;background:var(--accent);border-radius:14px;padding:10px; }
+  .login-logo-name { font-size:20px;font-weight:700;color:var(--text); }
+  .login-logo-sub { font-size:12px;color:var(--text-muted); }
+  .login-box h2 { font-size:16px;font-weight:600;margin-bottom:20px;color:var(--text); }
+  .login-field { margin-bottom:14px; }
+  .login-field label { display:block;font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px; }
+  .login-field input { width:100%;padding:9px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px;box-sizing:border-box; }
+  .login-field input:focus { outline:none;border-color:var(--accent); }
+  .login-error { color:#ef4444;font-size:13px;margin-bottom:12px;min-height:18px; }
+  .login-btn { width:100%;padding:10px;border-radius:8px;background:var(--accent);color:#fff;font-size:14px;font-weight:600;border:none;cursor:pointer; }
+  .login-btn:hover { opacity:.9; }
+  /* topbar user */
+  .topbar-user { display:flex;align-items:center;gap:8px;margin-left:auto;padding-left:8px; }
+  .topbar-user-name { font-size:13px;color:var(--text-muted);white-space:nowrap;max-width:120px;overflow:hidden;text-overflow:ellipsis; }
+  /* permission-hidden */
+  .perm-hidden { display:none !important; }
+  input[readonly] { background:var(--bg-secondary);cursor:default; }
+  #app-wrapper { display:contents; }
+  .td-clip { max-width:220px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  tr.row-link { cursor:pointer; }
+  tr.row-link td { vertical-align:top; padding-top:10px; padding-bottom:10px; }
+  tr.row-link:hover td { background:var(--surface2) !important; }
+  .todo-row { padding:12px 20px; border-bottom:1px solid var(--border); cursor:pointer; }
+  .todo-row:last-child { border-bottom:none; }
+  .todo-row:hover { background:var(--surface2); }
+  .todo-row-top { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:5px; }
+  .todo-row-note { font-size:13px; font-weight:500; }
+  .todo-row-bottom { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-top:8px; flex-wrap:wrap; }
+  /* user management */
+  .user-role-badge { font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px; }
+  .role-admin { background:#ede9fe;color:#4c1d95; }
+  .role-user { background:#e0f2fe;color:#0c4a6e; }
+  [data-theme="dark"] .role-admin { background:#2e1065;color:#c4b5fd; }
+  [data-theme="dark"] .role-user { background:#0c2340;color:#7dd3fc; }
   </style>
 </head>
 <body>
+
+<!-- LOGIN OVERLAY -->
+<div id="login-overlay">
+  <div class="login-box">
+    <div class="login-logo">
+      <svg viewBox="0 0 28 28" fill="none"><path d="M8 17 Q11 11 14 11 Q17 11 20 17" stroke="white" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="8" cy="17" r="2.2" fill="white"/><circle cx="20" cy="17" r="2.2" fill="white"/></svg>
+      <div class="login-logo-name">Korpsinventar</div>
+      <div class="login-logo-sub">v1.0.0</div>
+    </div>
+    <h2>Logg inn</h2>
+    <form onsubmit="doLogin(event)">
+      <div class="login-field"><label>Brukernavn</label><input id="login-username" type="text" autocomplete="username" required></div>
+      <div class="login-field"><label>Passord</label><input id="login-password" type="password" autocomplete="current-password" required></div>
+      <div class="login-error" id="login-error"></div>
+      <button type="submit" class="login-btn" id="login-btn">Logg inn</button>
+    </form>
+  </div>
+</div>
+
+<div id="app-wrapper" style="display:none;">
 
 <!-- SIDEBAR -->
 <aside class="sidebar">
@@ -395,7 +453,7 @@
     <div style="min-width:0;">
       <div id="sidebar-korpsname" class="logo-korpsname" style="display:none;"></div>
       <div class="logo-text">Korpsinventar</div>
-      <div class="logo-sub">v2.0</div>
+      <div class="logo-sub">v1.0.0</div>
     </div>
   </div>
   <nav class="sidebar-nav">
@@ -440,11 +498,19 @@
       <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5z" clip-rule="evenodd"/></svg>
       Leverandører
     </button>
+    <button class="nav-item perm-hidden" data-section="brukere" id="nav-brukere">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>
+      Brukere
+    </button>
   </nav>
   <div class="sidebar-footer">
-    <button class="nav-item" data-section="innstillinger" style="width:100%;margin-bottom:4px;">
+    <button class="nav-item" id="nav-innstillinger" data-section="innstillinger" style="width:100%;margin-bottom:4px;">
       <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/></svg>
       Innstillinger
+    </button>
+    <button class="nav-item" onclick="openChangePasswordModal()" style="width:100%;margin-bottom:4px;">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/></svg>
+      Endre passord
     </button>
     <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">
       <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>
@@ -464,6 +530,13 @@
     <div class="topbar-search-wrap">
       <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
       <input id="topbar-search" class="topbar-search-input" placeholder="Søk i aktiv liste…" oninput="filterActiveSection(this.value)">
+    </div>
+    <div class="topbar-user" id="topbar-user">
+      <span class="topbar-user-name" id="topbar-display-name"></span>
+      <button class="btn btn-sm" onclick="doLogout()" title="Logg ut" style="gap:5px;">
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 001 1h5a1 1 0 100-2H4V5h4a1 1 0 100-2H3zm10.293 4.293a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 01-1.414-1.414L14.586 11H9a1 1 0 110-2h5.586l-1.293-1.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+        Logg ut
+      </button>
     </div>
     <div class="varsler-wrap">
       <button class="btn btn-sm" id="varsler-btn" onclick="toggleVarslerDropdown()" title="Vis varsler" style="gap:6px;">
@@ -496,7 +569,7 @@
           <button class="btn-export" onclick="exportData('instruments','csv')">Eksporter CSV</button>
           <button class="btn-export" onclick="exportData('instruments','xlsx')">Eksporter Excel</button>
           <button class="btn" onclick="openImportModal('instruments')">↑ Importer CSV</button>
-          <button class="btn btn-primary" onclick="openInstModal()">+ Legg til instrument</button>
+          <button class="btn btn-primary" id="btn-add-inst" onclick="openInstModal()">+ Legg til instrument</button>
         </div>
       </div>
       <div class="filter-bar">
@@ -538,7 +611,7 @@
         <div class="section-header-actions">
           <button class="btn-export" onclick="exportData('players','csv')">Eksporter CSV</button>
           <button class="btn-export" onclick="exportData('players','xlsx')">Eksporter Excel</button>
-          <button class="btn btn-primary" onclick="openPlayerModal()">+ Legg til musiker</button>
+          <button class="btn btn-primary" id="btn-add-player" onclick="openPlayerModal()">+ Legg til musiker</button>
         </div>
       </div>
       <div class="filter-bar">
@@ -616,7 +689,7 @@
           <button class="btn-export" onclick="exportData('accessories','xlsx')">Eksporter Excel</button>
           <button class="btn" onclick="openAccReport()">📊 Rapport</button>
           <button class="btn" onclick="openImportModal('accessories')">↑ Importer CSV</button>
-          <button class="btn btn-primary" onclick="openAccModal()">+ Legg til vare</button>
+          <button class="btn btn-primary" id="btn-add-acc" onclick="openAccModal()">+ Legg til vare</button>
         </div>
       </div>
       <div class="filter-bar">
@@ -654,7 +727,7 @@
       <div class="section-header">
         <h2>Gjøremål</h2>
         <div class="section-header-actions">
-          <button class="btn btn-primary" onclick="openTodoModal()">+ Legg til gjøremål</button>
+          <button class="btn btn-primary" id="btn-add-todo" onclick="openTodoModal()">+ Legg til gjøremål</button>
         </div>
       </div>
       <div class="filter-bar">
@@ -666,12 +739,7 @@
         <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;color:var(--text-muted);white-space:nowrap;"><input type="radio" name="todo-filter" value="all" onchange="setTodoFilter('all')"> Alle</label>
       </div>
       <div class="card">
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Gjelder</th><th>Oppgave</th><th>Registrert</th><th>Registrert av</th><th>Status</th><th>Ansvarlig</th><th>Kvittert av</th><th>Handlinger</th></tr></thead>
-            <tbody id="todos-table"></tbody>
-          </table>
-        </div>
+        <div id="todos-table"></div>
       </div>
     </div>
 
@@ -680,7 +748,7 @@
       <div class="section-header">
         <h2>Verksteder</h2>
         <div class="section-header-actions">
-          <button class="btn btn-primary" onclick="openWorkshopModal()">+ Legg til verksted</button>
+          <button class="btn btn-primary" id="btn-add-ws" onclick="openWorkshopModal()">+ Legg til verksted</button>
         </div>
       </div>
       <div class="card">
@@ -698,7 +766,7 @@
       <div class="section-header">
         <h2>Leverandører</h2>
         <div class="section-header-actions">
-          <button class="btn btn-primary" onclick="openSupplierModal()">+ Legg til leverandør</button>
+          <button class="btn btn-primary" id="btn-add-sup" onclick="openSupplierModal()">+ Legg til leverandør</button>
         </div>
       </div>
       <div class="card">
@@ -708,6 +776,22 @@
             <tbody id="suppliers-table"></tbody>
           </table>
         </div>
+      </div>
+    </div>
+
+    <!-- BRUKERE -->
+    <div id="brukere" class="section">
+      <div class="section-header">
+        <h2>Brukere</h2>
+        <div class="section-header-actions">
+          <button class="btn btn-primary" onclick="openUserModal()">+ Ny bruker</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Brukernavn</th><th>Visningsnavn</th><th>Rolle</th><th>Siste innlogging</th><th>Opprettet</th><th>Handlinger</th></tr></thead>
+          <tbody id="users-table"></tbody>
+        </table>
       </div>
     </div>
 
@@ -776,10 +860,12 @@
       <div class="field"><label>Kjøpsdato</label><input type="date" id="inst-purchase"></div>
       <div class="field"><label>Neste sjekk (dato)</label><input type="date" id="inst-next-check"></div>
       <div class="field full"><label>Merknader</label><textarea id="inst-notes" placeholder="Oppbevaringssted, osv."></textarea></div>
+      <div class="field"><label>Registrert av</label><input id="inst-registered-by" placeholder="Navn" readonly></div>
     </div>
     <div class="modal-footer">
       <button class="btn" onclick="closeModal('inst-modal')">Avbryt</button>
-      <button class="btn btn-primary" onclick="saveInstrument()">Lagre</button>
+      <button class="btn modal-view-btn" style="display:none;" onclick="openInstModal(editingId.inst)">Rediger</button>
+      <button class="btn btn-primary modal-save-btn" onclick="saveInstrument()">Lagre</button>
     </div>
   </div>
 </div>
@@ -813,6 +899,7 @@
         <select id="player-section"><option>Messingblåsere</option><option>Treblåsere</option><option>Slagverk</option><option>Fanfare</option><option>Annet</option></select>
       </div>
       <div class="field"><label>Kontakt</label><input id="player-contact" placeholder="Telefon eller e-post"></div>
+      <div class="field"><label>Registrert av</label><input id="player-registered-by" placeholder="Navn" readonly></div>
     </div>
     <div class="field" style="margin-top:12px;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
@@ -838,7 +925,8 @@
     </div>
     <div class="modal-footer">
       <button class="btn" onclick="closePlayerModal()">Avbryt</button>
-      <button class="btn btn-primary" onclick="savePlayer()">Lagre</button>
+      <button class="btn modal-view-btn" style="display:none;" onclick="openPlayerModal(editingId.player)">Rediger</button>
+      <button class="btn btn-primary modal-save-btn" onclick="savePlayer()">Lagre</button>
     </div>
   </div>
 </div>
@@ -862,12 +950,14 @@
       <div class="field"><label>Kostnad (kr)</label><input type="number" id="svc-cost" placeholder="0" min="0"></div>
       <div class="field"><label>Fakturanummer</label><input id="svc-invoice" placeholder="Fakturanr."></div>
       <div class="field"><label>Utført av</label><input id="svc-by" placeholder="Navn, verksted, osv."></div>
+      <div class="field"><label>Registrert av</label><input id="svc-registered-by" placeholder="Navn" readonly></div>
       <div class="field"><label>Neste service (valgfritt)</label><input type="date" id="svc-next"></div>
       <div class="field full"><label>Beskrivelse</label><textarea id="svc-desc" placeholder="Hva ble gjort?"></textarea></div>
     </div>
     <div class="modal-footer">
       <button class="btn" onclick="closeModal('service-modal')">Avbryt</button>
-      <button class="btn btn-primary" onclick="saveService()">Lagre</button>
+      <button class="btn modal-view-btn" style="display:none;" onclick="openServiceModal(editingId.service)">Rediger</button>
+      <button class="btn btn-primary modal-save-btn" onclick="saveService()">Lagre</button>
     </div>
   </div>
 </div>
@@ -908,10 +998,12 @@
         <p class="scanner-hint">Støtter EAN-13, EAN-8, UPC, Code 128, QR m.fl.</p>
       </div>
       <div class="field full"><label>Merknader</label><textarea id="acc-notes" placeholder="Størrelse, spesifikasjoner, osv."></textarea></div>
+      <div class="field"><label>Registrert av</label><input id="acc-registered-by" placeholder="Navn" readonly></div>
     </div>
     <div class="modal-footer">
       <button class="btn" onclick="closeAccModal()">Avbryt</button>
-      <button class="btn btn-primary" onclick="saveAccessory()">Lagre</button>
+      <button class="btn modal-view-btn" style="display:none;" onclick="openAccModal(editingId.acc)">Rediger</button>
+      <button class="btn btn-primary modal-save-btn" onclick="saveAccessory()">Lagre</button>
     </div>
   </div>
 </div>
@@ -1077,7 +1169,8 @@
     <div class="modal-footer">
       <button class="btn btn-service" id="todo-modal-done-btn" style="display:none;margin-right:auto;" onclick="closeTodoModal();openTodoDoneModal(editingTodoId)">Kvitter ut</button>
       <button class="btn" onclick="closeTodoModal()">Avbryt</button>
-      <button class="btn btn-primary" onclick="saveTodo()">Lagre</button>
+      <button class="btn modal-view-btn" style="display:none;" onclick="openTodoModal(editingTodoId)">Rediger</button>
+      <button class="btn btn-primary modal-save-btn" onclick="saveTodo()">Lagre</button>
     </div>
   </div>
 </div>
@@ -1120,6 +1213,73 @@
   </div>
 </div>
 
+<!-- Modal: Bruker -->
+<div id="user-modal" class="modal-overlay">
+  <div class="modal" style="max-width:540px;">
+    <h3 id="user-modal-title">Ny bruker</h3>
+    <div class="form-grid">
+      <div class="field"><label>Brukernavn *</label><input id="user-username" placeholder="Brukernavn (unikt)"></div>
+      <div class="field"><label>Visningsnavn</label><input id="user-display-name" placeholder="Fullt navn"></div>
+      <div class="field"><label id="user-password-label">Passord *</label><input id="user-password" type="password" placeholder="Minst 6 tegn"></div>
+      <div class="field">
+        <label>Rolle</label>
+        <select id="user-role" onchange="onUserRoleChange()">
+          <option value="user">Bruker</option>
+          <option value="admin">Administrator</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Tving passordbytte ved neste innlogging</label>
+        <input type="checkbox" id="user-force-pw" style="width:auto;margin-top:4px;">
+      </div>
+      <div class="field">
+        <label>Deaktiver bruker (kan ikke logge inn)</label>
+        <input type="checkbox" id="user-disabled" style="width:auto;margin-top:4px;">
+      </div>
+      <div class="field" id="user-created-by-wrap" style="display:none;">
+        <label>Opprettet av</label>
+        <input id="user-created-by" readonly>
+      </div>
+    </div>
+    <div style="margin-top:16px;">
+      <div style="font-size:13px;font-weight:600;color:var(--text-muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px;">Rettigheter</div>
+      <div id="user-perms-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;font-size:13px;"></div>
+    </div>
+    <div id="user-modal-error" style="color:#ef4444;font-size:13px;margin-top:10px;display:none;"></div>
+    <div class="modal-footer">
+      <button class="btn btn-danger" id="user-delete-btn" style="margin-right:auto;display:none;" onclick="deleteUser()">Slett bruker</button>
+      <button class="btn" onclick="closeModal('user-modal')">Avbryt</button>
+      <button class="btn btn-primary" onclick="saveUser()">Lagre</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Endre passord -->
+<div id="change-password-modal" class="modal-overlay">
+  <div class="modal" style="max-width:400px;">
+    <h3>Endre passord</h3>
+    <div class="form-grid">
+      <div class="field full" id="current-pw-field">
+        <label>Nåværende passord</label>
+        <input id="change-pw-current" type="password" placeholder="Nåværende passord">
+      </div>
+      <div class="field full">
+        <label>Nytt passord</label>
+        <input id="change-pw-new" type="password" placeholder="Minst 6 tegn">
+      </div>
+      <div class="field full">
+        <label>Gjenta nytt passord</label>
+        <input id="change-pw-repeat" type="password" placeholder="Gjenta nytt passord">
+      </div>
+      <div class="field full"><span id="change-pw-error" style="color:#ef4444;font-size:13px;"></span></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('change-password-modal')" id="change-pw-cancel">Avbryt</button>
+      <button class="btn btn-primary" onclick="doChangePassword()">Lagre passord</button>
+    </div>
+  </div>
+</div>
+
 <!-- Hidden print area -->
 <div id="qr-print-area">
   <div style="text-align:center;">
@@ -1130,6 +1290,8 @@
 </div>
 
 <div id="toast"></div>
+
+</div><!-- /app-wrapper -->
 
 <script>
 // --- THEME ---
@@ -1145,7 +1307,7 @@ function toggleTheme() { applyTheme(localStorage.getItem('korps-theme') === 'dar
 applyTheme(localStorage.getItem('korps-theme') || 'light');
 
 // --- STATE ---
-let state = { instruments: [], players: [], service: [], accessories: [], workshops: [], suppliers: [], accCategories: [], settings: {}, todos: [] };
+let state = { instruments: [], players: [], service: [], accessories: [], workshops: [], suppliers: [], accCategories: [], settings: {}, todos: [], users: [], currentUser: null };
 let editingId = { inst: null, player: null, service: null, acc: null, ws: null, sup: null };
 let scannerActive = false;
 let barcodeScannerActive = false;
@@ -1166,11 +1328,75 @@ async function api(method, path, body) {
     headers: body ? { 'Content-Type': 'application/json' } : {},
     body: body ? JSON.stringify(body) : undefined
   });
+  if (res.status === 401) { showLogin(); throw new Error('Ikke innlogget'); }
+  if (res.status === 403) { toast('Du har ikke tilgang til denne handlingen'); throw new Error('Ingen tilgang'); }
   if (!res.ok) {
     const text = await res.text();
     throw new Error(`API ${method} ${path} feilet (${res.status}): ${text.slice(0, 200)}`);
   }
   return res.json();
+}
+
+function hasPerm(perm) {
+  return (state.currentUser?.permissions || []).includes(perm);
+}
+
+function setModalViewMode(modalId, isView) {
+  const modal = document.getElementById(modalId);
+  modal.querySelectorAll('input, select, textarea').forEach(el => { el.disabled = isView; });
+  modal.querySelectorAll('.modal-save-btn').forEach(el => { el.style.display = isView ? 'none' : ''; });
+  modal.querySelectorAll('.modal-view-btn').forEach(el => { el.style.display = isView ? '' : 'none'; });
+}
+
+function showLogin() {
+  document.getElementById('login-overlay').style.display = 'flex';
+  document.getElementById('app-wrapper').style.display = 'none';
+}
+function hideLogin() {
+  document.getElementById('login-overlay').style.display = 'none';
+  document.getElementById('app-wrapper').style.display = '';
+}
+
+async function doLogin(e) {
+  e.preventDefault();
+  const btn = document.getElementById('login-btn');
+  const errEl = document.getElementById('login-error');
+  errEl.textContent = '';
+  btn.disabled = true; btn.textContent = 'Logger inn…';
+  try {
+    const { forcePasswordChange } = await api('POST', '/api/auth/login', {
+      username: document.getElementById('login-username').value,
+      password: document.getElementById('login-password').value
+    });
+    document.getElementById('login-password').value = '';
+    await initApp();
+    navigateTo('dashboard');
+    if (forcePasswordChange) openChangePasswordModal(true);
+  } catch(err) {
+    errEl.textContent = 'Feil brukernavn eller passord';
+  } finally {
+    btn.disabled = false; btn.textContent = 'Logg inn';
+  }
+}
+
+async function doLogout() {
+  await fetch('/api/auth/logout', { method: 'POST' });
+  state.currentUser = null;
+  showLogin();
+}
+
+async function initApp() {
+  try {
+    const me = await fetch('/api/auth/me').then(r => r.ok ? r.json() : null);
+    if (!me) { showLogin(); return; }
+    state.currentUser = me;
+    hideLogin();
+    document.getElementById('topbar-display-name').textContent = me.displayName || me.username;
+    applyPermissions();
+    await loadAll();
+  } catch(e) {
+    showLogin();
+  }
 }
 
 async function loadAll() {
@@ -1181,11 +1407,12 @@ async function loadAll() {
     api('GET', '/api/acc-categories'), api('GET', '/api/settings'),
     api('GET', '/api/todos')
   ]);
-  state = { instruments, players, service, accessories, workshops, suppliers, accCategories, settings, todos };
+  const users = hasPerm('users_admin') ? await api('GET', '/api/users') : [];
+  state = { ...state, instruments, players, service, accessories, workshops, suppliers, accCategories, settings, todos, users };
   render();
 }
 
-const sectionTitles = { dashboard: 'Oversikt', instrumenter: 'Instrumenter', musikanter: 'Musikanter', service: 'Servicelogg', tilbehor: 'Tilbehør og lager', gjoremal: 'Gjøremål', verksteder: 'Verksteder', leverandorer: 'Leverandører', rapporter: 'Rapporter', innstillinger: 'Innstillinger' };
+const sectionTitles = { dashboard: 'Oversikt', instrumenter: 'Instrumenter', musikanter: 'Musikanter', service: 'Servicelogg', tilbehor: 'Tilbehør og lager', gjoremal: 'Gjøremål', verksteder: 'Verksteder', leverandorer: 'Leverandører', brukere: 'Brukere', rapporter: 'Rapporter', innstillinger: 'Innstillinger' };
 function openMobileMenu() {
   document.querySelector('.sidebar').classList.add('open');
   document.getElementById('sidebar-backdrop').classList.add('open');
@@ -1440,10 +1667,10 @@ function updateIdPreview() {
 }
 
 // --- INSTRUMENTS ---
-function openInstModal(id) {
+function openInstModal(id, viewOnly=false) {
   editingId.inst = id || null;
   const inst = id ? state.instruments.find(i => i.id === id) : null;
-  document.getElementById('inst-modal-title').textContent = inst ? 'Rediger instrument' : 'Legg til instrument';
+  document.getElementById('inst-modal-title').textContent = viewOnly ? 'Instrument' : (inst ? 'Rediger instrument' : 'Legg til instrument');
   document.getElementById('inst-name').value = inst?.name || '';
   document.getElementById('inst-cat').value = inst?.category || 'Messingblåser';
   document.getElementById('inst-cond').value = inst?.condition || 'God';
@@ -1451,8 +1678,10 @@ function openInstModal(id) {
   document.getElementById('inst-purchase').value = inst?.purchase || '';
   document.getElementById('inst-next-check').value = inst?.next_check || '';
   document.getElementById('inst-notes').value = inst?.notes || '';
+  document.getElementById('inst-registered-by').value = inst?.registered_by || (!inst ? (state.currentUser?.displayName || state.currentUser?.username || '') : '');
   document.getElementById('id-preview-wrap').style.display = 'none';
   openModal('inst-modal');
+  setModalViewMode('inst-modal', viewOnly);
 }
 async function saveInstrument() {
   const name = document.getElementById('inst-name').value.trim();
@@ -1465,7 +1694,8 @@ async function saveInstrument() {
     serial: document.getElementById('inst-serial').value.trim(),
     purchase: document.getElementById('inst-purchase').value,
     next_check: document.getElementById('inst-next-check').value || null,
-    notes: document.getElementById('inst-notes').value.trim() };
+    notes: document.getElementById('inst-notes').value.trim(),
+    registered_by: document.getElementById('inst-registered-by').value.trim() || null };
   if (editingId.inst) await api('PUT', '/api/instruments/'+editingId.inst, body);
   else await api('POST', '/api/instruments', body);
   closeModal('inst-modal'); toast('Lagret!'); await loadAll();
@@ -1738,31 +1968,32 @@ function renderInstTable() {
         ? `<span class="badge badge-bad">${inst.next_check} — forfalt</span>`
         : `<span style="color:var(--text-muted);">${inst.next_check}</span>`;
     }
-    return `<tr>
-      <td>${idbadge(inst.korps_id)}${inst.serial?`<br><span style="font-size:11px;color:var(--text-faint)">Ser: ${inst.serial}</span>`:''}</td>
-      <td><strong style="font-weight:600">${inst.name}</strong>${inst.purchase?`<br><span style="font-size:11px;color:var(--text-faint)">Kjøpt: ${inst.purchase}</span>`:''}</td>
+    return `<tr class="row-link" onclick="openInstModal('${inst.id}', true)">
+      <td style="white-space:nowrap;">${idbadge(inst.korps_id)}${inst.serial?`<br><span style="font-size:11px;color:var(--text-faint)">Ser: ${inst.serial}</span>`:''}</td>
+      <td class="td-clip"><strong style="font-weight:600">${inst.name}</strong></td>
       <td><span class="badge badge-gray">${inst.category}</span></td>
       <td>${condBadge(inst.condition)}</td>
       <td>${checkCell}</td>
       <td style="color:${player?'var(--text)':'var(--text-faint)'};">${player?player.name:'Ikke tildelt'}</td>
-      <td><div style="display:flex;gap:6px;flex-wrap:wrap;">
+      <td onclick="event.stopPropagation()"><div style="display:flex;gap:6px;flex-wrap:wrap;">
         <button class="btn-sm" onclick="openQrModal('${inst.id}')" title="Vis QR-kode">QR</button>
         ${serviceBtn}
         <button class="btn-sm" onclick="openInstModal('${inst.id}')">Rediger</button>
-        <button class="btn-sm btn-danger" onclick="deleteInstrument('${inst.id}')">Slett</button>
+        ${hasPerm('instruments_delete')?`<button class="btn-sm btn-danger" onclick="deleteInstrument('${inst.id}')">Slett</button>`:''}
       </div></td></tr>`;
   }).join('');
   syncSortHeaders('instruments');
 }
 
 // --- PLAYERS ---
-function openPlayerModal(id) {
+function openPlayerModal(id, viewOnly=false) {
   editingId.player = id || null;
   const p = id ? state.players.find(x => x.id === id) : null;
-  document.getElementById('player-modal-title').textContent = p ? 'Rediger musiker' : 'Legg til musiker';
+  document.getElementById('player-modal-title').textContent = viewOnly ? 'Musiker' : (p ? 'Rediger musiker' : 'Legg til musiker');
   document.getElementById('player-name').value = p?.name || '';
   document.getElementById('player-section').value = p?.section || 'Messingblåsere';
   document.getElementById('player-contact').value = p?.contact || '';
+  document.getElementById('player-registered-by').value = p?.registered_by || (!p ? (state.currentUser?.displayName || state.currentUser?.username || '') : '');
   const assigned = p?.instruments || [];
   // Build map of instrument_id -> player name for instruments assigned to OTHER players
   const takenBy = {};
@@ -1795,6 +2026,7 @@ function openPlayerModal(id) {
     });
   }
   openModal('player-modal');
+  setModalViewMode('player-modal', viewOnly);
 }
 function closePlayerModal() { stopScanner(); closeModal('player-modal'); }
 
@@ -1821,6 +2053,7 @@ async function savePlayer() {
   const body = { name: document.getElementById('player-name').value.trim(),
     section: document.getElementById('player-section').value,
     contact: document.getElementById('player-contact').value.trim(),
+    registered_by: document.getElementById('player-registered-by').value.trim() || null,
     instruments: [...document.querySelectorAll('#inst-checkboxes input:checked')].map(c => c.value) };
   if (!body.name) return;
   if (editingId.player) await api('PUT', '/api/players/'+editingId.player, body);
@@ -1844,24 +2077,24 @@ function renderPlayerTable() {
       const i = state.instruments.find(x => x.id === iid);
       return i ? `<span style="display:inline-flex;align-items:center;gap:4px;margin:2px;background:var(--surface2);border:0.5px solid var(--border);border-radius:6px;padding:2px 8px;font-size:12px;">${i.name} ${idbadge(i.korps_id)}</span>` : '';
     }).join('');
-    return `<tr>
-      <td><strong style="font-weight:600">${p.name}</strong></td>
+    return `<tr class="row-link" onclick="openPlayerModal('${p.id}', true)">
+      <td class="td-clip"><strong style="font-weight:600">${p.name}</strong></td>
       <td><span class="badge badge-info">${p.section}</span></td>
-      <td style="font-size:12px;color:var(--text-muted);">${p.contact||'—'}</td>
-      <td>${insts||'<span style="color:var(--text-faint);font-size:12px;">Ingen</span>'}</td>
-      <td><div style="display:flex;gap:6px;">
+      <td style="font-size:12px;color:var(--text-muted);white-space:nowrap;">${p.contact||'—'}</td>
+      <td style="max-width:250px;overflow:hidden;">${insts||'<span style="color:var(--text-faint);font-size:12px;">Ingen</span>'}</td>
+      <td onclick="event.stopPropagation()"><div style="display:flex;gap:6px;">
         <button class="btn-sm" onclick="openPlayerModal('${p.id}')">Rediger</button>
-        <button class="btn-sm btn-danger" onclick="deletePlayer('${p.id}')">Slett</button>
+        ${hasPerm('players_delete')?`<button class="btn-sm btn-danger" onclick="deletePlayer('${p.id}')">Slett</button>`:''}
       </div></td></tr>`;
   }).join('');
   syncSortHeaders('players');
 }
 
 // --- SERVICE ---
-function openServiceModal(id) {
+function openServiceModal(id, viewOnly=false) {
   editingId.service = id || null;
   const s = id ? state.service.find(x => x.id === id) : null;
-  document.getElementById('service-modal-title').textContent = s ? 'Rediger serviceoppføring' : 'Logg service';
+  document.getElementById('service-modal-title').textContent = viewOnly ? 'Serviceoppføring' : (s ? 'Rediger serviceoppføring' : 'Logg service');
   document.getElementById('svc-date').value = s?.date || new Date().toISOString().split('T')[0];
   document.getElementById('svc-type').value = s?.type || 'Rutinemessig vedlikehold';
   document.getElementById('svc-cost').value = s?.cost || '';
@@ -1870,6 +2103,7 @@ function openServiceModal(id) {
   document.getElementById('svc-desc').value = s?.desc || '';
   document.getElementById('svc-date-finished').value = s?.date_finished || '';
   document.getElementById('svc-invoice').value = s?.invoice_no || '';
+  document.getElementById('svc-registered-by').value = s?.registered_by || (!s ? (state.currentUser?.displayName || state.currentUser?.username || '') : '');
   document.getElementById('svc-inst').innerHTML = state.instruments.map(i =>
     `<option value="${i.id}"${s&&s.inst_id===i.id?' selected':''}>${i.korps_id?i.korps_id+' — ':''}${i.name}</option>`
   ).join('');
@@ -1877,6 +2111,7 @@ function openServiceModal(id) {
     '<option value="">— Intern / ingen verksted —</option>' +
     state.workshops.map(w => `<option value="${w.id}"${s&&s.workshop_id===w.id?' selected':''}>${w.name}</option>`).join('');
   openModal('service-modal');
+  setModalViewMode('service-modal', viewOnly);
 }
 async function saveService() {
   const body = {
@@ -1889,7 +2124,8 @@ async function saveService() {
     next_due: document.getElementById('svc-next').value || null,
     date_finished: document.getElementById('svc-date-finished').value || null,
     workshop_id: document.getElementById('svc-workshop').value || null,
-    invoice_no: document.getElementById('svc-invoice').value.trim() || null
+    invoice_no: document.getElementById('svc-invoice').value.trim() || null,
+    registered_by: document.getElementById('svc-registered-by').value.trim() || null
   };
   if (!body.inst_id || !body.date) return;
   if (editingId.service) await api('PUT', '/api/service/'+editingId.service, body);
@@ -1932,20 +2168,20 @@ function renderServiceTable() {
       : `<span class="badge badge-ok">${s.next_due}</span>`;
     const pickupBtn = status.key === 'til_henting'
       ? `<button class="btn-pickup" onclick="pickupService('${s.id}')">✓ Hentet</button>` : '';
-    return `<tr>
+    return `<tr class="row-link" onclick="openServiceModal('${s.id}', true)">
       <td style="white-space:nowrap;font-size:12px;">${s.date}${s.date_finished?`<br><span style="color:var(--text-faint)">Ferdig: ${s.date_finished}</span>`:''}</td>
-      <td>${inst?`${inst.name} ${idbadge(inst.korps_id)}`:'<span style="color:var(--text-faint)">Ukjent</span>'}</td>
+      <td style="white-space:nowrap;">${inst?`${inst.name} ${idbadge(inst.korps_id)}`:'<span style="color:var(--text-faint)">Ukjent</span>'}</td>
       <td><span class="badge badge-gray">${s.type}</span></td>
       <td><span class="badge ${status.cls}">${status.label}</span></td>
-      <td style="font-size:12px;color:var(--text-muted);">${ws?ws.name:(s.by_whom||'—')}</td>
-      <td style="font-size:13px;">${s.desc||'—'}</td>
+      <td style="font-size:12px;color:var(--text-muted);white-space:nowrap;">${ws?ws.name:(s.by_whom||'—')}</td>
+      <td class="td-clip" style="font-size:13px;">${s.desc||'—'}</td>
       <td style="white-space:nowrap;">${fmtKr(s.cost)}</td>
-      <td style="font-size:12px;color:var(--text-muted);">${s.invoice_no||'—'}</td>
+      <td style="font-size:12px;color:var(--text-muted);white-space:nowrap;">${s.invoice_no||'—'}</td>
       <td>${nextBadge}</td>
-      <td><div style="display:flex;gap:6px;flex-wrap:wrap;">
+      <td onclick="event.stopPropagation()"><div style="display:flex;gap:6px;flex-wrap:wrap;">
         ${pickupBtn}
         <button class="btn-sm" onclick="openServiceModal('${s.id}')">Rediger</button>
-        <button class="btn-sm btn-danger" onclick="deleteService('${s.id}')">Slett</button>
+        ${hasPerm('service_delete')?`<button class="btn-sm btn-danger" onclick="deleteService('${s.id}')">Slett</button>`:''}
       </div></td></tr>`;
   }).join('');
   syncSortHeaders('service');
@@ -2114,10 +2350,10 @@ async function ensureCategoryExists(name) {
     await api('POST', '/api/acc-categories', { name });
   }
 }
-function openAccModal(id) {
+function openAccModal(id, viewOnly=false) {
   editingId.acc = id || null;
   const a = id ? state.accessories.find(x => x.id === id) : null;
-  document.getElementById('acc-modal-title').textContent = a ? 'Rediger vare' : 'Legg til vare';
+  document.getElementById('acc-modal-title').textContent = viewOnly ? 'Vare' : (a ? 'Rediger vare' : 'Legg til vare');
   document.getElementById('acc-name').value = a?.name || '';
   document.getElementById('acc-cat').value = a?.category || '';
   document.getElementById('acc-price').value = a?.price ?? '';
@@ -2126,9 +2362,11 @@ function openAccModal(id) {
   document.getElementById('acc-min').value = a?.min_level ?? 2;
   document.getElementById('acc-notes').value = a?.notes || '';
   document.getElementById('acc-barcode').value = a?.barcode || '';
+  document.getElementById('acc-registered-by').value = a?.registered_by || (!a ? (state.currentUser?.displayName || state.currentUser?.username || '') : '');
   updateAccCategoryDatalist();
   updateAccSupplierDropdown(a?.supplier_id || '');
   openModal('acc-modal');
+  setModalViewMode('acc-modal', viewOnly);
 }
 async function saveAccessory() {
   const name = document.getElementById('acc-name').value.trim();
@@ -2142,7 +2380,8 @@ async function saveAccessory() {
     barcode: document.getElementById('acc-barcode').value.trim() || null,
     price: parseFloat(document.getElementById('acc-price').value) || null,
     invoice_no: document.getElementById('acc-invoice').value.trim() || null,
-    supplier_id: document.getElementById('acc-supplier-id').value || null };
+    supplier_id: document.getElementById('acc-supplier-id').value || null,
+    registered_by: document.getElementById('acc-registered-by').value.trim() || null };
   if (editingId.acc) await api('PUT', '/api/accessories/'+editingId.acc, body);
   else await api('POST', '/api/accessories', body);
   closeAccModal(); toast('Lagret!'); await loadAll();
@@ -2189,18 +2428,18 @@ function renderAccessories() {
     const sup = state.suppliers.find(s => s.id === a.supplier_id);
     const supName = sup?.name || '—';
     const statusBadge = a.stock===0?'<span class="badge badge-bad">Tomt</span>':a.stock<=a.min_level?'<span class="badge badge-warn">Lavt</span>':'<span class="badge badge-ok">OK</span>';
-    return `<tr>
-      <td><strong style="font-weight:600">${a.name}</strong>${a.notes?`<br><span style="font-size:12px;color:var(--text-muted)">${a.notes}</span>`:''}${a.barcode?`<br><span style="font-size:11px;color:var(--text-faint);font-family:monospace">${a.barcode}</span>`:''}</td>
+    return `<tr class="row-link" onclick="openAccModal('${a.id}', true)">
+      <td class="td-clip"><strong style="font-weight:600">${a.name}</strong></td>
       <td><span class="badge badge-gray">${a.category||'—'}</span></td>
-      <td style="font-size:12px;color:var(--text-muted);">${supName}</td>
+      <td style="font-size:12px;color:var(--text-muted);white-space:nowrap;">${supName}</td>
       <td style="white-space:nowrap;">${a.price!=null?fmt(a.price)+' kr':'—'}</td>
       <td style="font-weight:600">${a.stock}</td>
       <td style="color:var(--text-muted)">${a.min_level}</td>
       <td>${statusBadge}</td>
-      <td><div style="display:flex;gap:6px;">
+      <td onclick="event.stopPropagation()"><div style="display:flex;gap:6px;">
         <button class="btn-sm" onclick="openAdjust('${a.id}')">Lager</button>
         <button class="btn-sm" onclick="openAccModal('${a.id}')">Rediger</button>
-        <button class="btn-sm btn-danger" onclick="deleteAccessory('${a.id}')">Slett</button>
+        ${hasPerm('accessories_delete')?`<button class="btn-sm btn-danger" onclick="deleteAccessory('${a.id}')">Slett</button>`:''}
       </div></td></tr>`;
   }).join('');
   syncSortHeaders('accessories');
@@ -2803,6 +3042,21 @@ async function saveSettings() {
 
 // --- GJØREMÅL ---
 let todoFilter = 'active';
+let todoSortCol = 'created';
+let todoSortDir = 1; // 1 = ascending, -1 = descending
+
+function sortTodos(col) {
+  if (todoSortCol === col) todoSortDir *= -1;
+  else { todoSortCol = col; todoSortDir = 1; }
+  // Update header icons
+  ['type','created','created_by','status','assigned_to','done_by'].forEach(c => {
+    const el = document.getElementById('th-todo-' + c + '-icon');
+    if (!el) return;
+    if (c === col) { el.textContent = todoSortDir === 1 ? '▲' : '▼'; el.style.opacity = '1'; }
+    else { el.textContent = '⇅'; el.style.opacity = '0.4'; }
+  });
+  renderTodos();
+}
 let editingTodoId = null;
 let todoScannerActive = false;
 let _todoScanStream = null;
@@ -2822,27 +3076,47 @@ function renderTodos() {
   else if (todoFilter === 'open') list = list.filter(t => !t.done && !t.in_progress);
   else if (todoFilter === 'in_progress') list = list.filter(t => t.in_progress && !t.done);
   else if (todoFilter === 'done') list = list.filter(t => t.done);
-  // Sort: "Under arbeid" first, then "Åpen"
-  list = [...list].sort((a, b) => (b.in_progress || 0) - (a.in_progress || 0));
+  // Sort: primary = in_progress first (Under arbeid), secondary = user-selected column
+  list = [...list].sort((a, b) => {
+    const inProgDiff = (b.in_progress || 0) - (a.in_progress || 0);
+    if (inProgDiff !== 0) return inProgDiff;
+    let va, vb;
+    if (todoSortCol === 'status') {
+      const rank = t => t.done ? 2 : t.in_progress ? 1 : 0;
+      va = rank(a); vb = rank(b);
+    } else {
+      va = (a[todoSortCol] || '').toString().toLowerCase();
+      vb = (b[todoSortCol] || '').toString().toLowerCase();
+    }
+    if (va < vb) return -todoSortDir;
+    if (va > vb) return todoSortDir;
+    return 0;
+  });
   if (!list.length) {
-    tb.innerHTML = `<tr><td colspan="8" class="empty">${state.todos.length ? 'Ingen gjøremål matcher filteret' : 'Ingen gjøremål registrert ennå'}</td></tr>`;
+    tb.innerHTML = `<p class="empty" style="padding:20px;">${state.todos.length ? 'Ingen gjøremål matcher filteret' : 'Ingen gjøremål registrert ennå'}</p>`;
     return;
   }
   tb.innerHTML = list.map(t => {
     let refLabel = '<span class="badge badge-gray">Generell</span>';
+    let refSub = 'Generell';
     if (t.type === 'instrument' && t.ref_id) {
       const i = state.instruments.find(x => x.id === t.ref_id);
-      refLabel = i ? `<span class="badge badge-gray">Instrument</span> ${i.name}${i.korps_id?' '+idbadge(i.korps_id):''}` : `<span class="badge badge-gray">Instrument</span> <span style="color:var(--text-faint)">Ukjent</span>`;
+      refLabel = i ? `<span class="badge badge-gray">Instrument</span> <span style="font-size:12px;">${i.name}${i.korps_id?' '+idbadge(i.korps_id):''}</span>` : `<span class="badge badge-gray">Instrument</span>`;
+      refSub = i ? `${i.name}${i.korps_id?' ('+i.korps_id+')':''}` : 'Instrument';
     } else if (t.type === 'accessory' && t.ref_id) {
       const a = state.accessories.find(x => x.id === t.ref_id);
-      refLabel = a ? `<span class="badge badge-ok">Vare</span> ${a.name}` : `<span class="badge badge-ok">Vare</span> <span style="color:var(--text-faint)">Ukjent</span>`;
+      refLabel = a ? `<span class="badge badge-ok">Vare</span> <span style="font-size:12px;">${a.name}</span>` : `<span class="badge badge-ok">Vare</span>`;
+      refSub = a ? a.name : 'Vare';
     }
     let statusBadge;
     if (t.done) statusBadge = `<span class="badge badge-ok">Fullført</span>`;
     else if (t.in_progress) statusBadge = `<span class="badge badge-yellow">Under arbeid</span>`;
     else statusBadge = `<span class="badge badge-info">Åpen</span>`;
-    const doneInfo = t.done ? `${t.done_date||''}${t.done_by?' · '+t.done_by:''}` : '—';
-    const assignedInfo = t.assigned_to || (t.done ? '—' : '<span style="color:var(--text-faint);">—</span>');
+    const metaParts = [
+      t.created_by ? `Av: ${t.created_by}` : '',
+      t.assigned_to ? `Ansvarlig: ${t.assigned_to}` : '',
+      t.done && t.done_by ? `Kvittert: ${t.done_by}${t.done_date?' ('+t.done_date+')':''}` : ''
+    ].filter(Boolean).join(' · ');
     let actionBtns;
     if (t.done) {
       actionBtns = `<button class="btn-sm" onclick="reopenTodo('${t.id}')">Gjenåpne</button>
@@ -2854,31 +3128,32 @@ function renderTodos() {
          <button class="btn-sm btn-danger" onclick="deleteTodo('${t.id}')">Slett</button>`;
     } else {
       actionBtns = `<button class="btn-sm" onclick="openTodoModal('${t.id}')">Rediger</button>
-         <button class="btn-sm" onclick="openTodoStartModal('${t.id}')">Under arbeid</button>
+         <button class="btn-sm" onclick="openTodoStartModal('${t.id}')">Sett under arbeid</button>
          <button class="btn-sm btn-service" onclick="openTodoDoneModal('${t.id}')">Kvitter ut</button>
          <button class="btn-sm btn-danger" onclick="deleteTodo('${t.id}')">Slett</button>`;
     }
-    return `<tr>
-      <td>${refLabel}</td>
-      <td>${t.note||'—'}</td>
-      <td>${t.created||'—'}</td>
-      <td style="color:var(--text-muted);">${t.created_by||'—'}</td>
-      <td>${statusBadge}</td>
-      <td style="color:var(--text-muted);">${assignedInfo}</td>
-      <td style="color:var(--text-muted);">${doneInfo}</td>
-      <td><div style="display:flex;gap:6px;flex-wrap:wrap;">${actionBtns}</div></td>
-    </tr>`;
+    return `<div class="todo-row" onclick="openTodoModal('${t.id}', true)">
+      <div class="todo-row-top">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">${refLabel} ${statusBadge}</div>
+        <span class="activity-time">${t.created||''}</span>
+      </div>
+      <div class="todo-row-note">${t.note||'—'}</div>
+      <div class="todo-row-bottom" onclick="event.stopPropagation()">
+        <span class="activity-sub">${metaParts||'&nbsp;'}</span>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">${actionBtns}</div>
+      </div>
+    </div>`;
   }).join('');
 }
 
-function openTodoModal(id) {
+function openTodoModal(id, viewOnly=false) {
   editingTodoId = id || null;
   const todo = id ? state.todos.find(t => t.id === id) : null;
   todoSelectedItem = null;
-  document.getElementById('todo-modal-title').textContent = todo ? 'Rediger gjøremål' : 'Legg til gjøremål';
+  document.getElementById('todo-modal-title').textContent = viewOnly ? 'Gjøremål' : (todo ? 'Rediger gjøremål' : 'Legg til gjøremål');
   document.getElementById('todo-modal-done-btn').style.display = (todo && !todo.done) ? '' : 'none';
   document.getElementById('todo-note').value = todo?.note || '';
-  document.getElementById('todo-created-by').value = todo?.created_by || '';
+  document.getElementById('todo-created-by').value = todo?.created_by || (!todo ? (state.currentUser?.displayName || state.currentUser?.username || '') : '');
   document.getElementById('todo-edit-assigned-to').value = todo?.assigned_to || '';
 
   // Set radio first, then call onTodoTypeChange to build datalist + show/hide picker
@@ -2902,6 +3177,7 @@ function openTodoModal(id) {
   }
 
   openModal('todo-modal');
+  setModalViewMode('todo-modal', viewOnly);
 }
 
 function closeTodoModal() {
@@ -3069,7 +3345,7 @@ async function deleteTodo(id) {
 function openTodoDoneModal(id) {
   editingTodoId = id;
   document.getElementById('todo-done-date').value = new Date().toISOString().split('T')[0];
-  document.getElementById('todo-done-by').value = '';
+  document.getElementById('todo-done-by').value = state.currentUser?.displayName || state.currentUser?.username || '';
   openModal('todo-done-modal');
 }
 
@@ -3102,8 +3378,185 @@ async function reopenTodo(id) {
   await loadAll();
 }
 
-function render() { renderDashboard(); renderInstTable(); renderPlayerTable(); renderServiceTable(); renderAccessories(); renderTodos(); renderVerkstederTable(); renderLeverandorerTable(); renderReports(); updateVarslerBadge(); loadSettings(); }
-loadAll();
+function applyPermissions() {
+  const permMap = {
+    'btn-add-inst': 'instruments_write',
+    'btn-add-player': 'players_write',
+    'btn-add-acc': 'accessories_write',
+    'btn-add-todo': 'todos_write',
+    'btn-add-ws': 'workshops_admin',
+    'btn-add-sup': 'suppliers_admin',
+    'nav-brukere': 'users_admin'
+  };
+  Object.entries(permMap).forEach(([id, perm]) => {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('perm-hidden', !hasPerm(perm));
+  });
+  const isAdmin = state.currentUser?.role === 'admin';
+  const navInn = document.getElementById('nav-innstillinger');
+  if (navInn) navInn.classList.toggle('perm-hidden', !isAdmin);
+}
+
+// --- BRUKERE ---
+const PERM_LABELS = {
+  instruments_read:'Instrumenter: Les', instruments_write:'Instrumenter: Rediger', instruments_delete:'Instrumenter: Slett',
+  players_read:'Musikanter: Les', players_write:'Musikanter: Rediger', players_delete:'Musikanter: Slett', players_assign:'Musikanter: Tildel instrument',
+  service_read:'Servicelogg: Les', service_write:'Servicelogg: Rediger', service_delete:'Servicelogg: Slett',
+  accessories_read:'Tilbehør: Les', accessories_write:'Tilbehør: Rediger', accessories_delete:'Tilbehør: Slett',
+  todos_read:'Gjøremål: Les', todos_write:'Gjøremål: Rediger', todos_delete:'Gjøremål: Slett',
+  workshops_admin:'Verksteder: Admin', suppliers_admin:'Leverandører: Admin',
+  reports_read:'Rapporter: Les', users_admin:'Brukere: Admin'
+};
+const ROLE_PERMS_DEFAULTS = {
+  admin: Object.keys(PERM_LABELS),
+  user: ['instruments_read','instruments_write','players_read','players_write','players_assign','service_read','service_write','accessories_read','accessories_write','todos_read','todos_write','reports_read']
+};
+
+function renderUsersTable() {
+  const tb = document.getElementById('users-table');
+  if (!tb) return;
+  if (!hasPerm('users_admin')) return;
+  if (!state.users.length) { tb.innerHTML = '<tr><td colspan="6" class="empty">Ingen brukere</td></tr>'; return; }
+  tb.innerHTML = state.users.map(u => {
+    const perms = u.permissions ? JSON.parse(u.permissions) : [];
+    const roleCls = u.role === 'admin' ? 'role-admin' : 'role-user';
+    const roleLabel = u.role === 'admin' ? 'Administrator' : 'Bruker';
+    const isSelf = u.id === state.currentUser?.id;
+    return `<tr>
+      <td><strong>${u.username}</strong>${isSelf ? ' <span style="font-size:11px;color:var(--text-muted);">(deg)</span>' : ''}</td>
+      <td>${u.display_name || '—'}</td>
+      <td><span class="user-role-badge ${roleCls}">${roleLabel}</span></td>
+      <td style="color:var(--text-muted);">${u.last_login || '—'}</td>
+      <td style="color:var(--text-muted);">${u.created || '—'}</td>
+      <td><button class="btn-sm" onclick="openUserModal('${u.id}')">Rediger</button>
+          ${!isSelf ? `<button class="btn-sm btn-danger" onclick="deleteUser('${u.id}')">Slett</button>` : ''}</td>
+    </tr>`;
+  }).join('');
+}
+
+let editingUserId = null;
+function showUserModalError(msg) {
+  const el = document.getElementById('user-modal-error');
+  el.textContent = msg; el.style.display = msg ? '' : 'none';
+}
+function openUserModal(id) {
+  editingUserId = id || null;
+  showUserModalError('');
+  const isNew = !id;
+  document.getElementById('user-modal-title').textContent = isNew ? 'Ny bruker' : 'Rediger bruker';
+  document.getElementById('user-password-label').textContent = isNew ? 'Passord *' : 'Nytt passord (la stå tomt for å beholde)';
+  document.getElementById('user-delete-btn').style.display = 'none';
+  document.getElementById('user-username').disabled = false;
+  document.getElementById('user-password').value = '';
+  let currentPerms = ROLE_PERMS_DEFAULTS.user;
+  let currentRole = 'user';
+  if (!isNew) {
+    const u = state.users.find(x => x.id === id);
+    if (!u) return;
+    document.getElementById('user-username').value = u.username;
+    document.getElementById('user-username').disabled = true;
+    document.getElementById('user-display-name').value = u.display_name || '';
+    document.getElementById('user-role').value = u.role;
+    document.getElementById('user-force-pw').checked = !!u.force_password_change;
+    document.getElementById('user-disabled').checked = !!u.disabled;
+    document.getElementById('user-delete-btn').style.display = u.id !== state.currentUser?.id ? '' : 'none';
+    document.getElementById('user-created-by').value = u.created_by || '—';
+    document.getElementById('user-created-by-wrap').style.display = '';
+    currentPerms = u.permissions ? JSON.parse(u.permissions) : ROLE_PERMS_DEFAULTS[u.role] || [];
+    currentRole = u.role;
+  } else {
+    document.getElementById('user-username').value = '';
+    document.getElementById('user-display-name').value = '';
+    document.getElementById('user-role').value = 'user';
+    document.getElementById('user-force-pw').checked = true;
+    document.getElementById('user-disabled').checked = false;
+    document.getElementById('user-created-by-wrap').style.display = 'none';
+  }
+  renderPermsGrid(currentPerms);
+  document.getElementById('user-modal').classList.add('open');
+}
+function renderPermsGrid(activePerms) {
+  const grid = document.getElementById('user-perms-grid');
+  grid.innerHTML = Object.entries(PERM_LABELS).map(([key, label]) =>
+    `<label style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:3px 0;">
+      <input type="checkbox" id="perm-${key}" ${activePerms.includes(key)?'checked':''} style="width:auto;margin:0;">
+      <span>${label}</span>
+    </label>`
+  ).join('');
+}
+function onUserRoleChange() {
+  const role = document.getElementById('user-role').value;
+  renderPermsGrid(ROLE_PERMS_DEFAULTS[role] || []);
+}
+function getSelectedPerms() {
+  return Object.keys(PERM_LABELS).filter(k => document.getElementById('perm-'+k)?.checked);
+}
+async function saveUser() {
+  const isNew = !editingUserId;
+  const username = document.getElementById('user-username').value.trim();
+  const display_name = document.getElementById('user-display-name').value.trim();
+  const password = document.getElementById('user-password').value;
+  const role = document.getElementById('user-role').value;
+  const force_password_change = document.getElementById('user-force-pw').checked;
+  const disabled = document.getElementById('user-disabled').checked;
+  const permissions = getSelectedPerms();
+  if (isNew && (!username || !password)) return alert('Brukernavn og passord er påkrevd');
+  if (isNew && password.length < 6) return alert('Passord må være minst 6 tegn');
+  if (!isNew && password && password.length < 6) return alert('Passord må være minst 6 tegn');
+  try {
+    if (isNew) {
+      await api('POST', '/api/users', { username, display_name, password, role, permissions, force_password_change });
+    } else {
+      await api('PUT', `/api/users/${editingUserId}`, { display_name, role, permissions, force_password_change, disabled });
+      if (password) await api('POST', `/api/users/${editingUserId}/reset-password`, { newPassword: password });
+    }
+    closeModal('user-modal');
+    const users = await api('GET', '/api/users');
+    state.users = users;
+    renderUsersTable();
+  } catch(err) {
+    const match = err.message.match(/"error":"([^"]+)"/);
+    showUserModalError(match ? match[1] : 'En feil oppstod, prøv igjen');
+  }
+}
+async function deleteUser(id) {
+  if (!confirm('Slett denne brukeren?')) return;
+  try {
+    await api('DELETE', `/api/users/${id}`);
+    closeModal('user-modal');
+    const users = await api('GET', '/api/users');
+    state.users = users;
+    renderUsersTable();
+  } catch(err) { alert(err.message); }
+}
+
+// --- ENDRE PASSORD ---
+function openChangePasswordModal(isForced = false) {
+  document.getElementById('change-pw-current').value = '';
+  document.getElementById('change-pw-new').value = '';
+  document.getElementById('change-pw-repeat').value = '';
+  document.getElementById('change-pw-error').textContent = '';
+  document.getElementById('current-pw-field').style.display = isForced ? 'none' : '';
+  document.getElementById('change-pw-cancel').style.display = isForced ? 'none' : '';
+  document.getElementById('change-password-modal').classList.add('open');
+}
+async function doChangePassword() {
+  const currentPassword = document.getElementById('change-pw-current').value;
+  const newPassword = document.getElementById('change-pw-new').value;
+  const repeat = document.getElementById('change-pw-repeat').value;
+  const errEl = document.getElementById('change-pw-error');
+  errEl.textContent = '';
+  if (newPassword !== repeat) { errEl.textContent = 'Passordene er ikke like'; return; }
+  if (newPassword.length < 6) { errEl.textContent = 'Passord må være minst 6 tegn'; return; }
+  try {
+    await api('POST', '/api/auth/change-password', { currentPassword, newPassword });
+    state.currentUser.forcePasswordChange = false;
+    closeModal('change-password-modal');
+  } catch(err) { errEl.textContent = 'Feil nåværende passord'; }
+}
+
+function render() { renderDashboard(); renderInstTable(); renderPlayerTable(); renderServiceTable(); renderAccessories(); renderTodos(); renderVerkstederTable(); renderLeverandorerTable(); renderReports(); renderUsersTable(); updateVarslerBadge(); loadSettings(); }
+initApp();
 
 // --- SERVICE WORKER ---
 if ('serviceWorker' in navigator) {
