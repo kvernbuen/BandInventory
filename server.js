@@ -1,6 +1,6 @@
 const express = require('express');
 const Database = require('better-sqlite3');
-const XLSX = require('xlsx');
+const ExcelJS = require('exceljs');
 const path = require('path');
 const bcrypt = require('bcryptjs');
 const session = require('express-session');
@@ -557,7 +557,7 @@ app.delete('/api/accessories/:id', requirePerm('accessories_delete'), (req, res)
 });
 
 // --- EXPORT ---
-app.get('/api/export/:type/:format', requireAuth, (req, res) => {
+app.get('/api/export/:type/:format', requireAuth, async (req, res) => {
   const { type, format } = req.params;
   const today = new Date().toISOString().slice(0, 10);
 
@@ -692,19 +692,14 @@ app.get('/api/export/:type/:format', requireAuth, (req, res) => {
     res.send('\uFEFF' + csv);
 
   } else if (format === 'xlsx') {
-    const ws = XLSX.utils.aoa_to_sheet(rows);
-    const colWidths = rows[0].map((_, ci) =>
-      ({ wch: Math.min(50, Math.max(10, ...rows.map(r => String(r[ci] ?? '').length))) })
-    );
-    ws['!cols'] = colWidths;
-    const range = XLSX.utils.decode_range(ws['!ref']);
-    for (let c = range.s.c; c <= range.e.c; c++) {
-      const cell = ws[XLSX.utils.encode_cell({ r: 0, c })];
-      if (cell) cell.s = { font: { bold: true } };
-    }
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, sheetName);
-    const buf = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
+    const wb = new ExcelJS.Workbook();
+    const sheet = wb.addWorksheet(sheetName);
+    sheet.columns = rows[0].map((_, ci) => ({
+      width: Math.min(50, Math.max(10, ...rows.map(r => String(r[ci] ?? '').length)))
+    }));
+    sheet.addRows(rows);
+    sheet.getRow(1).font = { bold: true };
+    const buf = await wb.xlsx.writeBuffer();
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     res.setHeader('Content-Disposition', `attachment; filename="${filename}.xlsx"`);
     res.send(buf);
@@ -739,17 +734,18 @@ app.post('/api/import/accessories', requirePerm('accessories_write'), (req, res)
   res.json({ imported });
 });
 
-app.post('/api/export/report', requireAuth, (req, res) => {
+app.post('/api/export/report', requireAuth, async (req, res) => {
   const { filename, headers, rows } = req.body;
   if (!headers || !rows) return res.status(400).json({ error: 'Mangler data' });
   const aoa = [headers, ...rows];
-  const ws = XLSX.utils.aoa_to_sheet(aoa);
-  ws['!cols'] = headers.map((_, ci) =>
-    ({ wch: Math.min(50, Math.max(12, ...aoa.map(r => String(r[ci] ?? '').length))) })
-  );
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Rapport');
-  const buf = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
+  const wb = new ExcelJS.Workbook();
+  const sheet = wb.addWorksheet('Rapport');
+  sheet.columns = headers.map((_, ci) => ({
+    width: Math.min(50, Math.max(12, ...aoa.map(r => String(r[ci] ?? '').length)))
+  }));
+  sheet.addRows(aoa);
+  sheet.getRow(1).font = { bold: true };
+  const buf = await wb.xlsx.writeBuffer();
   res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
   res.setHeader('Content-Disposition', `attachment; filename="${(filename||'rapport').replace(/[^a-zA-Z0-9æøåÆØÅ._-]/g,'_')}.xlsx"`);
   res.send(buf);
