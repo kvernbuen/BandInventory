@@ -425,14 +425,14 @@
     <div class="login-logo">
       <svg viewBox="0 0 28 28" fill="none"><path d="M8 17 Q11 11 14 11 Q17 11 20 17" stroke="white" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="8" cy="17" r="2.2" fill="white"/><circle cx="20" cy="17" r="2.2" fill="white"/></svg>
       <div class="login-logo-name">Korpsinventar</div>
-      <div class="login-logo-sub">v1.0.1</div>
+      <div class="login-logo-sub">v1.2.0</div>
     </div>
-    <h2>Logg inn</h2>
+    <h2 data-i18n="Logg inn">Logg inn</h2>
     <form onsubmit="doLogin(event)">
-      <div class="login-field"><label>Brukernavn</label><input id="login-username" type="text" autocomplete="username" required></div>
-      <div class="login-field"><label>Passord</label><input id="login-password" type="password" autocomplete="current-password" required></div>
+      <div class="login-field"><label data-i18n="Brukernavn">Brukernavn</label><input id="login-username" type="text" autocomplete="username" required></div>
+      <div class="login-field"><label data-i18n="Passord">Passord</label><input id="login-password" type="password" autocomplete="current-password" required></div>
       <div class="login-error" id="login-error"></div>
-      <button type="submit" class="login-btn" id="login-btn">Logg inn</button>
+      <button type="submit" class="login-btn" id="login-btn" data-i18n="Logg inn">Logg inn</button>
     </form>
   </div>
 </div>
@@ -453,69 +453,74 @@
     <div style="min-width:0;">
       <div id="sidebar-korpsname" class="logo-korpsname" style="display:none;"></div>
       <div class="logo-text">Korpsinventar</div>
-      <div class="logo-sub">v1.0.1</div>
+      <div class="logo-sub">v1.2.0</div>
     </div>
   </div>
   <nav class="sidebar-nav">
-    <div class="nav-section-label">Hovedmeny</div>
+    <div class="nav-section-label" data-i18n="Hovedmeny">Hovedmeny</div>
     <button class="nav-item active" data-section="dashboard">
       <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zm6-4a1.5 1.5 0 113 0v10a1.5 1.5 0 01-3 0v-10zm6 7a1.5 1.5 0 113 0v3a1.5 1.5 0 01-3 0v-3z"/></svg>
-      Oversikt
+      <span data-i18n="Oversikt">Oversikt</span>
     </button>
     <button class="nav-item" data-section="instrumenter">
       <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>
-      Instrumenter
+      <span data-i18n="Instrumenter">Instrumenter</span>
     </button>
     <button class="nav-item" data-section="musikanter">
       <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>
-      Musikanter
+      <span data-i18n="Musikanter">Musikanter</span>
     </button>
     <button class="nav-item" data-section="service">
       <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947z" clip-rule="evenodd"/><path fill-rule="evenodd" d="M10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/></svg>
-      Servicelogg
+      <span data-i18n="Servicelogg">Servicelogg</span>
       <span class="nav-badge" id="nav-badge-service" style="display:none">0</span>
     </button>
     <button class="nav-item" data-section="tilbehor">
       <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3z"/></svg>
-      Tilbehør
+      <span data-i18n="Tilbehør">Tilbehør</span>
       <span class="nav-badge amber" id="nav-badge-acc" style="display:none">0</span>
     </button>
     <button class="nav-item" data-section="gjoremal">
       <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h3a1 1 0 100-2H6zm0 4a1 1 0 100 2h3a1 1 0 100-2H6zm5-4a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1zm0 4a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1z" clip-rule="evenodd"/></svg>
-      Gjøremål
+      <span data-i18n="Gjøremål">Gjøremål</span>
       <span class="nav-badge" id="nav-badge-todos" style="display:none">0</span>
     </button>
-    <div class="nav-section-label" style="margin-top:8px;">Administrasjon</div>
+    <div class="nav-section-label" style="margin-top:8px;" data-i18n="Administrasjon">Administrasjon</div>
     <button class="nav-item" data-section="rapporter">
       <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm2 10a1 1 0 10-2 0v3a1 1 0 102 0v-3zm4-1a1 1 0 011 1v3a1 1 0 11-2 0v-3a1 1 0 011-1zm-2-6a1 1 0 10-2 0v3a1 1 0 102 0V5z" clip-rule="evenodd"/></svg>
-      Rapporter
+      <span data-i18n="Rapporter">Rapporter</span>
     </button>
     <button class="nav-item" data-section="verksteder">
       <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4z" clip-rule="evenodd"/></svg>
-      Verksteder
+      <span data-i18n="Verksteder">Verksteder</span>
     </button>
     <button class="nav-item" data-section="leverandorer">
       <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5z" clip-rule="evenodd"/></svg>
-      Leverandører
+      <span data-i18n="Leverandører">Leverandører</span>
     </button>
     <button class="nav-item perm-hidden" data-section="brukere" id="nav-brukere">
       <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>
-      Brukere
+      <span data-i18n="Brukere">Brukere</span>
     </button>
   </nav>
   <div class="sidebar-footer">
     <button class="nav-item" id="nav-innstillinger" data-section="innstillinger" style="width:100%;margin-bottom:4px;">
       <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/></svg>
-      Innstillinger
+      <span data-i18n="Innstillinger">Innstillinger</span>
     </button>
     <button class="nav-item" onclick="openChangePasswordModal()" style="width:100%;margin-bottom:4px;">
       <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/></svg>
-      Endre passord
+      <span data-i18n="Endre passord">Endre passord</span>
     </button>
     <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">
       <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>
       Mørk modus
     </button>
+    <div style="display:flex;align-items:center;gap:6px;padding:6px 10px 2px;">
+      <span style="font-size:11px;color:rgba(255,255,255,0.4);">Lang</span>
+      <button id="lang-btn-en" onclick="setLanguage('en')" style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px;border:1px solid rgba(255,255,255,0.15);background:none;color:rgba(255,255,255,0.5);cursor:pointer;">EN</button>
+      <button id="lang-btn-no" onclick="setLanguage('no')" style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px;border:1px solid rgba(255,255,255,0.15);background:none;color:rgba(255,255,255,0.5);cursor:pointer;">NO</button>
+    </div>
   </div>
 </aside>
 <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="closeMobileMenu()"></div>
@@ -529,24 +534,24 @@
     <div id="topbar-title" class="topbar-title">Oversikt</div>
     <div class="topbar-search-wrap">
       <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
-      <input id="topbar-search" class="topbar-search-input" placeholder="Søk i aktiv liste…" oninput="filterActiveSection(this.value)">
+      <input id="topbar-search" class="topbar-search-input" placeholder="Søk i aktiv liste…" data-i18n-placeholder="Søk i aktiv liste…" oninput="filterActiveSection(this.value)">
     </div>
     <div class="topbar-user" id="topbar-user">
       <span class="topbar-user-name" id="topbar-display-name"></span>
       <button class="btn btn-sm" onclick="doLogout()" title="Logg ut" style="gap:5px;">
         <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 001 1h5a1 1 0 100-2H4V5h4a1 1 0 100-2H3zm10.293 4.293a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 01-1.414-1.414L14.586 11H9a1 1 0 110-2h5.586l-1.293-1.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
-        Logg ut
+        <span data-i18n="Logg ut">Logg ut</span>
       </button>
     </div>
     <div class="varsler-wrap">
       <button class="btn btn-sm" id="varsler-btn" onclick="toggleVarslerDropdown()" title="Vis varsler" style="gap:6px;">
         <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zm0 16a3 3 0 01-2.83-2h5.66A3 3 0 0110 18z"/></svg>
-        Varsler
+        <span data-i18n="Varsler">Varsler</span>
         <span id="varsler-count" style="display:none;background:#ef4444;color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;line-height:1.4;">0</span>
       </button>
       <div class="varsler-dropdown" id="varsler-dropdown">
         <div class="varsler-dropdown-header">
-          <span class="varsler-dropdown-title">Aktive varsler</span>
+          <span class="varsler-dropdown-title" data-i18n="Aktive varsler">Aktive varsler</span>
           <span id="varsler-dropdown-count" class="badge badge-red" style="font-size:11px;"></span>
         </div>
         <div class="varsler-dropdown-body" id="varsler-dropdown-body"></div>
@@ -564,40 +569,40 @@
     <!-- INSTRUMENTER -->
     <div id="instrumenter" class="section">
       <div class="section-header">
-        <h2>Instrumenter</h2>
+        <h2 data-i18n="Instrumenter">Instrumenter</h2>
         <div class="section-header-actions">
-          <button class="btn-export" onclick="exportData('instruments','csv')">Eksporter CSV</button>
-          <button class="btn-export" onclick="exportData('instruments','xlsx')">Eksporter Excel</button>
-          <button class="btn" onclick="openImportModal('instruments')">↑ Importer CSV</button>
-          <button class="btn btn-primary" id="btn-add-inst" onclick="openInstModal()">+ Legg til instrument</button>
+          <button class="btn-export" onclick="exportData('instruments','csv')" data-i18n="Eksporter CSV">Eksporter CSV</button>
+          <button class="btn-export" onclick="exportData('instruments','xlsx')" data-i18n="Eksporter Excel">Eksporter Excel</button>
+          <button class="btn" onclick="openImportModal('instruments')" data-i18n="↑ Importer CSV">↑ Importer CSV</button>
+          <button class="btn btn-primary" id="btn-add-inst" onclick="openInstModal()" data-i18n="+ Legg til instrument">+ Legg til instrument</button>
         </div>
       </div>
       <div class="filter-bar">
-        <span class="filter-bar-label">Filter:</span>
+        <span class="filter-bar-label" data-i18n="Filter:">Filter:</span>
         <details class="multiselect" id="inst-cond-multiselect">
-          <summary id="inst-cond-summary">Stand: Alle</summary>
+          <summary id="inst-cond-summary" data-i18n="Stand: Alle">Stand: Alle</summary>
           <div class="multiselect-options">
-            <label><input type="checkbox" value="God" onchange="toggleInstFilter(this)"> God</label>
-            <label><input type="checkbox" value="Akseptabel" onchange="toggleInstFilter(this)"> Akseptabel</label>
-            <label><input type="checkbox" value="Trenger service" onchange="toggleInstFilter(this)"> Trenger service</label>
+            <label><input type="checkbox" value="God" onchange="toggleInstFilter(this)"> <span data-i18n="God">God</span></label>
+            <label><input type="checkbox" value="Akseptabel" onchange="toggleInstFilter(this)"> <span data-i18n="Akseptabel">Akseptabel</span></label>
+            <label><input type="checkbox" value="Trenger service" onchange="toggleInstFilter(this)"> <span data-i18n="Trenger service">Trenger service</span></label>
           </div>
         </details>
         <details class="multiselect" id="inst-cat-multiselect">
-          <summary id="inst-cat-summary">Kategori: Alle</summary>
+          <summary id="inst-cat-summary" data-i18n="Kategori: Alle">Kategori: Alle</summary>
           <div class="multiselect-options" id="inst-cat-options"></div>
         </details>
         <details class="multiselect" id="inst-player-multiselect">
-          <summary id="inst-player-summary">Tildelt: Alle</summary>
+          <summary id="inst-player-summary" data-i18n="Tildelt: Alle">Tildelt: Alle</summary>
           <div class="multiselect-options">
-            <label><input type="checkbox" value="tildelt" onchange="toggleInstPlayerFilter(this)"> Tildelt</label>
-            <label><input type="checkbox" value="ikke_tildelt" onchange="toggleInstPlayerFilter(this)"> Ikke tildelt</label>
+            <label><input type="checkbox" value="tildelt" onchange="toggleInstPlayerFilter(this)"> <span data-i18n="Tildelt">Tildelt</span></label>
+            <label><input type="checkbox" value="ikke_tildelt" onchange="toggleInstPlayerFilter(this)"> <span data-i18n="Ikke tildelt">Ikke tildelt</span></label>
           </div>
         </details>
       </div>
       <div class="card">
         <div class="table-wrap">
           <table>
-            <thead><tr><th data-sort="korps_id">Instrument-ID</th><th data-sort="name">Navn</th><th data-sort="category">Kategori</th><th data-sort="condition">Stand</th><th data-sort="next_check">Neste sjekk</th><th data-sort="player">Tildelt</th><th>Handlinger</th></tr></thead>
+            <thead><tr><th data-sort="korps_id" data-i18n="Instrument-ID">Instrument-ID</th><th data-sort="name" data-i18n="Navn">Navn</th><th data-sort="category" data-i18n="Kategori">Kategori</th><th data-sort="condition" data-i18n="Stand">Stand</th><th data-sort="next_check" data-i18n="Neste sjekk">Neste sjekk</th><th data-sort="player" data-i18n="Tildelt">Tildelt</th><th data-i18n="Handlinger">Handlinger</th></tr></thead>
             <tbody id="inst-table"></tbody>
           </table>
         </div>
@@ -607,24 +612,24 @@
     <!-- MUSIKANTER -->
     <div id="musikanter" class="section">
       <div class="section-header">
-        <h2>Musikanter</h2>
+        <h2 data-i18n="Musikanter">Musikanter</h2>
         <div class="section-header-actions">
-          <button class="btn-export" onclick="exportData('players','csv')">Eksporter CSV</button>
-          <button class="btn-export" onclick="exportData('players','xlsx')">Eksporter Excel</button>
-          <button class="btn btn-primary" id="btn-add-player" onclick="openPlayerModal()">+ Legg til musiker</button>
+          <button class="btn-export" onclick="exportData('players','csv')" data-i18n="Eksporter CSV">Eksporter CSV</button>
+          <button class="btn-export" onclick="exportData('players','xlsx')" data-i18n="Eksporter Excel">Eksporter Excel</button>
+          <button class="btn btn-primary" id="btn-add-player" onclick="openPlayerModal()" data-i18n="+ Legg til musiker">+ Legg til musiker</button>
         </div>
       </div>
       <div class="filter-bar">
-        <span class="filter-bar-label">Filter:</span>
+        <span class="filter-bar-label" data-i18n="Filter:">Filter:</span>
         <details class="multiselect" id="player-section-multiselect">
-          <summary id="player-section-summary">Seksjon: Alle</summary>
+          <summary id="player-section-summary" data-i18n="Seksjon: Alle">Seksjon: Alle</summary>
           <div class="multiselect-options" id="player-section-options"></div>
         </details>
       </div>
       <div class="card">
         <div class="table-wrap">
           <table>
-            <thead><tr><th data-sort="name">Navn</th><th data-sort="section">Seksjon</th><th data-sort="contact">Kontakt</th><th data-sort="inst_count">Tildelte instrumenter</th><th>Handlinger</th></tr></thead>
+            <thead><tr><th data-sort="name" data-i18n="Navn">Navn</th><th data-sort="section" data-i18n="Seksjon">Seksjon</th><th data-sort="contact" data-i18n="Kontakt">Kontakt</th><th data-sort="inst_count" data-i18n="Tildelte instrumenter">Tildelte instrumenter</th><th data-i18n="Handlinger">Handlinger</th></tr></thead>
             <tbody id="player-table"></tbody>
           </table>
         </div>
@@ -634,38 +639,38 @@
     <!-- SERVICELOGG -->
     <div id="service" class="section">
       <div class="section-header">
-        <h2>Servicelogg</h2>
+        <h2 data-i18n="Servicelogg">Servicelogg</h2>
         <div class="section-header-actions">
-          <button class="btn-export" onclick="exportData('service','csv')">Eksporter CSV</button>
-          <button class="btn-export" onclick="exportData('service','xlsx')">Eksporter Excel</button>
-          <button class="btn" onclick="openServiceReport()">📊 Rapport</button>
-          <button class="btn" onclick="openTilHentingModal()">📦 Til henting</button>
-          <button class="btn btn-primary" onclick="openServiceModal()">+ Logg service</button>
+          <button class="btn-export" onclick="exportData('service','csv')" data-i18n="Eksporter CSV">Eksporter CSV</button>
+          <button class="btn-export" onclick="exportData('service','xlsx')" data-i18n="Eksporter Excel">Eksporter Excel</button>
+          <button class="btn" onclick="openServiceReport()" data-i18n="📊 Rapport">📊 Rapport</button>
+          <button class="btn" onclick="openTilHentingModal()" data-i18n="📦 Til henting">📦 Til henting</button>
+          <button class="btn btn-primary" onclick="openServiceModal()" data-i18n="+ Logg service">+ Logg service</button>
         </div>
       </div>
       <div class="filter-bar">
-        <span class="filter-bar-label">Filter:</span>
+        <span class="filter-bar-label" data-i18n="Filter:">Filter:</span>
         <details class="multiselect" id="svc-status-multiselect">
-          <summary id="svc-status-summary">Status: Alle</summary>
+          <summary id="svc-status-summary" data-i18n="Status: Alle">Status: Alle</summary>
           <div class="multiselect-options">
-            <label><input type="checkbox" value="under_service" onchange="toggleSvcFilter(this)"> Under service</label>
-            <label><input type="checkbox" value="til_henting" onchange="toggleSvcFilter(this)"> Til henting</label>
-            <label><input type="checkbox" value="ferdig" onchange="toggleSvcFilter(this)"> Ferdig</label>
+            <label><input type="checkbox" value="under_service" onchange="toggleSvcFilter(this)"> <span data-i18n="Under service">Under service</span></label>
+            <label><input type="checkbox" value="til_henting" onchange="toggleSvcFilter(this)"> <span data-i18n="Til henting">Til henting</span></label>
+            <label><input type="checkbox" value="ferdig" onchange="toggleSvcFilter(this)"> <span data-i18n="Ferdig">Ferdig</span></label>
           </div>
         </details>
         <details class="multiselect" id="svc-type-multiselect">
-          <summary id="svc-type-summary">Type: Alle</summary>
+          <summary id="svc-type-summary" data-i18n="Type: Alle">Type: Alle</summary>
           <div class="multiselect-options">
-            <label><input type="checkbox" value="Rutinemessig vedlikehold" onchange="toggleSvcTypeFilter(this)"> Rutinemessig vedlikehold</label>
-            <label><input type="checkbox" value="Reparasjon" onchange="toggleSvcTypeFilter(this)"> Reparasjon</label>
-            <label><input type="checkbox" value="Dybderens" onchange="toggleSvcTypeFilter(this)"> Dybderens</label>
-            <label><input type="checkbox" value="Pute-/filtbytte" onchange="toggleSvcTypeFilter(this)"> Pute-/filtbytte</label>
-            <label><input type="checkbox" value="Ventilservice" onchange="toggleSvcTypeFilter(this)"> Ventilservice</label>
-            <label><input type="checkbox" value="Annet" onchange="toggleSvcTypeFilter(this)"> Annet</label>
+            <label><input type="checkbox" value="Rutinemessig vedlikehold" onchange="toggleSvcTypeFilter(this)"> <span data-i18n="Rutinemessig vedlikehold">Rutinemessig vedlikehold</span></label>
+            <label><input type="checkbox" value="Reparasjon" onchange="toggleSvcTypeFilter(this)"> <span data-i18n="Reparasjon">Reparasjon</span></label>
+            <label><input type="checkbox" value="Dybderens" onchange="toggleSvcTypeFilter(this)"> <span data-i18n="Dybderens">Dybderens</span></label>
+            <label><input type="checkbox" value="Pute-/filtbytte" onchange="toggleSvcTypeFilter(this)"> <span data-i18n="Pute-/filtbytte">Pute-/filtbytte</span></label>
+            <label><input type="checkbox" value="Ventilservice" onchange="toggleSvcTypeFilter(this)"> <span data-i18n="Ventilservice">Ventilservice</span></label>
+            <label><input type="checkbox" value="Annet" onchange="toggleSvcTypeFilter(this)"> <span data-i18n="Annet">Annet</span></label>
           </div>
         </details>
         <details class="multiselect" id="svc-workshop-multiselect">
-          <summary id="svc-workshop-summary">Verksted: Alle</summary>
+          <summary id="svc-workshop-summary" data-i18n="Verksted: Alle">Verksted: Alle</summary>
           <div class="multiselect-options" id="svc-workshop-options"></div>
         </details>
         <input type="date" id="svc-date-search" class="filter-date-input" title="Filtrer på innlevert dato" onchange="onSvcDateSearch(this)">
@@ -673,7 +678,7 @@
       <div class="card">
         <div class="table-wrap">
           <table>
-            <thead><tr><th data-sort="date">Innlevert</th><th data-sort="inst_name">Instrument</th><th data-sort="type">Type</th><th data-sort="status">Status</th><th data-sort="workshop">Verksted</th><th data-sort="desc">Beskrivelse</th><th data-sort="cost">Kostnad</th><th data-sort="invoice_no">Fakturanr.</th><th data-sort="next_due">Neste frist</th><th>Handlinger</th></tr></thead>
+            <thead><tr><th data-sort="date" data-i18n="Innlevert">Innlevert</th><th data-sort="inst_name" data-i18n="Instrument">Instrument</th><th data-sort="type" data-i18n="Type">Type</th><th data-sort="status" data-i18n="Status">Status</th><th data-sort="workshop" data-i18n="Verksted">Verksted</th><th data-sort="desc" data-i18n="Beskrivelse">Beskrivelse</th><th data-sort="cost" data-i18n="Kostnad">Kostnad</th><th data-sort="invoice_no" data-i18n="Fakturanr.">Fakturanr.</th><th data-sort="next_due" data-i18n="Neste frist">Neste frist</th><th data-i18n="Handlinger">Handlinger</th></tr></thead>
             <tbody id="service-table"></tbody>
           </table>
         </div>
@@ -683,31 +688,31 @@
     <!-- TILBEHØR -->
     <div id="tilbehor" class="section">
       <div class="section-header">
-        <h2>Tilbehør og lager</h2>
+        <h2 data-i18n="Tilbehør og lager">Tilbehør og lager</h2>
         <div class="section-header-actions">
-          <button class="btn-export" onclick="exportData('accessories','csv')">Eksporter CSV</button>
-          <button class="btn-export" onclick="exportData('accessories','xlsx')">Eksporter Excel</button>
-          <button class="btn" onclick="openAccReport()">📊 Rapport</button>
-          <button class="btn" onclick="openImportModal('accessories')">↑ Importer CSV</button>
-          <button class="btn btn-primary" id="btn-add-acc" onclick="openAccModal()">+ Legg til vare</button>
+          <button class="btn-export" onclick="exportData('accessories','csv')" data-i18n="Eksporter CSV">Eksporter CSV</button>
+          <button class="btn-export" onclick="exportData('accessories','xlsx')" data-i18n="Eksporter Excel">Eksporter Excel</button>
+          <button class="btn" onclick="openAccReport()" data-i18n="📊 Rapport">📊 Rapport</button>
+          <button class="btn" onclick="openImportModal('accessories')" data-i18n="↑ Importer CSV">↑ Importer CSV</button>
+          <button class="btn btn-primary" id="btn-add-acc" onclick="openAccModal()" data-i18n="+ Legg til vare">+ Legg til vare</button>
         </div>
       </div>
       <div class="filter-bar">
-        <span class="filter-bar-label">Filter:</span>
+        <span class="filter-bar-label" data-i18n="Filter:">Filter:</span>
         <details class="multiselect" id="acc-status-multiselect">
-          <summary id="acc-status-summary">Status: Alle</summary>
+          <summary id="acc-status-summary" data-i18n="Status: Alle">Status: Alle</summary>
           <div class="multiselect-options">
             <label><input type="checkbox" value="OK" onchange="toggleAccFilter(this)"> OK</label>
-            <label><input type="checkbox" value="Lavt" onchange="toggleAccFilter(this)"> Lavt</label>
-            <label><input type="checkbox" value="Tomt" onchange="toggleAccFilter(this)"> Tomt</label>
+            <label><input type="checkbox" value="Lavt" onchange="toggleAccFilter(this)"> <span data-i18n="Lavt">Lavt</span></label>
+            <label><input type="checkbox" value="Tomt" onchange="toggleAccFilter(this)"> <span data-i18n="Tomt">Tomt</span></label>
           </div>
         </details>
         <details class="multiselect" id="acc-cat-multiselect">
-          <summary id="acc-cat-summary">Kategori: Alle</summary>
+          <summary id="acc-cat-summary" data-i18n="Kategori: Alle">Kategori: Alle</summary>
           <div class="multiselect-options" id="acc-cat-options"></div>
         </details>
         <details class="multiselect" id="acc-supplier-multiselect">
-          <summary id="acc-supplier-summary">Leverandør: Alle</summary>
+          <summary id="acc-supplier-summary" data-i18n="Leverandør: Alle">Leverandør: Alle</summary>
           <div class="multiselect-options" id="acc-supplier-options"></div>
         </details>
       </div>
@@ -715,7 +720,7 @@
       <div class="card">
         <div class="table-wrap">
           <table>
-            <thead><tr><th data-sort="name">Vare</th><th data-sort="category">Kategori</th><th data-sort="supplier">Leverandør</th><th data-sort="price">Pris</th><th data-sort="stock">På lager</th><th data-sort="min_level">Min.</th><th data-sort="status">Status</th><th>Handlinger</th></tr></thead>
+            <thead><tr><th data-sort="name" data-i18n="Vare">Vare</th><th data-sort="category" data-i18n="Kategori">Kategori</th><th data-sort="supplier" data-i18n="Leverandør">Leverandør</th><th data-sort="price" data-i18n="Pris">Pris</th><th data-sort="stock" data-i18n="På lager">På lager</th><th data-sort="min_level" data-i18n="Min.">Min.</th><th data-sort="status" data-i18n="Status">Status</th><th data-i18n="Handlinger">Handlinger</th></tr></thead>
             <tbody id="acc-table"></tbody>
           </table>
         </div>
@@ -725,18 +730,18 @@
     <!-- GJØREMÅL -->
     <div id="gjoremal" class="section">
       <div class="section-header">
-        <h2>Gjøremål</h2>
+        <h2 data-i18n="Gjøremål">Gjøremål</h2>
         <div class="section-header-actions">
-          <button class="btn btn-primary" id="btn-add-todo" onclick="openTodoModal()">+ Legg til gjøremål</button>
+          <button class="btn btn-primary" id="btn-add-todo" onclick="openTodoModal()" data-i18n="+ Legg til gjøremål">+ Legg til gjøremål</button>
         </div>
       </div>
       <div class="filter-bar">
-        <span class="filter-bar-label">Vis:</span>
-        <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;color:var(--text-muted);white-space:nowrap;"><input type="radio" name="todo-filter" value="active" onchange="setTodoFilter('active')" checked> Aktive</label>
-        <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;color:var(--text-muted);white-space:nowrap;"><input type="radio" name="todo-filter" value="open" onchange="setTodoFilter('open')"> Åpne</label>
-        <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;color:var(--text-muted);white-space:nowrap;"><input type="radio" name="todo-filter" value="in_progress" onchange="setTodoFilter('in_progress')"> Under arbeid</label>
-        <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;color:var(--text-muted);white-space:nowrap;"><input type="radio" name="todo-filter" value="done" onchange="setTodoFilter('done')"> Fullførte</label>
-        <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;color:var(--text-muted);white-space:nowrap;"><input type="radio" name="todo-filter" value="all" onchange="setTodoFilter('all')"> Alle</label>
+        <span class="filter-bar-label" data-i18n="Vis:">Vis:</span>
+        <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;color:var(--text-muted);white-space:nowrap;"><input type="radio" name="todo-filter" value="active" onchange="setTodoFilter('active')" checked> <span data-i18n="Aktive">Aktive</span></label>
+        <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;color:var(--text-muted);white-space:nowrap;"><input type="radio" name="todo-filter" value="open" onchange="setTodoFilter('open')"> <span data-i18n="Åpne">Åpne</span></label>
+        <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;color:var(--text-muted);white-space:nowrap;"><input type="radio" name="todo-filter" value="in_progress" onchange="setTodoFilter('in_progress')"> <span data-i18n="Under arbeid">Under arbeid</span></label>
+        <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;color:var(--text-muted);white-space:nowrap;"><input type="radio" name="todo-filter" value="done" onchange="setTodoFilter('done')"> <span data-i18n="Fullførte">Fullførte</span></label>
+        <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;color:var(--text-muted);white-space:nowrap;"><input type="radio" name="todo-filter" value="all" onchange="setTodoFilter('all')"> <span data-i18n="Alle">Alle</span></label>
       </div>
       <div class="card">
         <div id="todos-table"></div>
@@ -746,15 +751,15 @@
     <!-- VERKSTEDER -->
     <div id="verksteder" class="section">
       <div class="section-header">
-        <h2>Verksteder</h2>
+        <h2 data-i18n="Verksteder">Verksteder</h2>
         <div class="section-header-actions">
-          <button class="btn btn-primary" id="btn-add-ws" onclick="openWorkshopModal()">+ Legg til verksted</button>
+          <button class="btn btn-primary" id="btn-add-ws" onclick="openWorkshopModal()" data-i18n="+ Legg til verksted">+ Legg til verksted</button>
         </div>
       </div>
       <div class="card">
         <div class="table-wrap">
           <table>
-            <thead><tr><th data-sort="name">Navn</th><th data-sort="contact">Kontakt</th><th data-sort="address">Adresse</th><th data-sort="notes">Merknader</th><th>Handlinger</th></tr></thead>
+            <thead><tr><th data-sort="name" data-i18n="Navn">Navn</th><th data-sort="contact" data-i18n="Kontakt">Kontakt</th><th data-sort="address" data-i18n="Adresse">Adresse</th><th data-sort="notes" data-i18n="Merknader">Merknader</th><th data-i18n="Handlinger">Handlinger</th></tr></thead>
             <tbody id="workshops-table"></tbody>
           </table>
         </div>
@@ -764,15 +769,15 @@
     <!-- LEVERANDØRER -->
     <div id="leverandorer" class="section">
       <div class="section-header">
-        <h2>Leverandører</h2>
+        <h2 data-i18n="Leverandører">Leverandører</h2>
         <div class="section-header-actions">
-          <button class="btn btn-primary" id="btn-add-sup" onclick="openSupplierModal()">+ Legg til leverandør</button>
+          <button class="btn btn-primary" id="btn-add-sup" onclick="openSupplierModal()" data-i18n="+ Legg til leverandør">+ Legg til leverandør</button>
         </div>
       </div>
       <div class="card">
         <div class="table-wrap">
           <table>
-            <thead><tr><th data-sort="name">Navn</th><th data-sort="contact">Kontakt</th><th data-sort="address">Adresse</th><th data-sort="notes">Merknader</th><th>Handlinger</th></tr></thead>
+            <thead><tr><th data-sort="name" data-i18n="Navn">Navn</th><th data-sort="contact" data-i18n="Kontakt">Kontakt</th><th data-sort="address" data-i18n="Adresse">Adresse</th><th data-sort="notes" data-i18n="Merknader">Merknader</th><th data-i18n="Handlinger">Handlinger</th></tr></thead>
             <tbody id="suppliers-table"></tbody>
           </table>
         </div>
@@ -782,14 +787,14 @@
     <!-- BRUKERE -->
     <div id="brukere" class="section">
       <div class="section-header">
-        <h2>Brukere</h2>
+        <h2 data-i18n="Brukere">Brukere</h2>
         <div class="section-header-actions">
-          <button class="btn btn-primary" onclick="openUserModal()">+ Ny bruker</button>
+          <button class="btn btn-primary" onclick="openUserModal()" data-i18n="+ Ny bruker">+ Ny bruker</button>
         </div>
       </div>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Brukernavn</th><th>Visningsnavn</th><th>Rolle</th><th>Siste innlogging</th><th>Opprettet</th><th>Handlinger</th></tr></thead>
+          <thead><tr><th data-i18n="Brukernavn">Brukernavn</th><th data-i18n="Visningsnavn">Visningsnavn</th><th data-i18n="Rolle">Rolle</th><th data-i18n="Siste innlogging">Siste innlogging</th><th data-i18n="Opprettet">Opprettet</th><th data-i18n="Handlinger">Handlinger</th></tr></thead>
           <tbody id="users-table"></tbody>
         </table>
       </div>
@@ -797,7 +802,7 @@
 
     <!-- INNSTILLINGER -->
     <div id="innstillinger" class="section">
-      <div class="section-header"><h2>Innstillinger</h2></div>
+      <div class="section-header"><h2 data-i18n="Innstillinger">Innstillinger</h2></div>
       <div class="settings-card">
         <div class="settings-card-header">Korpsidentitet</div>
         <div class="settings-card-body">
@@ -818,6 +823,14 @@
               </div>
             </div>
           </div>
+          <div class="field">
+            <label data-i18n="Valuta">Valuta</label>
+            <input id="settings-currency" list="currency-suggestions" placeholder="kr" style="width:120px;">
+            <datalist id="currency-suggestions">
+              <option value="kr"><option value="NOK"><option value="SEK"><option value="DKK">
+              <option value="€"><option value="$"><option value="£">
+            </datalist>
+          </div>
           <div style="display:flex;justify-content:flex-end;padding-top:4px;">
             <button class="btn btn-primary" onclick="saveSettings()">Lagre innstillinger</button>
           </div>
@@ -828,7 +841,7 @@
     <!-- RAPPORTER -->
     <div id="rapporter" class="section">
       <div class="section-header">
-        <h2>Rapporter</h2>
+        <h2 data-i18n="Rapporter">Rapporter</h2>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;" id="reports-grid"></div>
     </div>
@@ -850,7 +863,7 @@
       </div>
       <div class="field"><label>Kategori</label>
         <select id="inst-cat" onchange="updateIdPreview()">
-          <option>Messingblåser</option><option>Treblåser</option><option>Slagverk</option><option>Annet</option>
+          <option value="Messingblåser" data-i18n="Messingblåser">Messingblåser</option><option value="Treblåser" data-i18n="Treblåser">Treblåser</option><option value="Slagverk" data-i18n="Slagverk">Slagverk</option><option value="Annet" data-i18n="Annet">Annet</option>
         </select>
       </div>
       <div class="field"><label>Stand</label>
@@ -896,7 +909,7 @@
     <div class="form-grid">
       <div class="field full"><label>Fullt navn *</label><input id="player-name"></div>
       <div class="field"><label>Seksjon</label>
-        <select id="player-section"><option>Messingblåsere</option><option>Treblåsere</option><option>Slagverk</option><option>Fanfare</option><option>Annet</option></select>
+        <select id="player-section"><option value="Messingblåsere" data-i18n="Messingblåsere">Messingblåsere</option><option value="Treblåsere" data-i18n="Treblåsere">Treblåsere</option><option value="Slagverk" data-i18n="Slagverk">Slagverk</option><option value="Fanfare" data-i18n="Fanfare">Fanfare</option><option value="Annet" data-i18n="Annet">Annet</option></select>
       </div>
       <div class="field"><label>Kontakt</label><input id="player-contact" placeholder="Telefon eller e-post"></div>
       <div class="field"><label>Registrert av</label><input id="player-registered-by" placeholder="Navn" readonly></div>
@@ -944,7 +957,7 @@
         </select>
       </div>
       <div class="field"><label>Type</label>
-        <select id="svc-type"><option>Rutinemessig vedlikehold</option><option>Reparasjon</option><option>Dybderens</option><option>Pute-/filtbytte</option><option>Ventilservice</option><option>Annet</option></select>
+        <select id="svc-type"><option value="Rutinemessig vedlikehold" data-i18n="Rutinemessig vedlikehold">Rutinemessig vedlikehold</option><option value="Reparasjon" data-i18n="Reparasjon">Reparasjon</option><option value="Dybderens" data-i18n="Dybderens">Dybderens</option><option value="Pute-/filtbytte" data-i18n="Pute-/filtbytte">Pute-/filtbytte</option><option value="Ventilservice" data-i18n="Ventilservice">Ventilservice</option><option value="Annet" data-i18n="Annet">Annet</option></select>
       </div>
       <div class="field"><label>Ferdig dato</label><input type="date" id="svc-date-finished"></div>
       <div class="field"><label>Kostnad (kr)</label><input type="number" id="svc-cost" placeholder="0" min="0"></div>
@@ -1294,19 +1307,7 @@
 </div><!-- /app-wrapper -->
 
 <script>
-// --- THEME ---
-function applyTheme(t) {
-  document.documentElement.setAttribute('data-theme', t);
-  const btn = document.getElementById('theme-btn');
-  if (btn) btn.innerHTML = t === 'dark'
-    ? '<svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"/></svg> Lys modus'
-    : '<svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg> Mørk modus';
-  localStorage.setItem('korps-theme', t);
-}
-function toggleTheme() { applyTheme(localStorage.getItem('korps-theme') === 'dark' ? 'light' : 'dark'); }
-applyTheme(localStorage.getItem('korps-theme') || 'light');
-
-// --- STATE ---
+// --- STATE (declared early to avoid TDZ when t() is called from applyTheme) ---
 let state = { instruments: [], players: [], service: [], accessories: [], workshops: [], suppliers: [], accCategories: [], settings: {}, todos: [], users: [], currentUser: null };
 let editingId = { inst: null, player: null, service: null, acc: null, ws: null, sup: null };
 let scannerActive = false;
@@ -1314,6 +1315,245 @@ let barcodeScannerActive = false;
 let _scanStream = null, _scanFrame = null;
 let _barcodeStream = null, _barcodeFrame = null;
 let currentQrInst = null;
+
+// --- THEME ---
+function applyTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  const btn = document.getElementById('theme-btn');
+  if (btn) btn.innerHTML = t === 'dark'
+    ? `<svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"/></svg> ${window.t ? window.t('Lys modus') : 'Lys modus'}`
+    : `<svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg> ${window.t ? window.t('Mørk modus') : 'Mørk modus'}`;
+  localStorage.setItem('korps-theme', t);
+}
+function toggleTheme() { applyTheme(localStorage.getItem('korps-theme') === 'dark' ? 'light' : 'dark'); }
+
+// --- I18N ---
+const EN = {
+  // Navigation & sections
+  'Hovedmeny': 'Main menu', 'Administrasjon': 'Administration',
+  'Oversikt': 'Overview', 'Instrumenter': 'Instruments', 'Musikanter': 'Musicians',
+  'Servicelogg': 'Service Log', 'Tilbehør': 'Accessories', 'Gjøremål': 'Tasks',
+  'Administrasjon': 'Administration', 'Rapporter': 'Reports', 'Verksteder': 'Workshops',
+  'Leverandører': 'Suppliers', 'Brukere': 'Users', 'Innstillinger': 'Settings',
+  'Tilbehør og lager': 'Accessories & Inventory',
+  'Endre passord': 'Change password', 'Mørk modus': 'Dark mode', 'Lys modus': 'Light mode',
+  // Topbar / login
+  'Varsler': 'Alerts', 'Logg ut': 'Log out', 'Søk i aktiv liste…': 'Search active list…',
+  'Logg inn': 'Log in', 'Brukernavn': 'Username', 'Passord': 'Password',
+  'Logger inn…': 'Logging in…', 'Feil brukernavn eller passord': 'Invalid username or password',
+  // Buttons
+  'Eksporter CSV': 'Export CSV', 'Eksporter Excel': 'Export Excel',
+  '↑ Importer CSV': '↑ Import CSV',
+  '+ Legg til instrument': '+ Add instrument', '+ Legg til musiker': '+ Add musician',
+  '+ Logg service': '+ Log service', '+ Legg til vare': '+ Add item',
+  '+ Legg til gjøremål': '+ Add task', '+ Legg til verksted': '+ Add workshop',
+  '+ Legg til leverandør': '+ Add supplier', '+ Ny bruker': '+ New user',
+  '📊 Rapport': '📊 Report', '📦 Til henting': '📦 Ready for pickup',
+  'Forhåndsvis': 'Preview', 'Importer': 'Import',
+  // Table headers
+  'Instrument': 'Instrument', 'Instrument-ID': 'Instrument ID', 'Navn': 'Name', 'Kategori': 'Category',
+  'Stand': 'Condition', 'Neste sjekk': 'Next check', 'Tildelt': 'Assigned',
+  'Handlinger': 'Actions', 'Seksjon': 'Section', 'Kontakt': 'Contact',
+  'Tildelte instrumenter': 'Assigned instruments', 'Innlevert': 'Submitted',
+  'Verksted': 'Workshop', 'Beskrivelse': 'Description', 'Kostnad': 'Cost',
+  'Fakturanr.': 'Invoice no.', 'Neste frist': 'Next due', 'Vare': 'Item',
+  'Leverandør': 'Supplier', 'Pris': 'Price', 'På lager': 'In stock', 'Min.': 'Min.',
+  'Visningsnavn': 'Display name', 'Rolle': 'Role', 'Siste innlogging': 'Last login',
+  'Opprettet': 'Created', 'Adresse': 'Address', 'Merknader': 'Notes',
+  // Filter labels / summaries
+  'Filter:': 'Filter:', 'Vis:': 'Show:',
+  'Stand: Alle': 'Condition: All', 'Kategori: Alle': 'Category: All',
+  'Tildelt: Alle': 'Assigned: All', 'Seksjon: Alle': 'Section: All',
+  'Status: Alle': 'Status: All', 'Type: Alle': 'Type: All',
+  'Verksted: Alle': 'Workshop: All', 'Leverandør: Alle': 'Supplier: All',
+  'Aktive': 'Active', 'Åpne': 'Open', 'Fullførte': 'Completed', 'Alle': 'All',
+  // Condition / status values
+  'God': 'Good', 'Akseptabel': 'Acceptable', 'Trenger service': 'Needs service',
+  'Under service': 'In service', 'Til henting': 'Ready for pickup', 'Ferdig': 'Done',
+  'Fullført': 'Completed', 'Under arbeid': 'In progress', 'Åpen': 'Open', 'Åpne': 'Open',
+  'Tomt': 'Empty', 'Lavt': 'Low', 'OK': 'OK',
+  // Action buttons
+  'Rediger': 'Edit', 'Slett': 'Delete', 'Lagre': 'Save', 'Avbryt': 'Cancel',
+  'Lukk': 'Close', 'Lager': 'Inventory',
+  '✓ Hentet': '✓ Picked up', 'Gjenåpne': 'Reopen', 'Kvitter ut': 'Complete',
+  'Sett under arbeid': 'Set in progress', 'Tilbake til åpen': 'Back to open',
+  'Ja, endre tildeling': 'Yes, change assignment',
+  // Modal titles
+  'Legg til instrument': 'Add instrument', 'Rediger instrument': 'Edit instrument',
+  'Logg service': 'Log service', 'Rediger serviceoppføring': 'Edit service entry',
+  'Serviceoppføring': 'Service entry',
+  'Legg til musiker': 'Add musician', 'Rediger musiker': 'Edit musician', 'Musiker': 'Musician',
+  'Legg til vare': 'Add item', 'Rediger vare': 'Edit item',
+  'Legg til gjøremål': 'Add task', 'Rediger gjøremål': 'Edit task', 'Gjøremål': 'Task',
+  'Rediger verksted': 'Edit workshop', 'Legg til verksted': 'Add workshop',
+  'Rediger leverandør': 'Edit supplier', 'Legg til leverandør': 'Add supplier',
+  'Ny bruker': 'New user', 'Rediger bruker': 'Edit user',
+  'Kvitter ut gjøremål': 'Complete task', 'Sett under arbeid': 'Set in progress',
+  'Endre tildeling?': 'Change assignment?', 'Endre passord': 'Change password',
+  'Juster lager': 'Adjust inventory',
+  'Instrumenter til henting': 'Instruments ready for pickup',
+  'QR-kode': 'QR code',
+  // Toast messages
+  'Lagret!': 'Saved!', 'Slettet': 'Deleted',
+  'Du har ikke tilgang til denne handlingen': 'You do not have permission for this action',
+  'QR-kode lastet ned': 'QR code downloaded',
+  'Kvittert ut som hentet!': 'Picked up — confirmed!',
+  'Lagerbeholdning oppdatert': 'Inventory updated',
+  'Gjøremål kvittert ut!': 'Task completed!',
+  'Gjøremål satt under arbeid!': 'Task set in progress!',
+  'Gjøremål satt tilbake til åpen': 'Task set back to open',
+  'Gjøremål oppdatert!': 'Task updated!', 'Gjøremål lagret!': 'Task saved!',
+  'Verksted oppdatert!': 'Workshop updated!', 'Verksted lagret!': 'Workshop saved!',
+  'Leverandør oppdatert!': 'Supplier updated!', 'Leverandør lagret!': 'Supplier saved!',
+  // Empty states
+  'Ingen instrumenter matcher filteret': 'No instruments match the filter',
+  'Ingen instrumenter registrert ennå': 'No instruments registered yet',
+  'Ingen musikanter matcher filteret': 'No musicians match the filter',
+  'Ingen musikanter registrert ennå': 'No musicians registered yet',
+  'Ingen oppføringer matcher filteret': 'No entries match the filter',
+  'Ingen serviceoppføringer ennå': 'No service entries yet',
+  'Ingen varer matcher filteret': 'No items match the filter',
+  'Ingen varer registrert ennå': 'No items registered yet',
+  'Ingen gjøremål matcher filteret': 'No tasks match the filter',
+  'Ingen gjøremål registrert ennå': 'No tasks registered yet',
+  'Ingen verksteder registrert ennå': 'No workshops registered yet',
+  'Ingen leverandører registrert ennå': 'No suppliers registered yet',
+  'Ingen brukere': 'No users',
+  'Ingen instrumenter registrert ennå': 'No instruments registered yet',
+  // Dashboard labels
+  'Instrumenter totalt': 'Total instruments', 'Tildelte instr.': 'Assigned instr.',
+  'Tilbehørsvarsler': 'Accessory alerts', 'Krever tiltak': 'Requires action',
+  'Hent snarest': 'Collect soon', 'Lavt lager': 'Low stock',
+  'Aktive gjøremål': 'Active tasks', 'Aktive varsler': 'Active alerts',
+  'Krever oppfølging': 'Requires follow-up', 'Aktive servicer': 'Active services',
+  'Ekskl. ferdige': 'Excl. completed',
+  'Ingen aktive gjøremål': 'No active tasks',
+  'Ingen aktive varsler': 'No active alerts',
+  'Ingen aktive serviceoppføringer': 'No active service entries',
+  'Vis alle': 'View all', 'aktive': 'active',
+  // Dashboard alert sub-strings
+  'klar til henting': 'ready for pickup',
+  'Ukjent verksted': 'Unknown workshop', 'Ukjent': 'Unknown',
+  'Service forfalt': 'Service overdue', 'Service forfalt:': 'Service overdue:',
+  'Sjekk forfalt:': 'Check overdue:', 'Neste sjekk:': 'Next check:',
+  'Tomt lager': 'Empty stock',
+  // Varsler dropdown
+  'varsler': 'alerts', 'Ingen aktive varsler': 'No active alerts', 'Aktive varsler': 'Active alerts',
+  // Reports
+  'Servicekostnad per verksted': 'Service cost by workshop',
+  'Total kostnad fordelt på utfører': 'Total cost by service provider',
+  'Varekostnad per kategori': 'Item cost by category',
+  'Total lagerverdi (pris × antall)': 'Total inventory value (price × qty)',
+  'Intern service': 'Internal service',
+  'Ingen serviceoppføringer': 'No service entries', 'Ingen serviceoppføringer ennå': 'No service entries yet',
+  'Ingen varer registrert': 'No items registered',
+  // Instrument & accessory categories
+  'Messingblåser': 'Brass', 'Treblåser': 'Woodwind', 'Slagverk': 'Percussion', 'Annet': 'Other',
+  // Musician sections
+  'Messingblåsere': 'Brass section', 'Treblåsere': 'Woodwind section', 'Fanfare': 'Fanfare',
+  // Service types
+  'Rutinemessig vedlikehold': 'Routine maintenance', 'Reparasjon': 'Repair',
+  'Dybderens': 'Deep clean', 'Pute-/filtbytte': 'Pad/felt replacement', 'Ventilservice': 'Valve service',
+  // Filter labels
+  'Type: Alle': 'Type: All', 'Type': 'Type',
+  // Misc
+  'Ikke tildelt': 'Not assigned', 'Generell': 'General', 'Ukategorisert': 'Uncategorized', 'Ingen': 'None',
+  'Av:': 'By:', 'Ansvarlig:': 'Responsible:', 'Ansvarlig': 'Responsible', 'Kvittert:': 'Completed by:',
+  'Ingen instrumenter registrert ennå': 'No instruments registered yet',
+  'Ferdig servicet eksternt — venter på henting.': 'Externally serviced — awaiting pickup.',
+  'Ingen instrumenter venter på henting.': 'No instruments awaiting pickup.',
+  'Verksted: ': 'Workshop: ', 'Innlevert: ': 'Submitted: ', 'Ferdig: ': 'Done: ',
+  'Ingen treff': 'No results', 'Ingen resultater': 'No results',
+  'treff': 'results', 'prøv et annet søkeord': 'try another search term',
+  'Registrert av': 'Registered by', 'Gjelder': 'Regarding', 'Oppgave': 'Task',
+  'Dato': 'Date',
+  // Confirm dialogs
+  'Slette dette instrumentet?': 'Delete this instrument?',
+  'Slette denne musikanten?': 'Delete this musician?',
+  'Slette denne oppføringen?': 'Delete this service entry?',
+  'Slette denne varen?': 'Delete this item?',
+  'Slette dette gjøremålet?': 'Delete this task?',
+  'Slette dette verkstedet?': 'Delete this workshop?',
+  'Slette denne leverandøren?': 'Delete this supplier?',
+  'Slett denne brukeren?': 'Delete this user?',
+  'Bekreft at instrumentet er hentet?': 'Confirm instrument has been picked up?',
+  // Permission labels
+  'Instrumenter: Les': 'Instruments: Read', 'Instrumenter: Rediger': 'Instruments: Edit',
+  'Instrumenter: Slett': 'Instruments: Delete',
+  'Musikanter: Les': 'Musicians: Read', 'Musikanter: Rediger': 'Musicians: Edit',
+  'Musikanter: Slett': 'Musicians: Delete', 'Musikanter: Tildel instrument': 'Musicians: Assign instrument',
+  'Servicelogg: Les': 'Service Log: Read', 'Servicelogg: Rediger': 'Service Log: Edit',
+  'Servicelogg: Slett': 'Service Log: Delete',
+  'Tilbehør: Les': 'Accessories: Read', 'Tilbehør: Rediger': 'Accessories: Edit',
+  'Tilbehør: Slett': 'Accessories: Delete',
+  'Gjøremål: Les': 'Tasks: Read', 'Gjøremål: Rediger': 'Tasks: Edit',
+  'Gjøremål: Slett': 'Tasks: Delete',
+  'Verksteder: Admin': 'Workshops: Admin', 'Leverandører: Admin': 'Suppliers: Admin',
+  'Rapporter: Les': 'Reports: Read', 'Brukere: Admin': 'Users: Admin',
+  // User management
+  'Administrator': 'Administrator', 'Bruker': 'User',
+  '(deg)': '(you)',
+  // Passord / user modal
+  'Passord *': 'Password *', 'Nytt passord (la stå tomt for å beholde)': 'New password (leave blank to keep current)',
+  'Brukernavn og passord er påkrevd': 'Username and password are required',
+  'Passord må være minst 6 tegn': 'Password must be at least 6 characters',
+  'Passordene er ikke like': 'Passwords do not match',
+  // Varsler dropdown misc
+  'stk igjen': 'left in stock', 'stk igjen (minimum:': 'left (minimum:', 'Minimum': 'Minimum',
+  'forfalt': 'overdue',
+  'aktive gjøremål': 'active tasks', 'åpne': 'open', 'under arbeid': 'in progress',
+  'Frist': 'Due', 'Sjekk forfalt': 'Check overdue',
+  // Misc toasts/alerts
+  'Instrument mangler ID': 'Instrument missing ID',
+  'Innstillinger lagret!': 'Settings saved!',
+  'Valuta': 'Currency',
+  'Ingen data å forhåndsvise': 'No data to preview',
+  'Skriv inn en beskrivelse': 'Enter a description',
+  'Velg et instrument eller en vare': 'Select an instrument or item',
+  'Feil ved lagring': 'Error saving',
+  'Eksport feilet': 'Export failed',
+  'importert': 'imported', 'instrumenter importert': 'instruments imported', 'varer importert': 'items imported',
+  'Kamera ikke tilgjengelig': 'Camera not available',
+};
+
+function t(key) {
+  if ((state.currentUser?.language || 'en') === 'no') return key;
+  return EN[key] ?? key;
+}
+
+// Apply theme now that state, EN and t() are all initialized
+applyTheme(localStorage.getItem('korps-theme') || 'light');
+
+function applyTranslations() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    el.textContent = t(el.dataset.i18n);
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    el.placeholder = t(el.dataset.i18nPlaceholder);
+  });
+  // Re-apply theme to update "Dark/Light mode" button text
+  applyTheme(localStorage.getItem('korps-theme') || 'light');
+}
+
+function updateLangButtons() {
+  const lang = state.currentUser?.language || 'en';
+  ['en','no'].forEach(l => {
+    const btn = document.getElementById('lang-btn-' + l);
+    if (!btn) return;
+    btn.style.background = lang === l ? 'rgba(255,255,255,0.25)' : 'none';
+    btn.style.color = lang === l ? '#fff' : 'rgba(255,255,255,0.5)';
+    btn.style.borderColor = lang === l ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.15)';
+  });
+}
+
+async function setLanguage(lang) {
+  if (!['en','no'].includes(lang)) return;
+  if (state.currentUser) state.currentUser.language = lang;
+  try { await api('PUT', '/api/auth/language', { language: lang }); } catch(e) {}
+  updateLangButtons();
+  applyTranslations();
+  render();
+}
 
 function toast(msg) {
   const el = document.getElementById('toast');
@@ -1329,7 +1569,7 @@ async function api(method, path, body) {
     body: body ? JSON.stringify(body) : undefined
   });
   if (res.status === 401) { showLogin(); throw new Error('Ikke innlogget'); }
-  if (res.status === 403) { toast('Du har ikke tilgang til denne handlingen'); throw new Error('Ingen tilgang'); }
+  if (res.status === 403) { toast(t('Du har ikke tilgang til denne handlingen')); throw new Error('Ingen tilgang'); }
   if (!res.ok) {
     const text = await res.text();
     throw new Error(`API ${method} ${path} feilet (${res.status}): ${text.slice(0, 200)}`);
@@ -1355,6 +1595,7 @@ function showLogin() {
 function hideLogin() {
   document.getElementById('login-overlay').style.display = 'none';
   document.getElementById('app-wrapper').style.display = '';
+  applyTranslations();
 }
 
 async function doLogin(e) {
@@ -1362,7 +1603,7 @@ async function doLogin(e) {
   const btn = document.getElementById('login-btn');
   const errEl = document.getElementById('login-error');
   errEl.textContent = '';
-  btn.disabled = true; btn.textContent = 'Logger inn…';
+  btn.disabled = true; btn.textContent = t('Logger inn…');
   try {
     const { forcePasswordChange } = await api('POST', '/api/auth/login', {
       username: document.getElementById('login-username').value,
@@ -1373,9 +1614,9 @@ async function doLogin(e) {
     navigateTo('dashboard');
     if (forcePasswordChange) openChangePasswordModal(true);
   } catch(err) {
-    errEl.textContent = 'Feil brukernavn eller passord';
+    errEl.textContent = t('Feil brukernavn eller passord');
   } finally {
-    btn.disabled = false; btn.textContent = 'Logg inn';
+    btn.disabled = false; btn.textContent = t('Logg inn');
   }
 }
 
@@ -1393,6 +1634,7 @@ async function initApp() {
     hideLogin();
     document.getElementById('topbar-display-name').textContent = me.displayName || me.username;
     applyPermissions();
+    updateLangButtons();
     await loadAll();
   } catch(e) {
     showLogin();
@@ -1412,7 +1654,8 @@ async function loadAll() {
   render();
 }
 
-const sectionTitles = { dashboard: 'Oversikt', instrumenter: 'Instrumenter', musikanter: 'Musikanter', service: 'Servicelogg', tilbehor: 'Tilbehør og lager', gjoremal: 'Gjøremål', verksteder: 'Verksteder', leverandorer: 'Leverandører', brukere: 'Brukere', rapporter: 'Rapporter', innstillinger: 'Innstillinger' };
+const sectionTitlesNO = { dashboard: 'Oversikt', instrumenter: 'Instrumenter', musikanter: 'Musikanter', service: 'Servicelogg', tilbehor: 'Tilbehør og lager', gjoremal: 'Gjøremål', verksteder: 'Verksteder', leverandorer: 'Leverandører', brukere: 'Brukere', rapporter: 'Rapporter', innstillinger: 'Innstillinger' };
+function getSectionTitle(sid) { return t(sectionTitlesNO[sid] || ''); }
 function openMobileMenu() {
   document.querySelector('.sidebar').classList.add('open');
   document.getElementById('sidebar-backdrop').classList.add('open');
@@ -1429,7 +1672,7 @@ function navigateTo(sid, addHistory = true) {
   const sec = document.getElementById(sid);
   if (sec) sec.classList.add('active');
   const titleEl = document.getElementById('topbar-title');
-  if (titleEl) titleEl.textContent = sectionTitles[sid] || '';
+  if (titleEl) titleEl.textContent = getSectionTitle(sid);
   const inp = document.getElementById('topbar-search');
   if (inp) inp.value = '';
   if (sid === 'innstillinger') populateSettingsForm();
@@ -1450,18 +1693,19 @@ document.querySelectorAll('.modal-overlay').forEach(o => {
 
 // --- HELPERS ---
 function fmt(n) { return (n||0).toLocaleString('nb-NO', { minimumFractionDigits: 0, maximumFractionDigits: 2 }); }
-function fmtKr(n) { return n ? fmt(n) + ' kr' : '—'; }
+function cur() { return state.settings['currency'] || 'kr'; }
+function fmtKr(n) { return n ? fmt(n) + ' ' + cur() : '—'; }
 
 function getServiceStatus(s) {
-  if (!s.date_finished) return { key: 'under_service', label: 'Under service', cls: 'badge-warn' };
-  if (s.workshop_id && !s.picked_up) return { key: 'til_henting', label: 'Til henting', cls: 'badge-purple' };
-  return { key: 'ferdig', label: 'Ferdig', cls: 'badge-ok' };
+  if (!s.date_finished) return { key: 'under_service', label: t('Under service'), cls: 'badge-warn' };
+  if (s.workshop_id && !s.picked_up) return { key: 'til_henting', label: t('Til henting'), cls: 'badge-purple' };
+  return { key: 'ferdig', label: t('Ferdig'), cls: 'badge-ok' };
 }
 
 function condBadge(c) {
-  return c === 'God' ? '<span class="badge badge-ok">God</span>'
-    : c === 'Akseptabel' ? '<span class="badge badge-yellow">Akseptabel</span>'
-    : '<span class="badge badge-bad">Trenger service</span>';
+  return c === 'God' ? `<span class="badge badge-ok">${t('God')}</span>`
+    : c === 'Akseptabel' ? `<span class="badge badge-yellow">${t('Akseptabel')}</span>`
+    : `<span class="badge badge-bad">${t('Trenger service')}</span>`;
 }
 function idbadge(kid) { return kid ? `<span class="idbadge">${kid}</span>` : ''; }
 function exportData(type, format) { window.location.href = `/api/export/${type}/${format}`; }
@@ -1480,7 +1724,7 @@ const QRGen = (() => {
 
 function openQrModal(instId) {
   const inst = state.instruments.find(i => i.id === instId);
-  if (!inst || !inst.korps_id) { toast('Instrument mangler ID'); return; }
+  if (!inst || !inst.korps_id) { toast(t('Instrument mangler ID')); return; }
   currentQrInst = inst;
   document.getElementById('qr-inst-name').textContent = inst.name;
   document.getElementById('qr-inst-id-label').textContent = inst.korps_id;
@@ -1492,7 +1736,7 @@ function downloadQr() {
   const a = document.createElement('a');
   a.download = `qr_${currentQrInst.korps_id}.png`;
   a.href = document.getElementById('qr-canvas').toDataURL('image/png');
-  a.click(); toast('QR-kode lastet ned');
+  a.click(); toast(t('QR-kode lastet ned'));
 }
 function printQr() {
   if (!currentQrInst) return;
@@ -1670,7 +1914,7 @@ function updateIdPreview() {
 function openInstModal(id, viewOnly=false) {
   editingId.inst = id || null;
   const inst = id ? state.instruments.find(i => i.id === id) : null;
-  document.getElementById('inst-modal-title').textContent = viewOnly ? 'Instrument' : (inst ? 'Rediger instrument' : 'Legg til instrument');
+  document.getElementById('inst-modal-title').textContent = viewOnly ? t('Instrument') : (inst ? t('Rediger instrument') : t('Legg til instrument'));
   document.getElementById('inst-name').value = inst?.name || '';
   document.getElementById('inst-cat').value = inst?.category || 'Messingblåser';
   document.getElementById('inst-cond').value = inst?.condition || 'God';
@@ -1698,11 +1942,11 @@ async function saveInstrument() {
     registered_by: document.getElementById('inst-registered-by').value.trim() || null };
   if (editingId.inst) await api('PUT', '/api/instruments/'+editingId.inst, body);
   else await api('POST', '/api/instruments', body);
-  closeModal('inst-modal'); toast('Lagret!'); await loadAll();
+  closeModal('inst-modal'); toast(t('Lagret!')); await loadAll();
 }
 async function deleteInstrument(id) {
-  if (!confirm('Slette dette instrumentet?')) return;
-  await api('DELETE', '/api/instruments/'+id); toast('Slettet'); await loadAll();
+  if (!confirm(t('Slette dette instrumentet?'))) return;
+  await api('DELETE', '/api/instruments/'+id); toast(t('Slettet')); await loadAll();
 }
 function openServiceForInstrument(instId) {
   openServiceModal();
@@ -1733,7 +1977,7 @@ function populateDynOptions(containerId, values, currentFilter, toggleFnName) {
   const el = document.getElementById(containerId);
   if (!el) return;
   el.innerHTML = values.map(v =>
-    `<label><input type="checkbox" value="${v}" onchange="${toggleFnName}(this)"${currentFilter.has(v) ? ' checked' : ''}> ${v}</label>`
+    `<label><input type="checkbox" value="${v}" onchange="${toggleFnName}(this)"${currentFilter.has(v) ? ' checked' : ''}> ${t(v)}</label>`
   ).join('');
 }
 
@@ -1831,8 +2075,8 @@ function syncSortHeaders(tableKey) {
 function setSvcStatusFilter(values) {
   svcStatusFilter.clear();
   values.forEach(v => svcStatusFilter.add(v));
-  const labels = {under_service:'Under service', til_henting:'Til henting', ferdig:'Ferdig'};
-  document.getElementById('svc-status-summary').textContent = svcStatusFilter.size === 0 ? 'Status: Alle' : 'Status: ' + [...svcStatusFilter].map(k => labels[k]||k).join(', ');
+  const labels = {under_service:t('Under service'), til_henting:t('Til henting'), ferdig:t('Ferdig')};
+  document.getElementById('svc-status-summary').textContent = svcStatusFilter.size === 0 ? t('Status: Alle') : t('Status') + ': ' + [...svcStatusFilter].map(k => labels[k]||k).join(', ');
   document.getElementById('svc-status-multiselect')?.classList.toggle('filter-active', svcStatusFilter.size > 0);
   document.querySelectorAll('#svc-status-options input[type=checkbox]').forEach(cb => { cb.checked = svcStatusFilter.has(cb.value); });
   renderServiceTable();
@@ -1840,7 +2084,7 @@ function setSvcStatusFilter(values) {
 function toggleSvcFilter(cb) {
   if (cb.checked) svcStatusFilter.add(cb.value); else svcStatusFilter.delete(cb.value);
   const ms = document.getElementById('svc-status-multiselect');
-  document.getElementById('svc-status-summary').textContent = svcStatusFilter.size === 0 ? 'Status: Alle' : 'Status: ' + [...svcStatusFilter].map(k => ({under_service:'Under service',til_henting:'Til henting',ferdig:'Ferdig'}[k]||k)).join(', ');
+  document.getElementById('svc-status-summary').textContent = svcStatusFilter.size === 0 ? t('Status: Alle') : t('Status') + ': ' + [...svcStatusFilter].map(k => ({under_service:t('Under service'),til_henting:t('Til henting'),ferdig:t('Ferdig')}[k]||k)).join(', ');
   ms.classList.toggle('filter-active', svcStatusFilter.size > 0);
   renderServiceTable();
 }
@@ -1848,14 +2092,14 @@ function toggleSvcFilter(cb) {
 function toggleInstFilter(cb) {
   if (cb.checked) instCondFilter.add(cb.value); else instCondFilter.delete(cb.value);
   const ms = document.getElementById('inst-cond-multiselect');
-  document.getElementById('inst-cond-summary').textContent = instCondFilter.size === 0 ? 'Stand: Alle' : 'Stand: ' + [...instCondFilter].join(', ');
+  document.getElementById('inst-cond-summary').textContent = instCondFilter.size === 0 ? t('Stand: Alle') : t('Stand') + ': ' + [...instCondFilter].map(v => t(v)).join(', ');
   ms.classList.toggle('filter-active', instCondFilter.size > 0);
   renderInstTable();
 }
 function toggleAccFilter(cb) {
   if (cb.checked) accStatusFilter.add(cb.value); else accStatusFilter.delete(cb.value);
   const ms = document.getElementById('acc-status-multiselect');
-  document.getElementById('acc-status-summary').textContent = accStatusFilter.size === 0 ? 'Status: Alle' : 'Status: ' + [...accStatusFilter].join(', ');
+  document.getElementById('acc-status-summary').textContent = accStatusFilter.size === 0 ? t('Status: Alle') : t('Status') + ': ' + [...accStatusFilter].map(v => t(v)).join(', ');
   ms.classList.toggle('filter-active', accStatusFilter.size > 0);
   renderAccessories();
 }
@@ -1865,7 +2109,7 @@ function setInstCondFilter(values) {
   // sync checkboxes
   document.querySelectorAll('#inst-cond-multiselect input[type=checkbox]').forEach(cb => { cb.checked = instCondFilter.has(cb.value); });
   const ms = document.getElementById('inst-cond-multiselect');
-  document.getElementById('inst-cond-summary').textContent = instCondFilter.size === 0 ? 'Stand: Alle' : 'Stand: ' + [...instCondFilter].join(', ');
+  document.getElementById('inst-cond-summary').textContent = instCondFilter.size === 0 ? t('Stand: Alle') : t('Stand') + ': ' + [...instCondFilter].map(v => t(v)).join(', ');
   ms.classList.toggle('filter-active', instCondFilter.size > 0);
   renderInstTable();
 }
@@ -1874,7 +2118,7 @@ function setAccStatusFilter(values) {
   values.forEach(v => accStatusFilter.add(v));
   document.querySelectorAll('#acc-status-multiselect input[type=checkbox]').forEach(cb => { cb.checked = accStatusFilter.has(cb.value); });
   const ms = document.getElementById('acc-status-multiselect');
-  document.getElementById('acc-status-summary').textContent = accStatusFilter.size === 0 ? 'Status: Alle' : 'Status: ' + [...accStatusFilter].join(', ');
+  document.getElementById('acc-status-summary').textContent = accStatusFilter.size === 0 ? t('Status: Alle') : t('Status') + ': ' + [...accStatusFilter].map(v => t(v)).join(', ');
   ms.classList.toggle('filter-active', accStatusFilter.size > 0);
   renderAccessories();
 }
@@ -1883,50 +2127,50 @@ function getAccStatus(a) { return a.stock === 0 ? 'Tomt' : a.stock <= a.min_leve
 function toggleInstCatFilter(cb) {
   if (cb.checked) instCatFilter.add(cb.value); else instCatFilter.delete(cb.value);
   const ms = document.getElementById('inst-cat-multiselect');
-  document.getElementById('inst-cat-summary').textContent = instCatFilter.size === 0 ? 'Kategori: Alle' : 'Kategori: ' + [...instCatFilter].join(', ');
+  document.getElementById('inst-cat-summary').textContent = instCatFilter.size === 0 ? t('Kategori: Alle') : t('Kategori') + ': ' + [...instCatFilter].map(v => t(v)).join(', ');
   ms.classList.toggle('filter-active', instCatFilter.size > 0);
   renderInstTable();
 }
 function toggleInstPlayerFilter(cb) {
   if (cb.checked) instPlayerFilter.add(cb.value); else instPlayerFilter.delete(cb.value);
   const ms = document.getElementById('inst-player-multiselect');
-  const labels = { tildelt: 'Tildelt', ikke_tildelt: 'Ikke tildelt' };
-  document.getElementById('inst-player-summary').textContent = instPlayerFilter.size === 0 ? 'Tildelt: Alle' : 'Tildelt: ' + [...instPlayerFilter].map(v => labels[v]).join(', ');
+  const labels = { tildelt: t('Tildelt'), ikke_tildelt: t('Ikke tildelt') };
+  document.getElementById('inst-player-summary').textContent = instPlayerFilter.size === 0 ? t('Tildelt: Alle') : t('Tildelt') + ': ' + [...instPlayerFilter].map(v => labels[v]).join(', ');
   ms.classList.toggle('filter-active', instPlayerFilter.size > 0);
   renderInstTable();
 }
 function togglePlayerSectionFilter(cb) {
   if (cb.checked) playerSectionFilter.add(cb.value); else playerSectionFilter.delete(cb.value);
   const ms = document.getElementById('player-section-multiselect');
-  document.getElementById('player-section-summary').textContent = playerSectionFilter.size === 0 ? 'Seksjon: Alle' : 'Seksjon: ' + [...playerSectionFilter].join(', ');
+  document.getElementById('player-section-summary').textContent = playerSectionFilter.size === 0 ? t('Seksjon: Alle') : t('Seksjon') + ': ' + [...playerSectionFilter].map(v => t(v)).join(', ');
   ms.classList.toggle('filter-active', playerSectionFilter.size > 0);
   renderPlayerTable();
 }
 function toggleSvcTypeFilter(cb) {
   if (cb.checked) svcTypeFilter.add(cb.value); else svcTypeFilter.delete(cb.value);
   const ms = document.getElementById('svc-type-multiselect');
-  document.getElementById('svc-type-summary').textContent = svcTypeFilter.size === 0 ? 'Type: Alle' : 'Type: ' + [...svcTypeFilter].join(', ');
+  document.getElementById('svc-type-summary').textContent = svcTypeFilter.size === 0 ? t('Type: Alle') : t('Type') + ': ' + [...svcTypeFilter].map(v => t(v)).join(', ');
   ms.classList.toggle('filter-active', svcTypeFilter.size > 0);
   renderServiceTable();
 }
 function toggleSvcWorkshopFilter(cb) {
   if (cb.checked) svcWorkshopFilter.add(cb.value); else svcWorkshopFilter.delete(cb.value);
   const ms = document.getElementById('svc-workshop-multiselect');
-  document.getElementById('svc-workshop-summary').textContent = svcWorkshopFilter.size === 0 ? 'Verksted: Alle' : 'Verksted: ' + [...svcWorkshopFilter].join(', ');
+  document.getElementById('svc-workshop-summary').textContent = svcWorkshopFilter.size === 0 ? t('Verksted: Alle') : t('Verksted') + ': ' + [...svcWorkshopFilter].join(', ');
   ms.classList.toggle('filter-active', svcWorkshopFilter.size > 0);
   renderServiceTable();
 }
 function toggleAccCatFilter(cb) {
   if (cb.checked) accCatFilter.add(cb.value); else accCatFilter.delete(cb.value);
   const ms = document.getElementById('acc-cat-multiselect');
-  document.getElementById('acc-cat-summary').textContent = accCatFilter.size === 0 ? 'Kategori: Alle' : 'Kategori: ' + [...accCatFilter].join(', ');
+  document.getElementById('acc-cat-summary').textContent = accCatFilter.size === 0 ? t('Kategori: Alle') : t('Kategori') + ': ' + [...accCatFilter].map(v => t(v)).join(', ');
   ms.classList.toggle('filter-active', accCatFilter.size > 0);
   renderAccessories();
 }
 function toggleAccSupplierFilter(cb) {
   if (cb.checked) accSupplierFilter.add(cb.value); else accSupplierFilter.delete(cb.value);
   const ms = document.getElementById('acc-supplier-multiselect');
-  document.getElementById('acc-supplier-summary').textContent = accSupplierFilter.size === 0 ? 'Leverandør: Alle' : 'Leverandør: ' + [...accSupplierFilter].join(', ');
+  document.getElementById('acc-supplier-summary').textContent = accSupplierFilter.size === 0 ? t('Leverandør: Alle') : t('Leverandør') + ': ' + [...accSupplierFilter].join(', ');
   ms.classList.toggle('filter-active', accSupplierFilter.size > 0);
   renderAccessories();
 }
@@ -1955,31 +2199,31 @@ function renderInstTable() {
     });
   }
   const list = applySort('instruments', filtered);
-  if (!list.length) { tb.innerHTML=`<tr><td colspan="7" class="empty">${state.instruments.length ? 'Ingen instrumenter matcher filteret' : 'Ingen instrumenter registrert ennå'}</td></tr>`; syncSortHeaders('instruments'); return; }
+  if (!list.length) { tb.innerHTML=`<tr><td colspan="7" class="empty">${t(state.instruments.length ? 'Ingen instrumenter matcher filteret' : 'Ingen instrumenter registrert ennå')}</td></tr>`; syncSortHeaders('instruments'); return; }
   const today = new Date().toISOString().split('T')[0];
   tb.innerHTML = list.map(inst => {
     const player = state.players.find(p => (p.instruments||[]).includes(inst.id));
     const serviceBtn = inst.condition === 'Trenger service'
-      ? `<button class="btn-service" onclick="openServiceForInstrument('${inst.id}')">+ Service</button>` : '';
+      ? `<button class="btn-service" onclick="openServiceForInstrument('${inst.id}')">+ ${t('Servicelogg')}</button>` : '';
     let checkCell = '<span style="color:var(--text-faint);">—</span>';
     if (inst.next_check) {
       const overdue = inst.next_check <= today;
       checkCell = overdue
-        ? `<span class="badge badge-bad">${inst.next_check} — forfalt</span>`
+        ? `<span class="badge badge-bad">${inst.next_check} — ${t('forfalt')}</span>`
         : `<span style="color:var(--text-muted);">${inst.next_check}</span>`;
     }
     return `<tr class="row-link" onclick="openInstModal('${inst.id}', true)">
       <td style="white-space:nowrap;">${idbadge(inst.korps_id)}${inst.serial?`<br><span style="font-size:11px;color:var(--text-faint)">Ser: ${inst.serial}</span>`:''}</td>
       <td class="td-clip"><strong style="font-weight:600">${inst.name}</strong></td>
-      <td><span class="badge badge-gray">${inst.category}</span></td>
+      <td><span class="badge badge-gray">${t(inst.category)}</span></td>
       <td>${condBadge(inst.condition)}</td>
       <td>${checkCell}</td>
-      <td style="color:${player?'var(--text)':'var(--text-faint)'};">${player?player.name:'Ikke tildelt'}</td>
+      <td style="color:${player?'var(--text)':'var(--text-faint)'};">${player?player.name:t('Ikke tildelt')}</td>
       <td onclick="event.stopPropagation()"><div style="display:flex;gap:6px;flex-wrap:wrap;">
         <button class="btn-sm" onclick="openQrModal('${inst.id}')" title="Vis QR-kode">QR</button>
         ${serviceBtn}
-        <button class="btn-sm" onclick="openInstModal('${inst.id}')">Rediger</button>
-        ${hasPerm('instruments_delete')?`<button class="btn-sm btn-danger" onclick="deleteInstrument('${inst.id}')">Slett</button>`:''}
+        <button class="btn-sm" onclick="openInstModal('${inst.id}')">${t('Rediger')}</button>
+        ${hasPerm('instruments_delete')?`<button class="btn-sm btn-danger" onclick="deleteInstrument('${inst.id}')">${t('Slett')}</button>`:''}
       </div></td></tr>`;
   }).join('');
   syncSortHeaders('instruments');
@@ -1989,7 +2233,7 @@ function renderInstTable() {
 function openPlayerModal(id, viewOnly=false) {
   editingId.player = id || null;
   const p = id ? state.players.find(x => x.id === id) : null;
-  document.getElementById('player-modal-title').textContent = viewOnly ? 'Musiker' : (p ? 'Rediger musiker' : 'Legg til musiker');
+  document.getElementById('player-modal-title').textContent = viewOnly ? t('Musiker') : (p ? t('Rediger musiker') : t('Legg til musiker'));
   document.getElementById('player-name').value = p?.name || '';
   document.getElementById('player-section').value = p?.section || 'Messingblåsere';
   document.getElementById('player-contact').value = p?.contact || '';
@@ -2012,7 +2256,7 @@ function openPlayerModal(id, viewOnly=false) {
       <label class="inst-picker-item" style="${other?'opacity:0.7;':''}">
         <input type="checkbox" value="${i.id}" data-inst-name="${i.name}" data-taken-by="${other||''}" ${assigned.includes(i.id)?'checked':''}>
         <div><div class="inst-picker-name">${i.name}</div>
-          <div class="inst-picker-meta">${i.category}${i.serial?' · Ser: '+i.serial:''}</div></div>
+          <div class="inst-picker-meta">${t(i.category)}${i.serial?' · Ser: '+i.serial:''}</div></div>
         ${idbadge(i.korps_id)}${takenLabel}
       </label>`;
     }).join('');
@@ -2058,11 +2302,11 @@ async function savePlayer() {
   if (!body.name) return;
   if (editingId.player) await api('PUT', '/api/players/'+editingId.player, body);
   else await api('POST', '/api/players', body);
-  closeModal('player-modal'); toast('Lagret!'); await loadAll();
+  closeModal('player-modal'); toast(t('Lagret!')); await loadAll();
 }
 async function deletePlayer(id) {
-  if (!confirm('Slette denne musikanten?')) return;
-  await api('DELETE', '/api/players/'+id); toast('Slettet'); await loadAll();
+  if (!confirm(t('Slette denne musikanten?'))) return;
+  await api('DELETE', '/api/players/'+id); toast(t('Slettet')); await loadAll();
 }
 function renderPlayerTable() {
   const tb = document.getElementById('player-table');
@@ -2070,7 +2314,7 @@ function renderPlayerTable() {
   const sections = [...new Set(state.players.map(p => p.section).filter(Boolean))].sort();
   populateDynOptions('player-section-options', sections, playerSectionFilter, 'togglePlayerSectionFilter');
   const filtered = playerSectionFilter.size > 0 ? state.players.filter(p => playerSectionFilter.has(p.section)) : state.players;
-  if (!filtered.length) { tb.innerHTML=`<tr><td colspan="5" class="empty">${state.players.length ? 'Ingen musikanter matcher filteret' : 'Ingen musikanter registrert ennå'}</td></tr>`; syncSortHeaders('players'); return; }
+  if (!filtered.length) { tb.innerHTML=`<tr><td colspan="5" class="empty">${t(state.players.length ? 'Ingen musikanter matcher filteret' : 'Ingen musikanter registrert ennå')}</td></tr>`; syncSortHeaders('players'); return; }
   const list = applySort('players', filtered);
   tb.innerHTML = list.map(p => {
     const insts = (p.instruments||[]).map(iid => {
@@ -2079,12 +2323,12 @@ function renderPlayerTable() {
     }).join('');
     return `<tr class="row-link" onclick="openPlayerModal('${p.id}', true)">
       <td class="td-clip"><strong style="font-weight:600">${p.name}</strong></td>
-      <td><span class="badge badge-info">${p.section}</span></td>
+      <td><span class="badge badge-info">${t(p.section)}</span></td>
       <td style="font-size:12px;color:var(--text-muted);white-space:nowrap;">${p.contact||'—'}</td>
-      <td style="max-width:250px;overflow:hidden;">${insts||'<span style="color:var(--text-faint);font-size:12px;">Ingen</span>'}</td>
+      <td style="max-width:250px;overflow:hidden;">${insts||`<span style="color:var(--text-faint);font-size:12px;">${t('Ingen')}</span>`}</td>
       <td onclick="event.stopPropagation()"><div style="display:flex;gap:6px;">
-        <button class="btn-sm" onclick="openPlayerModal('${p.id}')">Rediger</button>
-        ${hasPerm('players_delete')?`<button class="btn-sm btn-danger" onclick="deletePlayer('${p.id}')">Slett</button>`:''}
+        <button class="btn-sm" onclick="openPlayerModal('${p.id}')">${t('Rediger')}</button>
+        ${hasPerm('players_delete')?`<button class="btn-sm btn-danger" onclick="deletePlayer('${p.id}')">${t('Slett')}</button>`:''}
       </div></td></tr>`;
   }).join('');
   syncSortHeaders('players');
@@ -2094,7 +2338,7 @@ function renderPlayerTable() {
 function openServiceModal(id, viewOnly=false) {
   editingId.service = id || null;
   const s = id ? state.service.find(x => x.id === id) : null;
-  document.getElementById('service-modal-title').textContent = viewOnly ? 'Serviceoppføring' : (s ? 'Rediger serviceoppføring' : 'Logg service');
+  document.getElementById('service-modal-title').textContent = viewOnly ? t('Serviceoppføring') : (s ? t('Rediger serviceoppføring') : t('Logg service'));
   document.getElementById('svc-date').value = s?.date || new Date().toISOString().split('T')[0];
   document.getElementById('svc-type').value = s?.type || 'Rutinemessig vedlikehold';
   document.getElementById('svc-cost').value = s?.cost || '';
@@ -2130,15 +2374,15 @@ async function saveService() {
   if (!body.inst_id || !body.date) return;
   if (editingId.service) await api('PUT', '/api/service/'+editingId.service, body);
   else await api('POST', '/api/service', body);
-  closeModal('service-modal'); toast('Lagret!'); await loadAll();
+  closeModal('service-modal'); toast(t('Lagret!')); await loadAll();
 }
 async function deleteService(id) {
-  if (!confirm('Slette denne oppføringen?')) return;
-  await api('DELETE', '/api/service/'+id); toast('Slettet'); await loadAll();
+  if (!confirm(t('Slette denne oppføringen?'))) return;
+  await api('DELETE', '/api/service/'+id); toast(t('Slettet')); await loadAll();
 }
 async function pickupService(id) {
-  if (!confirm('Bekreft at instrumentet er hentet?')) return;
-  await api('POST', `/api/service/${id}/pickup`); toast('Kvittert ut som hentet!'); await loadAll();
+  if (!confirm(t('Bekreft at instrumentet er hentet?'))) return;
+  await api('POST', `/api/service/${id}/pickup`); toast(t('Kvittert ut som hentet!')); await loadAll();
 }
 function renderServiceTable() {
   const tb = document.getElementById('service-table');
@@ -2157,21 +2401,23 @@ function renderServiceTable() {
   }
   if (svcDateSearch) filtered = filtered.filter(s => s.date === svcDateSearch);
   const list = applySort('service', filtered);
-  if (!list.length) { tb.innerHTML=`<tr><td colspan="10" class="empty">${state.service.length ? 'Ingen oppføringer matcher filteret' : 'Ingen serviceoppføringer ennå'}</td></tr>`; syncSortHeaders('service'); return; }
+  if (!list.length) { tb.innerHTML=`<tr><td colspan="10" class="empty">${t(state.service.length ? 'Ingen oppføringer matcher filteret' : 'Ingen serviceoppføringer ennå')}</td></tr>`; syncSortHeaders('service'); return; }
   const today = new Date().toISOString().split('T')[0];
   tb.innerHTML = list.map(s => {
     const inst = state.instruments.find(i => i.id === s.inst_id);
     const ws = state.workshops.find(w => w.id === s.workshop_id);
     const status = getServiceStatus(s);
+    const overdueWord = t('forfalt');
+    const doneWord = t('Ferdig') + ':';
     const nextBadge = !s.next_due ? '—'
-      : s.next_due < today ? `<span class="badge badge-bad">${s.next_due} — forfalt</span>`
+      : s.next_due < today ? `<span class="badge badge-bad">${s.next_due} — ${overdueWord}</span>`
       : `<span class="badge badge-ok">${s.next_due}</span>`;
     const pickupBtn = status.key === 'til_henting'
-      ? `<button class="btn-pickup" onclick="pickupService('${s.id}')">✓ Hentet</button>` : '';
+      ? `<button class="btn-pickup" onclick="pickupService('${s.id}')">${t('✓ Hentet')}</button>` : '';
     return `<tr class="row-link" onclick="openServiceModal('${s.id}', true)">
-      <td style="white-space:nowrap;font-size:12px;">${s.date}${s.date_finished?`<br><span style="color:var(--text-faint)">Ferdig: ${s.date_finished}</span>`:''}</td>
-      <td style="white-space:nowrap;">${inst?`${inst.name} ${idbadge(inst.korps_id)}`:'<span style="color:var(--text-faint)">Ukjent</span>'}</td>
-      <td><span class="badge badge-gray">${s.type}</span></td>
+      <td style="white-space:nowrap;font-size:12px;">${s.date}${s.date_finished?`<br><span style="color:var(--text-faint)">${doneWord} ${s.date_finished}</span>`:''}</td>
+      <td style="white-space:nowrap;">${inst?`${inst.name} ${idbadge(inst.korps_id)}`:`<span style="color:var(--text-faint)">${t('Ukjent')}</span>`}</td>
+      <td><span class="badge badge-gray">${t(s.type)}</span></td>
       <td><span class="badge ${status.cls}">${status.label}</span></td>
       <td style="font-size:12px;color:var(--text-muted);white-space:nowrap;">${ws?ws.name:(s.by_whom||'—')}</td>
       <td class="td-clip" style="font-size:13px;">${s.desc||'—'}</td>
@@ -2180,8 +2426,8 @@ function renderServiceTable() {
       <td>${nextBadge}</td>
       <td onclick="event.stopPropagation()"><div style="display:flex;gap:6px;flex-wrap:wrap;">
         ${pickupBtn}
-        <button class="btn-sm" onclick="openServiceModal('${s.id}')">Rediger</button>
-        ${hasPerm('service_delete')?`<button class="btn-sm btn-danger" onclick="deleteService('${s.id}')">Slett</button>`:''}
+        <button class="btn-sm" onclick="openServiceModal('${s.id}')">${t('Rediger')}</button>
+        ${hasPerm('service_delete')?`<button class="btn-sm btn-danger" onclick="deleteService('${s.id}')">${t('Slett')}</button>`:''}
       </div></td></tr>`;
   }).join('');
   syncSortHeaders('service');
@@ -2192,7 +2438,7 @@ function openServiceReport() {
   const groups = {};
   state.service.forEach(s => {
     const ws = state.workshops.find(w => w.id === s.workshop_id);
-    const key = ws ? ws.name : 'Intern service';
+    const key = ws ? ws.name : t('Intern service');
     if (!groups[key]) groups[key] = { count: 0, total: 0 };
     groups[key].count++;
     groups[key].total += s.cost || 0;
@@ -2205,18 +2451,18 @@ function openServiceReport() {
     <tr>
       <td>${name}</td>
       <td class="num">${g.count}</td>
-      <td class="num">${fmt(g.total)} kr</td>
+      <td class="num">${fmt(g.total)} ${cur()}</td>
     </tr>`).join('');
 
   document.getElementById('service-report-content').innerHTML = sorted.length ? `
     <table class="report-table">
-      <thead><tr><th>Verksted / Utfører</th><th class="num">Antall servicer</th><th class="num">Total kostnad</th></tr></thead>
+      <thead><tr><th>${t('Verksted')} / Utfører</th><th class="num">Antall servicer</th><th class="num">Total kostnad</th></tr></thead>
       <tbody>${rows}</tbody>
     </table>
     <div class="report-total">
       <span>Totalt (${grandCount} servicer)</span>
-      <span>${fmt(grandTotal)} kr</span>
-    </div>` : '<p class="empty" style="padding:1.5rem 0;">Ingen serviceoppføringer ennå.</p>';
+      <span>${fmt(grandTotal)} ${cur()}</span>
+    </div>` : `<p class="empty" style="padding:1.5rem 0;">${t('Ingen serviceoppføringer ennå')}</p>`;
 
   openModal('service-report-modal');
 }
@@ -2225,7 +2471,7 @@ function openServiceReport() {
 function openWorkshopModal(id) {
   editingId.ws = id || null;
   const w = id ? state.workshops.find(x => x.id === id) : null;
-  document.getElementById('ws-modal-title').textContent = w ? 'Rediger verksted' : 'Legg til verksted';
+  document.getElementById('ws-modal-title').textContent = w ? t('Rediger verksted') : t('Legg til verksted');
   document.getElementById('ws-edit-name').value = w?.name || '';
   document.getElementById('ws-edit-contact').value = w?.contact || '';
   document.getElementById('ws-edit-address').value = w?.address || '';
@@ -2236,15 +2482,15 @@ function renderVerkstederTable() {
   const tb = document.getElementById('workshops-table');
   if (!tb) return;
   const list = applySort('workshops', state.workshops);
-  if (!list.length) { tb.innerHTML = '<tr><td colspan="5" class="empty">Ingen verksteder registrert ennå</td></tr>'; syncSortHeaders('workshops'); return; }
+  if (!list.length) { tb.innerHTML = `<tr><td colspan="5" class="empty">${t('Ingen verksteder registrert ennå')}</td></tr>`; syncSortHeaders('workshops'); return; }
   tb.innerHTML = list.map(w => `<tr>
     <td><strong style="font-weight:600">${w.name}</strong></td>
     <td style="font-size:13px;color:var(--text-muted);">${w.contact||'—'}</td>
     <td style="font-size:13px;color:var(--text-muted);">${w.address||'—'}</td>
     <td style="font-size:13px;color:var(--text-muted);">${w.notes||'—'}</td>
     <td><div style="display:flex;gap:6px;">
-      <button class="btn-sm" onclick="openWorkshopModal('${w.id}')">Rediger</button>
-      <button class="btn-sm btn-danger" onclick="deleteWorkshop('${w.id}')">Slett</button>
+      <button class="btn-sm" onclick="openWorkshopModal('${w.id}')">${t('Rediger')}</button>
+      <button class="btn-sm btn-danger" onclick="deleteWorkshop('${w.id}')">${t('Slett')}</button>
     </div></td></tr>`).join('');
   syncSortHeaders('workshops');
 }
@@ -2254,19 +2500,19 @@ async function saveWorkshopEdit() {
   if (editingId.ws) await api('PUT', '/api/workshops/'+editingId.ws, body);
   else await api('POST', '/api/workshops', body);
   closeModal('ws-edit-modal');
-  toast(editingId.ws ? 'Verksted oppdatert!' : 'Verksted lagret!');
+  toast(editingId.ws ? t('Verksted oppdatert!') : t('Verksted lagret!'));
   await loadAll();
 }
 async function deleteWorkshop(id) {
-  if (!confirm('Slette dette verkstedet?')) return;
-  await api('DELETE', '/api/workshops/'+id); toast('Slettet'); await loadAll();
+  if (!confirm(t('Slette dette verkstedet?'))) return;
+  await api('DELETE', '/api/workshops/'+id); toast(t('Slettet')); await loadAll();
 }
 
 // --- SUPPLIERS ---
 function openSupplierModal(id) {
   editingId.sup = id || null;
   const s = id ? state.suppliers.find(x => x.id === id) : null;
-  document.getElementById('sup-modal-title').textContent = s ? 'Rediger leverandør' : 'Legg til leverandør';
+  document.getElementById('sup-modal-title').textContent = s ? t('Rediger leverandør') : t('Legg til leverandør');
   document.getElementById('sup-edit-name').value = s?.name || '';
   document.getElementById('sup-edit-contact').value = s?.contact || '';
   document.getElementById('sup-edit-address').value = s?.address || '';
@@ -2277,15 +2523,15 @@ function renderLeverandorerTable() {
   const tb = document.getElementById('suppliers-table');
   if (!tb) return;
   const list = applySort('suppliers', state.suppliers);
-  if (!list.length) { tb.innerHTML = '<tr><td colspan="5" class="empty">Ingen leverandører registrert ennå</td></tr>'; syncSortHeaders('suppliers'); return; }
+  if (!list.length) { tb.innerHTML = `<tr><td colspan="5" class="empty">${t('Ingen leverandører registrert ennå')}</td></tr>`; syncSortHeaders('suppliers'); return; }
   tb.innerHTML = list.map(s => `<tr>
     <td><strong style="font-weight:600">${s.name}</strong></td>
     <td style="font-size:13px;color:var(--text-muted);">${s.contact||'—'}</td>
     <td style="font-size:13px;color:var(--text-muted);">${s.address||'—'}</td>
     <td style="font-size:13px;color:var(--text-muted);">${s.notes||'—'}</td>
     <td><div style="display:flex;gap:6px;">
-      <button class="btn-sm" onclick="openSupplierModal('${s.id}')">Rediger</button>
-      <button class="btn-sm btn-danger" onclick="deleteSupplier('${s.id}')">Slett</button>
+      <button class="btn-sm" onclick="openSupplierModal('${s.id}')">${t('Rediger')}</button>
+      <button class="btn-sm btn-danger" onclick="deleteSupplier('${s.id}')">${t('Slett')}</button>
     </div></td></tr>`).join('');
   syncSortHeaders('suppliers');
 }
@@ -2295,12 +2541,12 @@ async function saveSupplierEdit() {
   if (editingId.sup) await api('PUT', '/api/suppliers/'+editingId.sup, body);
   else await api('POST', '/api/suppliers', body);
   closeModal('sup-edit-modal');
-  toast(editingId.sup ? 'Leverandør oppdatert!' : 'Leverandør lagret!');
+  toast(editingId.sup ? t('Leverandør oppdatert!') : t('Leverandør lagret!'));
   await loadAll();
 }
 async function deleteSupplier(id) {
-  if (!confirm('Slette denne leverandøren?')) return;
-  await api('DELETE', '/api/suppliers/'+id); toast('Slettet'); await loadAll();
+  if (!confirm(t('Slette denne leverandøren?'))) return;
+  await api('DELETE', '/api/suppliers/'+id); toast(t('Slettet')); await loadAll();
 }
 
 // --- TIL HENTING MODAL ---
@@ -2308,7 +2554,7 @@ function openTilHentingModal() {
   const tilHenting = state.service.filter(s => getServiceStatus(s).key === 'til_henting');
   const el = document.getElementById('til-henting-list');
   if (!tilHenting.length) {
-    el.innerHTML = '<p class="empty" style="padding:1.5rem 0;">Ingen instrumenter venter på henting.</p>';
+    el.innerHTML = `<p class="empty" style="padding:1.5rem 0;">${t('Ingen instrumenter venter på henting.')}</p>`;
   } else {
     el.innerHTML = tilHenting.map(s => {
       const inst = state.instruments.find(i => i.id === s.inst_id);
@@ -2316,12 +2562,12 @@ function openTilHentingModal() {
       return `<div class="th-list-item">
         <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
           <div>
-            <div class="th-list-item-title">${inst?.name||'Ukjent'} ${idbadge(inst?.korps_id)}</div>
-            <div class="th-list-item-meta">Verksted: <strong>${ws?.name||'—'}</strong>${ws?.contact?' · '+ws.contact:''}</div>
-            <div class="th-list-item-meta">Innlevert: ${s.date} &nbsp;·&nbsp; Ferdig: ${s.date_finished}</div>
+            <div class="th-list-item-title">${inst?.name||t('Ukjent')} ${idbadge(inst?.korps_id)}</div>
+            <div class="th-list-item-meta">${t('Verksted')}: <strong>${ws?.name||'—'}</strong>${ws?.contact?' · '+ws.contact:''}</div>
+            <div class="th-list-item-meta">${t('Innlevert')}: ${s.date} &nbsp;·&nbsp; ${t('Ferdig')}: ${s.date_finished}</div>
             ${s.desc?`<div class="th-list-item-meta">${s.desc}</div>`:''}
           </div>
-          <button class="btn-pickup" onclick="pickupFromModal('${s.id}')">✓ Hentet</button>
+          <button class="btn-pickup" onclick="pickupFromModal('${s.id}')">${t('✓ Hentet')}</button>
         </div>
       </div>`;
     }).join('');
@@ -2329,8 +2575,8 @@ function openTilHentingModal() {
   openModal('til-henting-modal');
 }
 async function pickupFromModal(id) {
-  if (!confirm('Bekreft at instrumentet er hentet?')) return;
-  await api('POST', `/api/service/${id}/pickup`); toast('Kvittert ut som hentet!');
+  if (!confirm(t('Bekreft at instrumentet er hentet?'))) return;
+  await api('POST', `/api/service/${id}/pickup`); toast(t('Kvittert ut som hentet!'));
   await loadAll(); openTilHentingModal();
 }
 
@@ -2353,7 +2599,7 @@ async function ensureCategoryExists(name) {
 function openAccModal(id, viewOnly=false) {
   editingId.acc = id || null;
   const a = id ? state.accessories.find(x => x.id === id) : null;
-  document.getElementById('acc-modal-title').textContent = viewOnly ? 'Vare' : (a ? 'Rediger vare' : 'Legg til vare');
+  document.getElementById('acc-modal-title').textContent = viewOnly ? t('Vare') : (a ? t('Rediger vare') : t('Legg til vare'));
   document.getElementById('acc-name').value = a?.name || '';
   document.getElementById('acc-cat').value = a?.category || '';
   document.getElementById('acc-price').value = a?.price ?? '';
@@ -2384,11 +2630,11 @@ async function saveAccessory() {
     registered_by: document.getElementById('acc-registered-by').value.trim() || null };
   if (editingId.acc) await api('PUT', '/api/accessories/'+editingId.acc, body);
   else await api('POST', '/api/accessories', body);
-  closeAccModal(); toast('Lagret!'); await loadAll();
+  closeAccModal(); toast(t('Lagret!')); await loadAll();
 }
 async function deleteAccessory(id) {
-  if (!confirm('Slette denne varen?')) return;
-  await api('DELETE', '/api/accessories/'+id); toast('Slettet'); await loadAll();
+  if (!confirm(t('Slette denne varen?'))) return;
+  await api('DELETE', '/api/accessories/'+id); toast(t('Slettet')); await loadAll();
 }
 function openAdjust(id) {
   editingId.acc = id;
@@ -2401,13 +2647,13 @@ async function adjustStock() {
   const id = editingId.acc;
   const a = state.accessories.find(x => x.id === id);
   await api('PUT', '/api/accessories/'+id, {...a, stock: parseInt(document.getElementById('adj-stock').value)||0});
-  closeModal('acc-adjust-modal'); toast('Lagerbeholdning oppdatert'); await loadAll();
+  closeModal('acc-adjust-modal'); toast(t('Lagerbeholdning oppdatert')); await loadAll();
 }
 function renderAccessories() {
   const tb = document.getElementById('acc-table');
   const alerts = document.getElementById('acc-alerts');
   const low = state.accessories.filter(a => a.stock <= a.min_level);
-  alerts.innerHTML = low.map(a => `<div class="alert-box">Lavt lager: <strong>${a.name}</strong> — ${a.stock} stk igjen (minimum: ${a.min_level})</div>`).join('');
+  alerts.innerHTML = low.map(a => `<div class="alert-box">${t('Lavt lager')}: <strong>${a.name}</strong> — ${a.stock} ${t('stk igjen (minimum:')} ${a.min_level})</div>`).join('');
   // Populate dynamic category and supplier options
   const accCats = [...new Set(state.accessories.map(a => a.category).filter(Boolean))].sort();
   populateDynOptions('acc-cat-options', accCats, accCatFilter, 'toggleAccCatFilter');
@@ -2423,23 +2669,23 @@ function renderAccessories() {
     });
   }
   const list = applySort('accessories', filtered2);
-  if (!list.length) { tb.innerHTML=`<tr><td colspan="8" class="empty">${state.accessories.length ? 'Ingen varer matcher filteret' : 'Ingen varer registrert ennå'}</td></tr>`; syncSortHeaders('accessories'); return; }
+  if (!list.length) { tb.innerHTML=`<tr><td colspan="8" class="empty">${t(state.accessories.length ? 'Ingen varer matcher filteret' : 'Ingen varer registrert ennå')}</td></tr>`; syncSortHeaders('accessories'); return; }
   tb.innerHTML = list.map(a => {
     const sup = state.suppliers.find(s => s.id === a.supplier_id);
     const supName = sup?.name || '—';
-    const statusBadge = a.stock===0?'<span class="badge badge-bad">Tomt</span>':a.stock<=a.min_level?'<span class="badge badge-warn">Lavt</span>':'<span class="badge badge-ok">OK</span>';
+    const statusBadge = a.stock===0?`<span class="badge badge-bad">${t('Tomt')}</span>`:a.stock<=a.min_level?`<span class="badge badge-warn">${t('Lavt')}</span>`:`<span class="badge badge-ok">${t('OK')}</span>`;
     return `<tr class="row-link" onclick="openAccModal('${a.id}', true)">
       <td class="td-clip"><strong style="font-weight:600">${a.name}</strong></td>
-      <td><span class="badge badge-gray">${a.category||'—'}</span></td>
+      <td><span class="badge badge-gray">${a.category ? t(a.category) : '—'}</span></td>
       <td style="font-size:12px;color:var(--text-muted);white-space:nowrap;">${supName}</td>
-      <td style="white-space:nowrap;">${a.price!=null?fmt(a.price)+' kr':'—'}</td>
+      <td style="white-space:nowrap;">${a.price!=null?fmt(a.price)+' '+cur():'—'}</td>
       <td style="font-weight:600">${a.stock}</td>
       <td style="color:var(--text-muted)">${a.min_level}</td>
       <td>${statusBadge}</td>
       <td onclick="event.stopPropagation()"><div style="display:flex;gap:6px;">
-        <button class="btn-sm" onclick="openAdjust('${a.id}')">Lager</button>
-        <button class="btn-sm" onclick="openAccModal('${a.id}')">Rediger</button>
-        ${hasPerm('accessories_delete')?`<button class="btn-sm btn-danger" onclick="deleteAccessory('${a.id}')">Slett</button>`:''}
+        <button class="btn-sm" onclick="openAdjust('${a.id}')">${t('Lager')}</button>
+        <button class="btn-sm" onclick="openAccModal('${a.id}')">${t('Rediger')}</button>
+        ${hasPerm('accessories_delete')?`<button class="btn-sm btn-danger" onclick="deleteAccessory('${a.id}')">${t('Slett')}</button>`:''}
       </div></td></tr>`;
   }).join('');
   syncSortHeaders('accessories');
@@ -2449,7 +2695,7 @@ function renderAccessories() {
 function openAccReport() {
   const groups = {};
   state.accessories.forEach(a => {
-    const cat = a.category || 'Ukategorisert';
+    const cat = a.category || t('Ukategorisert');
     if (!groups[cat]) groups[cat] = { count: 0, totalStock: 0, totalValue: 0 };
     groups[cat].count++;
     groups[cat].totalStock += a.stock || 0;
@@ -2464,20 +2710,20 @@ function openAccReport() {
       <td>${cat}</td>
       <td class="num">${g.count}</td>
       <td class="num">${g.totalStock}</td>
-      <td class="num">${fmt(g.totalValue)} kr</td>
+      <td class="num">${fmt(g.totalValue)} ${cur()}</td>
     </tr>`).join('');
 
   document.getElementById('acc-report-content').innerHTML = sorted.length ? `
     <table class="report-table">
-      <thead><tr><th>Kategori</th><th class="num">Antall varer</th><th class="num">Totalt på lager</th><th class="num">Total verdi (pris × antall)</th></tr></thead>
+      <thead><tr><th>${t('Kategori')}</th><th class="num">Antall varer</th><th class="num">Totalt på lager</th><th class="num">Total verdi (pris × antall)</th></tr></thead>
       <tbody>${rows}</tbody>
     </table>
     <div class="report-total">
       <span>Totalt (${grandCount} varetyper)</span>
-      <span>${fmt(grandValue)} kr</span>
+      <span>${fmt(grandValue)} ${cur()}</span>
     </div>
-    <p style="font-size:11px;color:var(--text-faint);margin-top:8px;">* Varer uten registrert pris teller som 0 kr.</p>`
-    : '<p class="empty" style="padding:1.5rem 0;">Ingen varer registrert ennå.</p>';
+    <p style="font-size:11px;color:var(--text-faint);margin-top:8px;">* Varer uten registrert pris teller som 0 ${cur()}.</p>`
+    : `<p class="empty" style="padding:1.5rem 0;">${t('Ingen varer registrert ennå')}</p>`;
 
   openModal('acc-report-modal');
 }
@@ -2502,27 +2748,27 @@ function renderDashboard() {
   document.getElementById('metrics').innerHTML = `
     <div class="metric-card" onclick="navigateTo('instrumenter')" style="cursor:pointer;">
       <div class="metric-top">${mkIcon('indigo','<path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5z" clip-rule="evenodd"/>')}</div>
-      <div class="metric-value">${state.instruments.length}</div><div class="metric-label">Instrumenter totalt</div>
+      <div class="metric-value">${state.instruments.length}</div><div class="metric-label">${t('Instrumenter totalt')}</div>
     </div>
     <div class="metric-card" onclick="navigateTo('musikanter')" style="cursor:pointer;">
       <div class="metric-top">${mkIcon('green','<path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>')}</div>
-      <div class="metric-value">${state.players.length}</div><div class="metric-label">Musikanter</div>
+      <div class="metric-value">${state.players.length}</div><div class="metric-label">${t('Musikanter')}</div>
     </div>
     <div class="metric-card" onclick="navigateTo('musikanter')" style="cursor:pointer;">
       <div class="metric-top">${mkIcon('sky','<path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>')}</div>
-      <div class="metric-value">${assigned}</div><div class="metric-label">Tildelte instr.</div>
+      <div class="metric-value">${assigned}</div><div class="metric-label">${t('Tildelte instr.')}</div>
     </div>
     <div class="metric-card" onclick="navigateTo('instrumenter');setInstCondFilter(['Trenger service']);" style="cursor:pointer;">
-      <div class="metric-top">${mkIcon('red','<path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>')}${needsService>0?mkTrend('trend-bad','Krever tiltak'):''}</div>
-      <div class="metric-value"${needsService>0?' style="color:#dc2626;"':''}>${needsService}</div><div class="metric-label">Trenger service</div>
+      <div class="metric-top">${mkIcon('red','<path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>')}${needsService>0?mkTrend('trend-bad',t('Krever tiltak')):''}</div>
+      <div class="metric-value"${needsService>0?' style="color:#dc2626;"':''}>${needsService}</div><div class="metric-label">${t('Trenger service')}</div>
     </div>
     <div class="metric-card" onclick="navigateTo('service')" style="cursor:pointer;">
-      <div class="metric-top">${mkIcon('purple','<path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/><path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3z"/><path d="M14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1v-5a1 1 0 00-.293-.707l-2-2A1 1 0 0015 7h-1z"/>')}${tilHenting>0?mkTrend('trend-warn','Hent snarest'):''}</div>
-      <div class="metric-value"${tilHenting>0?' style="color:#7c3aed;"':''}>${tilHenting}</div><div class="metric-label">Til henting</div>
+      <div class="metric-top">${mkIcon('purple','<path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/><path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3z"/><path d="M14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1v-5a1 1 0 00-.293-.707l-2-2A1 1 0 0015 7h-1z"/>')}${tilHenting>0?mkTrend('trend-warn',t('Hent snarest')):''}</div>
+      <div class="metric-value"${tilHenting>0?' style="color:#7c3aed;"':''}>${tilHenting}</div><div class="metric-label">${t('Til henting')}</div>
     </div>
     <div class="metric-card" onclick="navigateTo('tilbehor');setAccStatusFilter(['Lavt','Tomt']);" style="cursor:pointer;">
-      <div class="metric-top">${mkIcon('amber','<path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3z"/>')}${lowAcc>0?mkTrend('trend-warn','Lavt lager'):''}</div>
-      <div class="metric-value"${lowAcc>0?' style="color:#d97706;"':''}>${lowAcc}</div><div class="metric-label">Tilbehørsvarsler</div>
+      <div class="metric-top">${mkIcon('amber','<path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3z"/>')}${lowAcc>0?mkTrend('trend-warn',t('Lavt lager')):''}</div>
+      <div class="metric-value"${lowAcc>0?' style="color:#d97706;"':''}>${lowAcc}</div><div class="metric-label">${t('Tilbehørsvarsler')}</div>
     </div>`;
 
   // Alerts for right panel
@@ -2545,47 +2791,50 @@ function renderDashboard() {
   const mkAlertItem = (wrapCls, svgBody, title, sub, onclick) =>
     `<div class="alert-item"${onclick ? ` style="cursor:pointer;" onclick="${onclick}"` : ''}><div class="alert-dot-wrap ${wrapCls}"><svg viewBox="0 0 20 20" fill="currentColor">${svgBody}</svg></div><div style="flex:1;"><div class="alert-title">${title}</div><div class="alert-sub">${sub}</div></div></div>`;
 
-  const todoAlertSub = [openTodos.length ? `${openTodos.length} åpen` : '', inProgressTodos.length ? `${inProgressTodos.length} under arbeid` : ''].filter(Boolean).join(' · ');
+  const todoAlertSub = [openTodos.length ? `${openTodos.length} ${t('åpne')}` : '', inProgressTodos.length ? `${inProgressTodos.length} ${t('under arbeid')}` : ''].filter(Boolean).join(' · ');
+  const doneLabel = t('Ferdig') + ':';
+  const fristLabel = t('Frist').toLowerCase() + ':';
+  const leftLabel2 = t('stk igjen') + ' · ' + t('Minimum') + ':';
   const alertHtml = [
-    ...tilHentingItems.map(s => { const i=state.instruments.find(x=>x.id===s.inst_id); const ws=state.workshops.find(w=>w.id===s.workshop_id); return mkAlertItem('purple', iconSvg.truck, `${i?.name||'Ukjent'} klar til henting`, `${ws?.name||'Ukjent verksted'}${s.date_finished?' · Ferdig '+s.date_finished:''}`, "navigateTo('service');setSvcStatusFilter(['under_service','til_henting'])"); }),
-    ...overdue.map(s => { const i=state.instruments.find(x=>x.id===s.inst_id); return mkAlertItem('red', iconSvg.warn, 'Service forfalt', `${i?.name||'Ukjent'}${i?.korps_id?' ('+i.korps_id+')':''} — frist: ${s.next_due}`, "navigateTo('service');setSvcStatusFilter(['under_service','til_henting'])"); }),
-    ...checkDueItems.map(i => mkAlertItem('amber', iconSvg.check, `Sjekk forfalt: ${i.name}`, `${i.korps_id?' ('+i.korps_id+') ':''}Neste sjekk: ${i.next_check}`)),
-    ...lowAccItems.map(a => mkAlertItem('amber', iconSvg.cart, `${a.stock===0?'Tomt':'Lavt lager'}: ${a.name}`, `${a.stock} stk igjen · Minimum: ${a.min_level}`)),
-    activeTodoCount > 0 ? mkAlertItem('indigo', iconSvg.todo, `${activeTodoCount} aktive gjøremål`, todoAlertSub, "navigateTo('gjoremal')") : ''
+    ...tilHentingItems.map(s => { const i=state.instruments.find(x=>x.id===s.inst_id); const ws=state.workshops.find(w=>w.id===s.workshop_id); return mkAlertItem('purple', iconSvg.truck, `${i?.name||t('Ukjent')} ${t('klar til henting')}`, `${ws?.name||t('Ukjent verksted')}${s.date_finished?' · '+doneLabel+' '+s.date_finished:''}`, "navigateTo('service');setSvcStatusFilter(['under_service','til_henting'])"); }),
+    ...overdue.map(s => { const i=state.instruments.find(x=>x.id===s.inst_id); return mkAlertItem('red', iconSvg.warn, t('Service forfalt'), `${i?.name||t('Ukjent')}${i?.korps_id?' ('+i.korps_id+')':''} — ${fristLabel} ${s.next_due}`, "navigateTo('service');setSvcStatusFilter(['under_service','til_henting'])"); }),
+    ...checkDueItems.map(i => mkAlertItem('amber', iconSvg.check, `${t('Sjekk forfalt:')} ${i.name}`, `${i.korps_id?' ('+i.korps_id+') ':''}${t('Neste sjekk:')} ${i.next_check}`)),
+    ...lowAccItems.map(a => mkAlertItem('amber', iconSvg.cart, `${a.stock===0?t('Tomt lager'):t('Lavt lager')}: ${a.name}`, `${a.stock} ${leftLabel2} ${a.min_level}`)),
+    activeTodoCount > 0 ? mkAlertItem('indigo', iconSvg.todo, `${activeTodoCount} ${t('aktive gjøremål')}`, todoAlertSub, "navigateTo('gjoremal')") : ''
   ].join('');
 
   // Active todos list
-  const activeTodosList = state.todos.filter(t => !t.done).sort((a,b) => (b.in_progress||0)-(a.in_progress||0));
-  const todosListHtml = activeTodosList.length ? activeTodosList.slice(0,8).map(t => {
-    const statusBadge = t.in_progress ? '<span class="badge badge-yellow">Under arbeid</span>' : '<span class="badge badge-info">Åpen</span>';
+  const activeTodosList = state.todos.filter(td => !td.done).sort((a,b) => (b.in_progress||0)-(a.in_progress||0));
+  const todosListHtml = activeTodosList.length ? activeTodosList.slice(0,8).map(td => {
+    const statusBadge = td.in_progress ? `<span class="badge badge-yellow">${t('Under arbeid')}</span>` : `<span class="badge badge-info">${t('Åpen')}</span>`;
     let refLabel = '';
-    if (t.type === 'instrument' && t.ref_id) { const inst = state.instruments.find(x=>x.id===t.ref_id); refLabel = inst ? inst.name + (inst.korps_id?' · '+inst.korps_id:'') : ''; }
-    else if (t.type === 'accessory' && t.ref_id) { const acc = state.accessories.find(x=>x.id===t.ref_id); refLabel = acc ? acc.name : ''; }
-    return `<div class="activity-item" style="cursor:pointer;" onclick="navigateTo('gjoremal')"><div style="flex:1;"><div class="activity-title">${t.note||'—'}</div><div class="activity-sub">${refLabel||'Generell'}${t.assigned_to?' · '+t.assigned_to:''}</div></div><div style="display:flex;align-items:center;gap:8px;">${statusBadge}<span class="activity-time">${t.created}</span></div></div>`;
-  }).join('') : '<p class="empty">Ingen aktive gjøremål</p>';
+    if (td.type === 'instrument' && td.ref_id) { const inst = state.instruments.find(x=>x.id===td.ref_id); refLabel = inst ? inst.name + (inst.korps_id?' · '+inst.korps_id:'') : ''; }
+    else if (td.type === 'accessory' && td.ref_id) { const acc = state.accessories.find(x=>x.id===td.ref_id); refLabel = acc ? acc.name : ''; }
+    return `<div class="activity-item" style="cursor:pointer;" onclick="navigateTo('gjoremal')"><div style="flex:1;"><div class="activity-title">${td.note||'—'}</div><div class="activity-sub">${refLabel||t('Generell')}${td.assigned_to?' · '+td.assigned_to:''}</div></div><div style="display:flex;align-items:center;gap:8px;">${statusBadge}<span class="activity-time">${td.created}</span></div></div>`;
+  }).join('') : `<p class="empty">${t('Ingen aktive gjøremål')}</p>`;
 
   // Recent service — only non-finished
   const recent = state.service.filter(s => getServiceStatus(s).key !== 'ferdig').slice(0,5);
   const serviceHtml = recent.length ? recent.map(s => {
     const i=state.instruments.find(x=>x.id===s.inst_id); const st=getServiceStatus(s); const ws=state.workshops.find(w=>w.id===s.workshop_id);
-    return `<div class="activity-item" style="cursor:pointer;" onclick="navigateTo('service');setSvcStatusFilter(['under_service','til_henting'])"><div style="flex:1;"><div class="activity-title">${i?.name||'?'} ${idbadge(i?.korps_id)}</div><div class="activity-sub">${s.type}${ws?' · '+ws.name:''}</div></div><div style="display:flex;align-items:center;gap:8px;"><span class="badge ${st.cls}">${st.label}</span><span class="activity-time">${s.date}</span></div></div>`;
-  }).join('') : '<p class="empty">Ingen aktive serviceoppføringer</p>';
+    return `<div class="activity-item" style="cursor:pointer;" onclick="navigateTo('service');setSvcStatusFilter(['under_service','til_henting'])"><div style="flex:1;"><div class="activity-title">${i?.name||'?'} ${idbadge(i?.korps_id)}</div><div class="activity-sub">${t(s.type)}${ws?' · '+ws.name:''}</div></div><div style="display:flex;align-items:center;gap:8px;"><span class="badge ${st.cls}">${st.label}</span><span class="activity-time">${s.date}</span></div></div>`;
+  }).join('') : `<p class="empty">${t('Ingen aktive serviceoppføringer')}</p>`;
 
   document.getElementById('dash-content-grid').innerHTML = `
     <div class="content-grid">
       <div class="card">
-        <div class="card-header"><div><div class="card-title">Aktive gjøremål</div><div class="card-subtitle">${activeTodosList.length} aktive</div></div><button class="btn btn-sm" onclick="navigateTo('gjoremal')">Vis alle</button></div>
+        <div class="card-header"><div><div class="card-title">${t('Aktive gjøremål')}</div><div class="card-subtitle">${activeTodosList.length} ${t('aktive')}</div></div><button class="btn btn-sm" onclick="navigateTo('gjoremal')">${t('Vis alle')}</button></div>
         <div class="card-body">${todosListHtml}</div>
       </div>
       <div class="card">
         <div class="card-header">
-          <div><div class="card-title">Aktive varsler</div><div class="card-subtitle">Krever oppfølging</div></div>
+          <div><div class="card-title">${t('Aktive varsler')}</div><div class="card-subtitle">${t('Krever oppfølging')}</div></div>
           <span class="badge ${alertCount>0?'badge-red':'badge-ok'}">${alertCount>0?alertCount:'OK'}</span>
         </div>
-        <div class="alert-list card-body">${alertHtml||'<p class="empty">Ingen aktive varsler</p>'}</div>
+        <div class="alert-list card-body">${alertHtml||`<p class="empty">${t('Ingen aktive varsler')}</p>`}</div>
       </div>
       <div class="card">
-        <div class="card-header"><div><div class="card-title">Aktive servicer</div><div class="card-subtitle">Ekskl. ferdige</div></div></div>
+        <div class="card-header"><div><div class="card-title">${t('Aktive servicer')}</div><div class="card-subtitle">${t('Ekskl. ferdige')}</div></div></div>
         <div class="card-body">${serviceHtml}</div>
       </div>
     </div>`;
@@ -2631,36 +2880,36 @@ function showGlobalSearch(q) {
       <div class="table-wrap">${tableHtml}</div>
     </div>` : '';
 
-  const instHtml = mkSection('Instrumenter', inst.length, `<table><thead><tr><th>ID</th><th>Navn</th><th>Kategori</th><th>Stand</th><th>Tildelt</th></tr></thead><tbody>
-    ${inst.map(i => { const p = state.players.find(p => (p.instruments||[]).includes(i.id)); return `<tr style="cursor:pointer;" title="Klikk for å redigere" onclick="openInstModal('${i.id}')"><td>${idbadge(i.korps_id)}</td><td><strong>${i.name}</strong></td><td><span class="badge badge-gray">${i.category}</span></td><td>${condBadge(i.condition)}</td><td style="color:${p?'var(--text)':'var(--text-faint)'};">${p?p.name:'Ikke tildelt'}</td></tr>`; }).join('')}
+  const instHtml = mkSection(t('Instrumenter'), inst.length, `<table><thead><tr><th>ID</th><th>${t('Navn')}</th><th>${t('Kategori')}</th><th>${t('Stand')}</th><th>${t('Tildelt')}</th></tr></thead><tbody>
+    ${inst.map(i => { const p = state.players.find(p => (p.instruments||[]).includes(i.id)); return `<tr style="cursor:pointer;" onclick="openInstModal('${i.id}')"><td>${idbadge(i.korps_id)}</td><td><strong>${i.name}</strong></td><td><span class="badge badge-gray">${t(i.category)}</span></td><td>${condBadge(i.condition)}</td><td style="color:${p?'var(--text)':'var(--text-faint)'};">${p?p.name:t('Ikke tildelt')}</td></tr>`; }).join('')}
   </tbody></table>`);
 
-  const playersHtml = mkSection('Musikanter', players.length, `<table><thead><tr><th>Navn</th><th>Seksjon</th><th>Kontakt</th></tr></thead><tbody>
-    ${players.map(p => `<tr style="cursor:pointer;" title="Klikk for å redigere" onclick="openPlayerModal('${p.id}')"><td><strong>${p.name}</strong></td><td><span class="badge badge-info">${p.section}</span></td><td style="color:var(--text-muted);">${p.contact||'—'}</td></tr>`).join('')}
+  const playersHtml = mkSection(t('Musikanter'), players.length, `<table><thead><tr><th>${t('Navn')}</th><th>${t('Seksjon')}</th><th>${t('Kontakt')}</th></tr></thead><tbody>
+    ${players.map(p => `<tr style="cursor:pointer;" onclick="openPlayerModal('${p.id}')"><td><strong>${p.name}</strong></td><td><span class="badge badge-info">${t(p.section)}</span></td><td style="color:var(--text-muted);">${p.contact||'—'}</td></tr>`).join('')}
   </tbody></table>`);
 
-  const svcHtml = mkSection('Servicelogg', services.length, `<table><thead><tr><th>Dato</th><th>Instrument</th><th>Type</th><th>Status</th><th>Kostnad</th></tr></thead><tbody>
-    ${services.map(s => { const i=state.instruments.find(x=>x.id===s.inst_id); const st=getServiceStatus(s); return `<tr style="cursor:pointer;" title="Klikk for å redigere" onclick="openServiceModal('${s.id}')"><td style="font-size:12px;">${s.date}</td><td>${i?i.name+' '+idbadge(i.korps_id):'?'}</td><td><span class="badge badge-gray">${s.type}</span></td><td><span class="badge ${st.cls}">${st.label}</span></td><td style="white-space:nowrap;">${fmtKr(s.cost)}</td></tr>`; }).join('')}
+  const svcHtml = mkSection(t('Servicelogg'), services.length, `<table><thead><tr><th>${t('Dato')}</th><th>${t('Instrument')}</th><th>${t('Type')}</th><th>${t('Status')}</th><th>${t('Kostnad')}</th></tr></thead><tbody>
+    ${services.map(s => { const i=state.instruments.find(x=>x.id===s.inst_id); const st=getServiceStatus(s); return `<tr style="cursor:pointer;" onclick="openServiceModal('${s.id}')"><td style="font-size:12px;">${s.date}</td><td>${i?i.name+' '+idbadge(i.korps_id):'?'}</td><td><span class="badge badge-gray">${t(s.type)}</span></td><td><span class="badge ${st.cls}">${st.label}</span></td><td style="white-space:nowrap;">${fmtKr(s.cost)}</td></tr>`; }).join('')}
   </tbody></table>`);
 
-  const accHtml = mkSection('Tilbehør', accessories.length, `<table><thead><tr><th>Vare</th><th>Kategori</th><th>På lager</th><th>Status</th></tr></thead><tbody>
-    ${accessories.map(a => { const sc=a.stock===0?'badge-bad':a.stock<=a.min_level?'badge-warn':'badge-ok'; return `<tr style="cursor:pointer;" title="Klikk for å redigere" onclick="openAccModal('${a.id}')"><td><strong>${a.name}</strong></td><td><span class="badge badge-gray">${a.category||'—'}</span></td><td style="font-weight:600;">${a.stock}</td><td><span class="badge ${sc}">${a.stock===0?'Tomt':a.stock<=a.min_level?'Lavt':'OK'}</span></td></tr>`; }).join('')}
+  const accHtml = mkSection(t('Tilbehør'), accessories.length, `<table><thead><tr><th>${t('Vare')}</th><th>${t('Kategori')}</th><th>${t('På lager')}</th><th>${t('Status')}</th></tr></thead><tbody>
+    ${accessories.map(a => { const sc=a.stock===0?'badge-bad':a.stock<=a.min_level?'badge-warn':'badge-ok'; return `<tr style="cursor:pointer;" onclick="openAccModal('${a.id}')"><td><strong>${a.name}</strong></td><td><span class="badge badge-gray">${a.category ? t(a.category) : '—'}</span></td><td style="font-weight:600;">${a.stock}</td><td><span class="badge ${sc}">${a.stock===0?t('Tomt'):a.stock<=a.min_level?t('Lavt'):'OK'}</span></td></tr>`; }).join('')}
   </tbody></table>`);
 
-  const todosHtml = mkSection('Gjøremål', todos.length, `<table><thead><tr><th>Oppgave</th><th>Gjelder</th><th>Status</th><th>Registrert av</th><th>Ansvarlig</th></tr></thead><tbody>
-    ${todos.map(t => {
-      const refInst = t.ref_id && t.type==='instrument' ? state.instruments.find(x=>x.id===t.ref_id) : null;
-      const refAcc = t.ref_id && t.type==='accessory' ? state.accessories.find(x=>x.id===t.ref_id) : null;
-      const refLabel = refInst ? refInst.name : refAcc ? refAcc.name : 'Generell';
-      const st = t.done ? '<span class="badge badge-ok">Fullført</span>' : t.in_progress ? '<span class="badge badge-yellow">Under arbeid</span>' : '<span class="badge badge-info">Åpen</span>';
-      return `<tr style="cursor:pointer;" onclick="navigateTo('gjoremal')"><td><strong>${t.note||'—'}</strong></td><td style="color:var(--text-muted);">${refLabel}</td><td>${st}</td><td style="color:var(--text-muted);">${t.created_by||'—'}</td><td style="color:var(--text-muted);">${t.assigned_to||'—'}</td></tr>`;
+  const todosHtml = mkSection(t('Gjøremål'), todos.length, `<table><thead><tr><th>${t('Oppgave')}</th><th>${t('Gjelder')}</th><th>${t('Status')}</th><th>${t('Registrert av')}</th><th>${t('Ansvarlig')}</th></tr></thead><tbody>
+    ${todos.map(td => {
+      const refInst = td.ref_id && td.type==='instrument' ? state.instruments.find(x=>x.id===td.ref_id) : null;
+      const refAcc = td.ref_id && td.type==='accessory' ? state.accessories.find(x=>x.id===td.ref_id) : null;
+      const refLabel = refInst ? refInst.name : refAcc ? refAcc.name : t('Generell');
+      const st = td.done ? `<span class="badge badge-ok">${t('Fullført')}</span>` : td.in_progress ? `<span class="badge badge-yellow">${t('Under arbeid')}</span>` : `<span class="badge badge-info">${t('Åpen')}</span>`;
+      return `<tr style="cursor:pointer;" onclick="navigateTo('gjoremal')"><td><strong>${td.note||'—'}</strong></td><td style="color:var(--text-muted);">${refLabel}</td><td>${st}</td><td style="color:var(--text-muted);">${td.created_by||'—'}</td><td style="color:var(--text-muted);">${td.assigned_to||'—'}</td></tr>`;
     }).join('')}
   </tbody></table>`);
 
   document.getElementById('dash-content-grid').innerHTML = `<div style="grid-column:1/-1;">
-    <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">${total} treff for «${q}»${total===0?' — prøv et annet søkeord':''}</p>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">${total} ${t('treff')} «${q}»${total===0?' — '+t('prøv et annet søkeord'):''}</p>
     ${instHtml}${playersHtml}${svcHtml}${accHtml}${todosHtml}
-    ${total===0?'<p class="empty">Ingen resultater</p>':''}
+    ${total===0?`<p class="empty">${t('Ingen resultater')}</p>`:''}
   </div>`;
 }
 
@@ -2688,7 +2937,7 @@ function renderVarslerDropdown() {
   const total = tilHenting.length + overdue.length + lowAcc.length + checkDue.length + (activeTodos.length > 0 ? 1 : 0);
 
   const countEl = document.getElementById('varsler-dropdown-count');
-  if (countEl) { countEl.textContent = total > 0 ? total + ' varsler' : ''; countEl.style.display = total > 0 ? '' : 'none'; }
+  if (countEl) { countEl.textContent = total > 0 ? total + ' ' + t('varsler') : ''; countEl.style.display = total > 0 ? '' : 'none'; }
 
   const mkSvg = path => `<svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">${path}</svg>`;
   const truck = mkSvg('<path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/><path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3z"/><path d="M14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1v-5a1 1 0 00-.293-.707l-2-2A1 1 0 0015 7h-1z"/>');
@@ -2708,44 +2957,44 @@ function renderVarslerDropdown() {
     const inst = state.instruments.find(i => i.id === s.inst_id);
     const ws = state.workshops.find(w => w.id === s.workshop_id);
     html += mkItem('purple', truck,
-      `${inst?.name || 'Ukjent instrument'} klar til henting`,
-      `${ws?.name || 'Ukjent verksted'}${s.date_finished ? ' · Ferdig ' + s.date_finished : ''}`,
+      `${inst?.name || t('Ukjent')} ${t('klar til henting')}`,
+      `${ws?.name || t('Ukjent verksted')}${s.date_finished ? ' · ' + t('Ferdig') + ' ' + s.date_finished : ''}`,
       "navigateTo('service');setSvcStatusFilter(['under_service','til_henting'])");
   });
   overdue.forEach(s => {
     const inst = state.instruments.find(i => i.id === s.inst_id);
     html += mkItem('red', warn,
-      `Service forfalt: ${inst?.name || 'Ukjent'}`,
-      `Frist: ${s.next_due}${inst?.korps_id ? ' · ' + inst.korps_id : ''}`,
+      `${t('Service forfalt')}: ${inst?.name || t('Ukjent')}`,
+      `${t('Frist')}: ${s.next_due}${inst?.korps_id ? ' · ' + inst.korps_id : ''}`,
       "navigateTo('service');setSvcStatusFilter(['under_service','til_henting'])");
   });
   checkDue.forEach(i => {
     html += mkItem('amber', clock,
-      `Sjekk forfalt: ${i.name}`,
-      `${i.korps_id ? i.korps_id + ' · ' : ''}Neste sjekk: ${i.next_check}`,
+      `${t('Sjekk forfalt')}: ${i.name}`,
+      `${i.korps_id ? i.korps_id + ' · ' : ''}${t('Neste sjekk')}: ${i.next_check}`,
       "navigateTo('instrumenter')");
   });
   lowAcc.forEach(a => {
     html += mkItem('amber', cart,
-      `${a.stock === 0 ? 'Tomt lager' : 'Lavt lager'}: ${a.name}`,
-      `${a.stock} stk igjen · Minimum: ${a.min_level}`,
+      `${a.stock === 0 ? t('Tomt lager') : t('Lavt lager')}: ${a.name}`,
+      `${a.stock} ${t('stk igjen')} · ${t('Minimum')}: ${a.min_level}`,
       "navigateTo('tilbehor')");
   });
 
   if (activeTodos.length > 0) {
-    const openCount = activeTodos.filter(t => !t.in_progress).length;
-    const inProgressCount = activeTodos.filter(t => t.in_progress).length;
+    const openCount = activeTodos.filter(td => !td.in_progress).length;
+    const inProgressCount = activeTodos.filter(td => td.in_progress).length;
     const parts = [];
-    if (openCount) parts.push(`${openCount} åpne`);
-    if (inProgressCount) parts.push(`${inProgressCount} under arbeid`);
+    if (openCount) parts.push(`${openCount} ${t('åpne')}`);
+    if (inProgressCount) parts.push(`${inProgressCount} ${t('under arbeid')}`);
     html += mkItem('indigo', todo,
-      `${activeTodos.length} aktive gjøremål`,
+      `${activeTodos.length} ${t('aktive gjøremål')}`,
       parts.join(' · '),
       "navigateTo('gjoremal')");
   }
 
   const body = document.getElementById('varsler-dropdown-body');
-  if (body) body.innerHTML = html || '<div class="varsler-empty">Ingen aktive varsler</div>';
+  if (body) body.innerHTML = html || `<div class="varsler-empty">${t('Ingen aktive varsler')}</div>`;
 }
 
 // --- RAPPORTER ---
@@ -2757,7 +3006,7 @@ function renderReports() {
   const svcGroups = {};
   state.service.forEach(s => {
     const ws = state.workshops.find(w => w.id === s.workshop_id);
-    const key = ws ? ws.name : 'Intern service';
+    const key = ws ? ws.name : t('Intern service');
     if (!svcGroups[key]) svcGroups[key] = { count: 0, total: 0 };
     svcGroups[key].count++; svcGroups[key].total += s.cost || 0;
   });
@@ -2768,7 +3017,7 @@ function renderReports() {
   // Tilbehør per kategori
   const accGroups = {};
   state.accessories.forEach(a => {
-    const cat = a.category || 'Ukategorisert';
+    const cat = a.category || t('Ukategorisert');
     if (!accGroups[cat]) accGroups[cat] = { count: 0, stock: 0, value: 0 };
     accGroups[cat].count++; accGroups[cat].stock += a.stock||0; accGroups[cat].value += (a.price||0)*(a.stock||0);
   });
@@ -2787,29 +3036,29 @@ function renderReports() {
   grid.innerHTML = `
     <div class="card">
       <div class="card-header">
-        <div><div class="card-title">Servicekostnad per verksted</div><div class="card-subtitle">Total kostnad fordelt på utfører</div></div>
+        <div><div class="card-title">${t('Servicekostnad per verksted')}</div><div class="card-subtitle">${t('Total kostnad fordelt på utfører')}</div></div>
         ${exportBtns('exportSvcReportCSV','exportSvcReportXLS')}
       </div>
       <div class="table-wrap"><table>
-        <thead><tr><th>Verksted / Utfører</th><th style="text-align:right;">Antall</th><th style="text-align:right;">Total kostnad</th></tr></thead>
+        <thead><tr><th>${t('Verksted')} / Utfører</th><th style="text-align:right;">Antall</th><th style="text-align:right;">Total kostnad</th></tr></thead>
         <tbody>${svcRows.length ? svcRows.map(([n,g]) =>
-          `<tr><td style="font-weight:500;">${n}</td><td style="text-align:right;color:var(--text-muted);">${g.count}</td><td style="text-align:right;font-weight:600;">${fmt(g.total)} kr</td></tr>`
-        ).join('') : `<tr><td colspan="3" class="empty">Ingen serviceoppføringer</td></tr>`}</tbody>
+          `<tr><td style="font-weight:500;">${n}</td><td style="text-align:right;color:var(--text-muted);">${g.count}</td><td style="text-align:right;font-weight:600;">${fmt(g.total)} ${cur()}</td></tr>`
+        ).join('') : `<tr><td colspan="3" class="empty">${t('Ingen serviceoppføringer')}</td></tr>`}</tbody>
       </table></div>
-      ${svcRows.length ? footer(`Totalt (${svcCount} servicer)`, fmt(svcTotal)+' kr') : ''}
+      ${svcRows.length ? footer(`Totalt (${svcCount} servicer)`, fmt(svcTotal)+' '+cur()) : ''}
     </div>
     <div class="card">
       <div class="card-header">
-        <div><div class="card-title">Varekostnad per kategori</div><div class="card-subtitle">Total lagerverdi (pris × antall)</div></div>
+        <div><div class="card-title">${t('Varekostnad per kategori')}</div><div class="card-subtitle">${t('Total lagerverdi (pris × antall)')}</div></div>
         ${exportBtns('exportAccReportCSV','exportAccReportXLS')}
       </div>
       <div class="table-wrap"><table>
-        <thead><tr><th>Kategori</th><th style="text-align:right;">Varetyper</th><th style="text-align:right;">Lager</th><th style="text-align:right;">Verdi</th></tr></thead>
+        <thead><tr><th>${t('Kategori')}</th><th style="text-align:right;">Varetyper</th><th style="text-align:right;">${t('Lager')}</th><th style="text-align:right;">Verdi</th></tr></thead>
         <tbody>${accRows.length ? accRows.map(([c,g]) =>
-          `<tr><td style="font-weight:500;">${c}</td><td style="text-align:right;color:var(--text-muted);">${g.count}</td><td style="text-align:right;color:var(--text-muted);">${g.stock}</td><td style="text-align:right;font-weight:600;">${fmt(g.value)} kr</td></tr>`
-        ).join('') : `<tr><td colspan="4" class="empty">Ingen varer registrert</td></tr>`}</tbody>
+          `<tr><td style="font-weight:500;">${c}</td><td style="text-align:right;color:var(--text-muted);">${g.count}</td><td style="text-align:right;color:var(--text-muted);">${g.stock}</td><td style="text-align:right;font-weight:600;">${fmt(g.value)} ${cur()}</td></tr>`
+        ).join('') : `<tr><td colspan="4" class="empty">${t('Ingen varer registrert')}</td></tr>`}</tbody>
       </table></div>
-      ${accRows.length ? footer(`Totalt (${accCount} varetyper)`, fmt(accValue)+' kr') : ''}
+      ${accRows.length ? footer(`Totalt (${accCount} varetyper)`, fmt(accValue)+' '+cur()) : ''}
     </div>`;
 }
 
@@ -2822,7 +3071,7 @@ function dlCSV(filename, headers, rows) {
 }
 async function dlXLS(filename, headers, rows) {
   const res = await fetch('/api/export/report', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ filename, headers, rows }) });
-  if (!res.ok) { toast('Eksport feilet'); return; }
+  if (!res.ok) { toast(t('Eksport feilet')); return; }
   const blob = await res.blob();
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -2832,12 +3081,12 @@ async function dlXLS(filename, headers, rows) {
 }
 function getSvcReportData() {
   const g = {};
-  state.service.forEach(s => { const ws=state.workshops.find(w=>w.id===s.workshop_id); const k=ws?ws.name:'Intern service'; if(!g[k])g[k]={count:0,total:0}; g[k].count++;g[k].total+=s.cost||0; });
+  state.service.forEach(s => { const ws=state.workshops.find(w=>w.id===s.workshop_id); const k=ws?ws.name:t('Intern service'); if(!g[k])g[k]={count:0,total:0}; g[k].count++;g[k].total+=s.cost||0; });
   return Object.entries(g).sort((a,b)=>b[1].total-a[1].total).map(([n,v])=>[n,v.count,v.total]);
 }
 function getAccReportData() {
   const g = {};
-  state.accessories.forEach(a => { const c=a.category||'Ukategorisert'; if(!g[c])g[c]={count:0,stock:0,value:0}; g[c].count++;g[c].stock+=a.stock||0;g[c].value+=(a.price||0)*(a.stock||0); });
+  state.accessories.forEach(a => { const c=a.category||t('Ukategorisert'); if(!g[c])g[c]={count:0,stock:0,value:0}; g[c].count++;g[c].stock+=a.stock||0;g[c].value+=(a.price||0)*(a.stock||0); });
   return Object.entries(g).sort((a,b)=>b[1].value-a[1].value).map(([c,v])=>[c,v.count,v.stock,v.value]);
 }
 function exportSvcReportCSV() { dlCSV('servicekostnad-per-verksted.csv', ['Verksted/Utfører','Antall servicer','Total kostnad (kr)'], getSvcReportData()); }
@@ -2934,7 +3183,7 @@ function generateImportInstIds(rows) {
 
 function previewImport() {
   const text = document.getElementById('import-text').value.trim();
-  if (!text) { toast('Ingen data å forhåndsvise'); return; }
+  if (!text) { toast(t('Ingen data å forhåndsvise')); return; }
   const cfg = importConfig[importType];
   const rawRows = parseCSV(text);
   if (!rawRows.length) { document.getElementById('import-preview').innerHTML = '<p class="empty">Ingen gyldige rader funnet. Sjekk at filen har minst én datarad (etter overskriftrad).</p>'; return; }
@@ -2948,7 +3197,7 @@ function previewImport() {
 
   const hdrs = importType === 'instruments'
     ? ['ID', 'Navn', 'Kategori', 'Stand', 'Serienummer', 'Kjøpsdato', 'Merknader']
-    : ['Varenavn', 'Kategori', 'Antall', 'Minimum', 'Pris (kr)', 'Merknader'];
+    : ['Varenavn', 'Kategori', 'Antall', 'Minimum', `Pris (${cur()})`, 'Merknader'];
 
   const rowsHtml = importParsedRows.map(r => importType === 'instruments'
     ? `<tr><td>${idbadge(r.korps_id)}</td><td><strong>${r.name}</strong></td><td>${r.category}</td><td>${condBadge(r.condition)}</td><td style="color:var(--text-muted);font-size:12px;">${r.serial||'—'}</td><td style="color:var(--text-muted);font-size:12px;">${r.purchase||'—'}</td><td style="color:var(--text-muted);font-size:12px;">${r.notes||'—'}</td></tr>`
@@ -2973,7 +3222,7 @@ async function confirmImport() {
   const result = await api('POST', endpoint, { rows: importParsedRows });
   btn.textContent = 'Importer'; btn.disabled = false;
   closeModal('import-modal');
-  toast(`${result.imported} ${importType === 'instruments' ? 'instrumenter' : 'varer'} importert!`);
+  toast(`${result.imported} ${t(importType === 'instruments' ? 'instrumenter importert' : 'varer importert')}!`);
   await loadAll();
 }
 
@@ -3005,6 +3254,8 @@ function populateSettingsForm() {
   const inp = document.getElementById('settings-korpsname');
   if (inp) inp.value = korpsname;
   updateLogoPreview(logo);
+  const cur = document.getElementById('settings-currency');
+  if (cur) cur.value = state.settings['currency'] || 'kr';
 }
 function updateLogoPreview(src) {
   const box = document.getElementById('settings-logo-preview');
@@ -3033,11 +3284,14 @@ async function saveSettings() {
   const korpsname = document.getElementById('settings-korpsname').value.trim();
   const img = document.querySelector('#settings-logo-preview img');
   const logo = img ? img.src : '';
-  await api('PUT', '/api/settings', { 'korps-name': korpsname, 'korps-logo': logo });
+  const currency = document.getElementById('settings-currency').value.trim() || 'kr';
+  await api('PUT', '/api/settings', { 'korps-name': korpsname, 'korps-logo': logo, 'currency': currency });
   state.settings['korps-name'] = korpsname;
   state.settings['korps-logo'] = logo;
+  state.settings['currency'] = currency;
   applySettings(korpsname, logo);
-  toast('Innstillinger lagret!');
+  render();
+  toast(t('Innstillinger lagret!'));
 }
 
 // --- GJØREMÅL ---
@@ -3093,51 +3347,51 @@ function renderTodos() {
     return 0;
   });
   if (!list.length) {
-    tb.innerHTML = `<p class="empty" style="padding:20px;">${state.todos.length ? 'Ingen gjøremål matcher filteret' : 'Ingen gjøremål registrert ennå'}</p>`;
+    tb.innerHTML = `<p class="empty" style="padding:20px;">${t(state.todos.length ? 'Ingen gjøremål matcher filteret' : 'Ingen gjøremål registrert ennå')}</p>`;
     return;
   }
-  tb.innerHTML = list.map(t => {
-    let refLabel = '<span class="badge badge-gray">Generell</span>';
-    let refSub = 'Generell';
-    if (t.type === 'instrument' && t.ref_id) {
-      const i = state.instruments.find(x => x.id === t.ref_id);
-      refLabel = i ? `<span class="badge badge-gray">Instrument</span> <span style="font-size:12px;">${i.name}${i.korps_id?' '+idbadge(i.korps_id):''}</span>` : `<span class="badge badge-gray">Instrument</span>`;
-      refSub = i ? `${i.name}${i.korps_id?' ('+i.korps_id+')':''}` : 'Instrument';
-    } else if (t.type === 'accessory' && t.ref_id) {
-      const a = state.accessories.find(x => x.id === t.ref_id);
-      refLabel = a ? `<span class="badge badge-ok">Vare</span> <span style="font-size:12px;">${a.name}</span>` : `<span class="badge badge-ok">Vare</span>`;
-      refSub = a ? a.name : 'Vare';
+  tb.innerHTML = list.map(td => {
+    let refLabel = `<span class="badge badge-gray">${t('Generell')}</span>`;
+    let refSub = t('Generell');
+    if (td.type === 'instrument' && td.ref_id) {
+      const i = state.instruments.find(x => x.id === td.ref_id);
+      refLabel = i ? `<span class="badge badge-gray">${t('Instrumenter')}</span> <span style="font-size:12px;">${i.name}${i.korps_id?' '+idbadge(i.korps_id):''}</span>` : `<span class="badge badge-gray">${t('Instrumenter')}</span>`;
+      refSub = i ? `${i.name}${i.korps_id?' ('+i.korps_id+')':''}` : t('Instrumenter');
+    } else if (td.type === 'accessory' && td.ref_id) {
+      const a = state.accessories.find(x => x.id === td.ref_id);
+      refLabel = a ? `<span class="badge badge-ok">${t('Vare')}</span> <span style="font-size:12px;">${a.name}</span>` : `<span class="badge badge-ok">${t('Vare')}</span>`;
+      refSub = a ? a.name : t('Vare');
     }
     let statusBadge;
-    if (t.done) statusBadge = `<span class="badge badge-ok">Fullført</span>`;
-    else if (t.in_progress) statusBadge = `<span class="badge badge-yellow">Under arbeid</span>`;
-    else statusBadge = `<span class="badge badge-info">Åpen</span>`;
+    if (td.done) statusBadge = `<span class="badge badge-ok">${t('Fullført')}</span>`;
+    else if (td.in_progress) statusBadge = `<span class="badge badge-yellow">${t('Under arbeid')}</span>`;
+    else statusBadge = `<span class="badge badge-info">${t('Åpen')}</span>`;
     const metaParts = [
-      t.created_by ? `Av: ${t.created_by}` : '',
-      t.assigned_to ? `Ansvarlig: ${t.assigned_to}` : '',
-      t.done && t.done_by ? `Kvittert: ${t.done_by}${t.done_date?' ('+t.done_date+')':''}` : ''
+      td.created_by ? `${t('Av:')} ${td.created_by}` : '',
+      td.assigned_to ? `${t('Ansvarlig:')} ${td.assigned_to}` : '',
+      td.done && td.done_by ? `${t('Kvittert:')} ${td.done_by}${td.done_date?' ('+td.done_date+')':''}` : ''
     ].filter(Boolean).join(' · ');
     let actionBtns;
-    if (t.done) {
-      actionBtns = `<button class="btn-sm" onclick="reopenTodo('${t.id}')">Gjenåpne</button>
-         <button class="btn-sm btn-danger" onclick="deleteTodo('${t.id}')">Slett</button>`;
-    } else if (t.in_progress) {
-      actionBtns = `<button class="btn-sm" onclick="openTodoModal('${t.id}')">Rediger</button>
-         <button class="btn-sm btn-service" onclick="openTodoDoneModal('${t.id}')">Kvitter ut</button>
-         <button class="btn-sm" onclick="reopenTodo('${t.id}')">Tilbake til åpen</button>
-         <button class="btn-sm btn-danger" onclick="deleteTodo('${t.id}')">Slett</button>`;
+    if (td.done) {
+      actionBtns = `<button class="btn-sm" onclick="reopenTodo('${td.id}')">${t('Gjenåpne')}</button>
+         <button class="btn-sm btn-danger" onclick="deleteTodo('${td.id}')">${t('Slett')}</button>`;
+    } else if (td.in_progress) {
+      actionBtns = `<button class="btn-sm" onclick="openTodoModal('${td.id}')">${t('Rediger')}</button>
+         <button class="btn-sm btn-service" onclick="openTodoDoneModal('${td.id}')">${t('Kvitter ut')}</button>
+         <button class="btn-sm" onclick="reopenTodo('${td.id}')">${t('Tilbake til åpen')}</button>
+         <button class="btn-sm btn-danger" onclick="deleteTodo('${td.id}')">${t('Slett')}</button>`;
     } else {
-      actionBtns = `<button class="btn-sm" onclick="openTodoModal('${t.id}')">Rediger</button>
-         <button class="btn-sm" onclick="openTodoStartModal('${t.id}')">Sett under arbeid</button>
-         <button class="btn-sm btn-service" onclick="openTodoDoneModal('${t.id}')">Kvitter ut</button>
-         <button class="btn-sm btn-danger" onclick="deleteTodo('${t.id}')">Slett</button>`;
+      actionBtns = `<button class="btn-sm" onclick="openTodoModal('${td.id}')">${t('Rediger')}</button>
+         <button class="btn-sm" onclick="openTodoStartModal('${td.id}')">${t('Sett under arbeid')}</button>
+         <button class="btn-sm btn-service" onclick="openTodoDoneModal('${td.id}')">${t('Kvitter ut')}</button>
+         <button class="btn-sm btn-danger" onclick="deleteTodo('${td.id}')">${t('Slett')}</button>`;
     }
-    return `<div class="todo-row" onclick="openTodoModal('${t.id}', true)">
+    return `<div class="todo-row" onclick="openTodoModal('${td.id}', true)">
       <div class="todo-row-top">
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">${refLabel} ${statusBadge}</div>
-        <span class="activity-time">${t.created||''}</span>
+        <span class="activity-time">${td.created||''}</span>
       </div>
-      <div class="todo-row-note">${t.note||'—'}</div>
+      <div class="todo-row-note">${td.note||'—'}</div>
       <div class="todo-row-bottom" onclick="event.stopPropagation()">
         <span class="activity-sub">${metaParts||'&nbsp;'}</span>
         <div style="display:flex;gap:6px;flex-wrap:wrap;">${actionBtns}</div>
@@ -3150,7 +3404,7 @@ function openTodoModal(id, viewOnly=false) {
   editingTodoId = id || null;
   const todo = id ? state.todos.find(t => t.id === id) : null;
   todoSelectedItem = null;
-  document.getElementById('todo-modal-title').textContent = viewOnly ? 'Gjøremål' : (todo ? 'Rediger gjøremål' : 'Legg til gjøremål');
+  document.getElementById('todo-modal-title').textContent = viewOnly ? t('Gjøremål') : (todo ? t('Rediger gjøremål') : t('Legg til gjøremål'));
   document.getElementById('todo-modal-done-btn').style.display = (todo && !todo.done) ? '' : 'none';
   document.getElementById('todo-note').value = todo?.note || '';
   document.getElementById('todo-created-by').value = todo?.created_by || (!todo ? (state.currentUser?.displayName || state.currentUser?.username || '') : '');
@@ -3262,7 +3516,7 @@ function todoResolveScanCode(code) {
   }
   // Not found
   const el = document.getElementById('todo-item-found');
-  el.innerHTML = `<span>Ingen treff for: ${code}</span>`;
+  el.innerHTML = `<span>${t('Ingen treff')}: ${code}</span>`;
   el.style.display = 'flex';
 }
 
@@ -3294,7 +3548,7 @@ async function startTodoScanner() {
   } catch(e) {
     wrap.style.display = 'none';
     if (btn) btn.textContent = '📷 Skann';
-    toast('Kamera ikke tilgjengelig');
+    toast(t('Kamera ikke tilgjengelig'));
   }
 }
 
@@ -3310,9 +3564,9 @@ function stopTodoScanner() {
 
 async function saveTodo() {
   const note = document.getElementById('todo-note').value.trim();
-  if (!note) { toast('Skriv inn en beskrivelse'); return; }
+  if (!note) { toast(t('Skriv inn en beskrivelse')); return; }
   const type = document.querySelector('input[name="todo-type"]:checked')?.value || 'general';
-  if (type !== 'general' && !todoSelectedItem) { toast('Velg et instrument eller en vare'); return; }
+  if (type !== 'general' && !todoSelectedItem) { toast(t('Velg et instrument eller en vare')); return; }
   const created_by = document.getElementById('todo-created-by').value.trim();
   const assigned_to = document.getElementById('todo-edit-assigned-to').value.trim();
   try {
@@ -3326,19 +3580,19 @@ async function saveTodo() {
       await api('POST', '/api/todos', body);
     }
   } catch (e) {
-    toast('Feil ved lagring: ' + e.message);
+    toast(t('Feil ved lagring') + ': ' + e.message);
     console.error(e);
     return;
   }
   closeTodoModal();
-  toast(editingTodoId ? 'Gjøremål oppdatert!' : 'Gjøremål lagret!');
+  toast(editingTodoId ? t('Gjøremål oppdatert!') : t('Gjøremål lagret!'));
   await loadAll();
 }
 
 async function deleteTodo(id) {
-  if (!confirm('Slette dette gjøremålet?')) return;
+  if (!confirm(t('Slette dette gjøremålet?'))) return;
   await api('DELETE', '/api/todos/' + id);
-  toast('Slettet');
+  toast(t('Slettet'));
   await loadAll();
 }
 
@@ -3354,7 +3608,7 @@ async function markTodoDone() {
   const done_by = document.getElementById('todo-done-by').value.trim();
   await api('POST', '/api/todos/' + editingTodoId + '/done', { done_date, done_by });
   closeModal('todo-done-modal');
-  toast('Gjøremål kvittert ut!');
+  toast(t('Gjøremål kvittert ut!'));
   await loadAll();
 }
 
@@ -3368,13 +3622,13 @@ async function markTodoInProgress() {
   const assigned_to = document.getElementById('todo-assigned-to').value.trim();
   await api('POST', '/api/todos/' + editingTodoId + '/start', { assigned_to });
   closeModal('todo-start-modal');
-  toast('Gjøremål satt under arbeid!');
+  toast(t('Gjøremål satt under arbeid!'));
   await loadAll();
 }
 
 async function reopenTodo(id) {
   await api('POST', '/api/todos/' + id + '/reopen', {});
-  toast('Gjøremål satt tilbake til åpen');
+  toast(t('Gjøremål satt tilbake til åpen'));
   await loadAll();
 }
 
@@ -3416,20 +3670,20 @@ function renderUsersTable() {
   const tb = document.getElementById('users-table');
   if (!tb) return;
   if (!hasPerm('users_admin')) return;
-  if (!state.users.length) { tb.innerHTML = '<tr><td colspan="6" class="empty">Ingen brukere</td></tr>'; return; }
+  if (!state.users.length) { tb.innerHTML = `<tr><td colspan="6" class="empty">${t('Ingen brukere')}</td></tr>`; return; }
   tb.innerHTML = state.users.map(u => {
     const perms = u.permissions ? JSON.parse(u.permissions) : [];
     const roleCls = u.role === 'admin' ? 'role-admin' : 'role-user';
-    const roleLabel = u.role === 'admin' ? 'Administrator' : 'Bruker';
+    const roleLabel = u.role === 'admin' ? t('Administrator') : t('Bruker');
     const isSelf = u.id === state.currentUser?.id;
     return `<tr>
-      <td><strong>${u.username}</strong>${isSelf ? ' <span style="font-size:11px;color:var(--text-muted);">(deg)</span>' : ''}</td>
+      <td><strong>${u.username}</strong>${isSelf ? ` <span style="font-size:11px;color:var(--text-muted);">${t('(deg)')}</span>` : ''}</td>
       <td>${u.display_name || '—'}</td>
       <td><span class="user-role-badge ${roleCls}">${roleLabel}</span></td>
       <td style="color:var(--text-muted);">${u.last_login || '—'}</td>
       <td style="color:var(--text-muted);">${u.created || '—'}</td>
-      <td><button class="btn-sm" onclick="openUserModal('${u.id}')">Rediger</button>
-          ${!isSelf ? `<button class="btn-sm btn-danger" onclick="deleteUser('${u.id}')">Slett</button>` : ''}</td>
+      <td><button class="btn-sm" onclick="openUserModal('${u.id}')">${t('Rediger')}</button>
+          ${!isSelf ? `<button class="btn-sm btn-danger" onclick="deleteUser('${u.id}')">${t('Slett')}</button>` : ''}</td>
     </tr>`;
   }).join('');
 }
@@ -3443,8 +3697,8 @@ function openUserModal(id) {
   editingUserId = id || null;
   showUserModalError('');
   const isNew = !id;
-  document.getElementById('user-modal-title').textContent = isNew ? 'Ny bruker' : 'Rediger bruker';
-  document.getElementById('user-password-label').textContent = isNew ? 'Passord *' : 'Nytt passord (la stå tomt for å beholde)';
+  document.getElementById('user-modal-title').textContent = isNew ? t('Ny bruker') : t('Rediger bruker');
+  document.getElementById('user-password-label').textContent = isNew ? t('Passord *') : t('Nytt passord (la stå tomt for å beholde)');
   document.getElementById('user-delete-btn').style.display = 'none';
   document.getElementById('user-username').disabled = false;
   document.getElementById('user-password').value = '';
@@ -3480,7 +3734,7 @@ function renderPermsGrid(activePerms) {
   grid.innerHTML = Object.entries(PERM_LABELS).map(([key, label]) =>
     `<label style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:3px 0;">
       <input type="checkbox" id="perm-${key}" ${activePerms.includes(key)?'checked':''} style="width:auto;margin:0;">
-      <span>${label}</span>
+      <span>${t(label)}</span>
     </label>`
   ).join('');
 }
@@ -3500,9 +3754,9 @@ async function saveUser() {
   const force_password_change = document.getElementById('user-force-pw').checked;
   const disabled = document.getElementById('user-disabled').checked;
   const permissions = getSelectedPerms();
-  if (isNew && (!username || !password)) return alert('Brukernavn og passord er påkrevd');
-  if (isNew && password.length < 6) return alert('Passord må være minst 6 tegn');
-  if (!isNew && password && password.length < 6) return alert('Passord må være minst 6 tegn');
+  if (isNew && (!username || !password)) return alert(t('Brukernavn og passord er påkrevd'));
+  if (isNew && password.length < 6) return alert(t('Passord må være minst 6 tegn'));
+  if (!isNew && password && password.length < 6) return alert(t('Passord må være minst 6 tegn'));
   try {
     if (isNew) {
       await api('POST', '/api/users', { username, display_name, password, role, permissions, force_password_change });
@@ -3520,7 +3774,7 @@ async function saveUser() {
   }
 }
 async function deleteUser(id) {
-  if (!confirm('Slett denne brukeren?')) return;
+  if (!confirm(t('Slett denne brukeren?'))) return;
   try {
     await api('DELETE', `/api/users/${id}`);
     closeModal('user-modal');
@@ -3546,8 +3800,8 @@ async function doChangePassword() {
   const repeat = document.getElementById('change-pw-repeat').value;
   const errEl = document.getElementById('change-pw-error');
   errEl.textContent = '';
-  if (newPassword !== repeat) { errEl.textContent = 'Passordene er ikke like'; return; }
-  if (newPassword.length < 6) { errEl.textContent = 'Passord må være minst 6 tegn'; return; }
+  if (newPassword !== repeat) { errEl.textContent = t('Passordene er ikke like'); return; }
+  if (newPassword.length < 6) { errEl.textContent = t('Passord må være minst 6 tegn'); return; }
   try {
     await api('POST', '/api/auth/change-password', { currentPassword, newPassword });
     state.currentUser.forcePasswordChange = false;

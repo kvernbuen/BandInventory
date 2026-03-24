@@ -81,6 +81,7 @@ try { db.exec('ALTER TABLE todos ADD COLUMN assigned_to TEXT'); } catch(e) {}
 try { db.exec("UPDATE todos SET type='general' WHERE type IS NULL"); } catch(e) {}
 try { db.exec('ALTER TABLE users ADD COLUMN disabled INTEGER DEFAULT 0'); } catch(e) {}
 try { db.exec('ALTER TABLE users ADD COLUMN created_by TEXT'); } catch(e) {}
+try { db.exec("ALTER TABLE users ADD COLUMN language TEXT DEFAULT 'en'"); } catch(e) {}
 try { db.exec('ALTER TABLE instruments ADD COLUMN registered_by TEXT'); } catch(e) {}
 try { db.exec('ALTER TABLE players ADD COLUMN registered_by TEXT'); } catch(e) {}
 try { db.exec('ALTER TABLE service ADD COLUMN registered_by TEXT'); } catch(e) {}
@@ -182,7 +183,8 @@ db.exec(`
     disabled INTEGER DEFAULT 0,
     last_login TEXT,
     created TEXT,
-    created_by TEXT
+    created_by TEXT,
+    language TEXT DEFAULT 'en'
   );
 `);
 
@@ -416,12 +418,21 @@ app.post('/api/auth/login', (req, res) => {
   req.session.role = user.role;
   req.session.permissions = perms;
   req.session.forcePasswordChange = !!user.force_password_change;
+  req.session.language = user.language || 'en';
   db.prepare('UPDATE users SET last_login=? WHERE id=?').run(new Date().toISOString().slice(0,10), user.id);
   res.json({ ok: true, forcePasswordChange: !!user.force_password_change });
 });
 
 app.post('/api/auth/logout', (req, res) => {
   req.session.destroy(() => res.json({ ok: true }));
+});
+
+app.put('/api/auth/language', requireAuth, (req, res) => {
+  const { language } = req.body;
+  if (!['en', 'no'].includes(language)) return res.status(400).json({ error: 'Invalid language' });
+  db.prepare('UPDATE users SET language=? WHERE id=?').run(language, req.session.userId);
+  req.session.language = language;
+  res.json({ ok: true });
 });
 
 app.get('/api/auth/me', (req, res) => {
@@ -433,7 +444,8 @@ app.get('/api/auth/me', (req, res) => {
     displayName: req.session.displayName,
     role: req.session.role,
     permissions: req.session.permissions,
-    forcePasswordChange: req.session.forcePasswordChange
+    forcePasswordChange: req.session.forcePasswordChange,
+    language: req.session.language || 'en'
   });
 });
 
