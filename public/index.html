@@ -425,7 +425,7 @@
     <div class="login-logo">
       <svg viewBox="0 0 28 28" fill="none"><path d="M8 17 Q11 11 14 11 Q17 11 20 17" stroke="white" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="8" cy="17" r="2.2" fill="white"/><circle cx="20" cy="17" r="2.2" fill="white"/></svg>
       <div class="login-logo-name">Korpsinventar</div>
-      <div class="login-logo-sub">v1.2.0</div>
+      <div class="login-logo-sub">v1.2.1</div>
     </div>
     <h2 data-i18n="Logg inn">Logg inn</h2>
     <form onsubmit="doLogin(event)">
@@ -452,8 +452,8 @@
     </div>
     <div style="min-width:0;">
       <div id="sidebar-korpsname" class="logo-korpsname" style="display:none;"></div>
-      <div class="logo-text">Korpsinventar</div>
-      <div class="logo-sub">v1.2.0</div>
+      <div class="logo-text" data-i18n="Korpsinventar">Korpsinventar</div>
+      <div class="logo-sub">v1.2.1</div>
     </div>
   </div>
   <nav class="sidebar-nav">
@@ -804,35 +804,39 @@
     <div id="innstillinger" class="section">
       <div class="section-header"><h2 data-i18n="Innstillinger">Innstillinger</h2></div>
       <div class="settings-card">
-        <div class="settings-card-header">Korpsidentitet</div>
+        <div class="settings-card-header" data-i18n="Korpsidentitet">Korpsidentitet</div>
         <div class="settings-card-body">
           <div class="field">
-            <label>Korpsens navn</label>
-            <input id="settings-korpsname" placeholder="f.eks. Blindern Studenterkameraderi">
+            <label data-i18n="Korpsens navn">Korpsens navn</label>
+            <input id="settings-korpsname" data-i18n-placeholder="f.eks. Blindern Studenterkameraderi" placeholder="f.eks. Blindern Studenterkameraderi">
           </div>
           <div class="field">
-            <label>Logo (vises i sidepanelet og nettleserfanen)</label>
+            <label data-i18n="Logo (vises i sidepanelet og nettleserfanen)">Logo (vises i sidepanelet og nettleserfanen)</label>
             <div style="display:flex;align-items:center;gap:14px;margin-top:2px;">
               <div class="logo-preview-box" id="settings-logo-preview">
-                <span style="font-size:11px;color:var(--text-faint);">Ingen</span>
+                <span style="font-size:11px;color:var(--text-faint);" data-i18n="Ingen">Ingen</span>
               </div>
               <div style="flex:1;">
                 <input type="file" id="settings-logo-file" accept="image/*" onchange="handleLogoUpload(this)">
-                <div style="font-size:11px;color:var(--text-faint);margin-top:5px;">PNG, JPG, SVG — anbefalt kvadratisk format</div>
-                <button class="btn btn-sm btn-danger" id="settings-remove-logo-btn" onclick="removeSettingsLogo()" style="display:none;margin-top:8px;">Fjern logo</button>
+                <div style="font-size:11px;color:var(--text-faint);margin-top:5px;" data-i18n="PNG, JPG, SVG — anbefalt kvadratisk format">PNG, JPG, SVG — anbefalt kvadratisk format</div>
+                <button class="btn btn-sm btn-danger" id="settings-remove-logo-btn" onclick="removeSettingsLogo()" style="display:none;margin-top:8px;" data-i18n="Fjern logo">Fjern logo</button>
               </div>
             </div>
           </div>
           <div class="field">
             <label data-i18n="Valuta">Valuta</label>
-            <input id="settings-currency" list="currency-suggestions" placeholder="kr" style="width:120px;">
-            <datalist id="currency-suggestions">
-              <option value="kr"><option value="NOK"><option value="SEK"><option value="DKK">
-              <option value="€"><option value="$"><option value="£">
-            </datalist>
+            <select id="settings-currency" style="width:160px;">
+              <option value="kr">kr</option>
+              <option value="NOK">NOK</option>
+              <option value="SEK">SEK</option>
+              <option value="DKK">DKK</option>
+              <option value="€">€</option>
+              <option value="$">$</option>
+              <option value="£">£</option>
+            </select>
           </div>
           <div style="display:flex;justify-content:flex-end;padding-top:4px;">
-            <button class="btn btn-primary" onclick="saveSettings()">Lagre innstillinger</button>
+            <button class="btn btn-primary" onclick="saveSettings()" data-i18n="Lagre innstillinger">Lagre innstillinger</button>
           </div>
         </div>
       </div>
@@ -857,28 +861,32 @@
     <h3 id="inst-modal-title">Legg til instrument</h3>
     <div class="form-grid">
       <div class="field full">
-        <label>Navn *</label>
-        <input id="inst-name" placeholder="f.eks. Trompet i Bb" oninput="updateIdPreview()">
-        <div class="id-preview" id="id-preview-wrap" style="display:none">Instrument-ID blir: <span class="kid" id="id-preview"></span></div>
+        <label data-i18n="Navn *">Navn *</label>
+        <input id="inst-name" data-i18n-placeholder="f.eks. Trompet i Bb" placeholder="f.eks. Trompet i Bb" oninput="updateIdPreview()">
+        <div class="id-preview" id="id-preview-wrap" style="display:none"><span data-i18n="Instrument-ID blir:">Instrument-ID blir:</span> <span class="kid" id="id-preview"></span></div>
       </div>
-      <div class="field"><label>Kategori</label>
+      <div class="field"><label data-i18n="Kategori">Kategori</label>
         <select id="inst-cat" onchange="updateIdPreview()">
           <option value="Messingblåser" data-i18n="Messingblåser">Messingblåser</option><option value="Treblåser" data-i18n="Treblåser">Treblåser</option><option value="Slagverk" data-i18n="Slagverk">Slagverk</option><option value="Annet" data-i18n="Annet">Annet</option>
         </select>
       </div>
-      <div class="field"><label>Stand</label>
-        <select id="inst-cond"><option>God</option><option>Akseptabel</option><option>Trenger service</option></select>
+      <div class="field"><label data-i18n="Stand">Stand</label>
+        <select id="inst-cond">
+          <option value="God" data-i18n="God">God</option>
+          <option value="Akseptabel" data-i18n="Akseptabel">Akseptabel</option>
+          <option value="Trenger service" data-i18n="Trenger service">Trenger service</option>
+        </select>
       </div>
-      <div class="field"><label>Serienummer (valgfritt)</label><input id="inst-serial" placeholder="Produsentens serienr."></div>
-      <div class="field"><label>Kjøpsdato</label><input type="date" id="inst-purchase"></div>
-      <div class="field"><label>Neste sjekk (dato)</label><input type="date" id="inst-next-check"></div>
-      <div class="field full"><label>Merknader</label><textarea id="inst-notes" placeholder="Oppbevaringssted, osv."></textarea></div>
-      <div class="field"><label>Registrert av</label><input id="inst-registered-by" placeholder="Navn" readonly></div>
+      <div class="field"><label data-i18n="Serienummer (valgfritt)">Serienummer (valgfritt)</label><input id="inst-serial" data-i18n-placeholder="Produsentens serienr." placeholder="Produsentens serienr."></div>
+      <div class="field"><label data-i18n="Kjøpsdato">Kjøpsdato</label><input type="date" id="inst-purchase"></div>
+      <div class="field"><label data-i18n="Neste sjekk (dato)">Neste sjekk (dato)</label><input type="date" id="inst-next-check"></div>
+      <div class="field full"><label data-i18n="Merknader">Merknader</label><textarea id="inst-notes" data-i18n-placeholder="Oppbevaringssted, osv." placeholder="Oppbevaringssted, osv."></textarea></div>
+      <div class="field"><label data-i18n="Registrert av">Registrert av</label><input id="inst-registered-by" placeholder="Navn" readonly></div>
     </div>
     <div class="modal-footer">
-      <button class="btn" onclick="closeModal('inst-modal')">Avbryt</button>
-      <button class="btn modal-view-btn" style="display:none;" onclick="openInstModal(editingId.inst)">Rediger</button>
-      <button class="btn btn-primary modal-save-btn" onclick="saveInstrument()">Lagre</button>
+      <button class="btn" onclick="closeModal('inst-modal')" data-i18n="Avbryt">Avbryt</button>
+      <button class="btn modal-view-btn" style="display:none;" onclick="openInstModal(editingId.inst)" data-i18n="Rediger">Rediger</button>
+      <button class="btn btn-primary modal-save-btn" onclick="saveInstrument()" data-i18n="Lagre">Lagre</button>
     </div>
   </div>
 </div>
@@ -893,10 +901,10 @@
       <div class="qr-inst-id" id="qr-inst-id-label"></div>
     </div>
     <div class="modal-footer" style="justify-content:space-between;margin-top:1rem;">
-      <button class="btn" onclick="closeModal('qr-modal')">Lukk</button>
+      <button class="btn" onclick="closeModal('qr-modal')" data-i18n="Lukk">Lukk</button>
       <div style="display:flex;gap:8px;">
-        <button class="btn" onclick="downloadQr()">Last ned</button>
-        <button class="btn btn-primary" onclick="printQr()">Skriv ut</button>
+        <button class="btn" onclick="downloadQr()" data-i18n="Last ned">Last ned</button>
+        <button class="btn btn-primary" onclick="printQr()" data-i18n="Skriv ut">Skriv ut</button>
       </div>
     </div>
   </div>
@@ -907,39 +915,39 @@
   <div class="modal">
     <h3 id="player-modal-title">Legg til musiker</h3>
     <div class="form-grid">
-      <div class="field full"><label>Fullt navn *</label><input id="player-name"></div>
-      <div class="field"><label>Seksjon</label>
+      <div class="field full"><label data-i18n="Fullt navn *">Fullt navn *</label><input id="player-name" data-i18n-placeholder="Fullt navn" placeholder="Fullt navn"></div>
+      <div class="field"><label data-i18n="Seksjon">Seksjon</label>
         <select id="player-section"><option value="Messingblåsere" data-i18n="Messingblåsere">Messingblåsere</option><option value="Treblåsere" data-i18n="Treblåsere">Treblåsere</option><option value="Slagverk" data-i18n="Slagverk">Slagverk</option><option value="Fanfare" data-i18n="Fanfare">Fanfare</option><option value="Annet" data-i18n="Annet">Annet</option></select>
       </div>
-      <div class="field"><label>Kontakt</label><input id="player-contact" placeholder="Telefon eller e-post"></div>
-      <div class="field"><label>Registrert av</label><input id="player-registered-by" placeholder="Navn" readonly></div>
+      <div class="field"><label data-i18n="Kontakt">Kontakt</label><input id="player-contact" data-i18n-placeholder="Telefon eller e-post" placeholder="Telefon eller e-post"></div>
+      <div class="field"><label data-i18n="Registrert av">Registrert av</label><input id="player-registered-by" placeholder="Navn" readonly></div>
     </div>
     <div class="field" style="margin-top:12px;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
-        <label style="font-size:12px;color:var(--text-muted);font-weight:500;">Tildel instrument(er)</label>
-        <button class="btn-sm" onclick="toggleScanner()" id="scanner-toggle-btn" style="font-size:11px;padding:3px 10px;">📷 Skann QR</button>
+        <label style="font-size:12px;color:var(--text-muted);font-weight:500;" data-i18n="Tildel instrument(er)">Tildel instrument(er)</label>
+        <button class="btn-sm" onclick="toggleScanner()" id="scanner-toggle-btn" style="font-size:11px;padding:3px 10px;" data-i18n="📷 Skann QR">📷 Skann QR</button>
       </div>
       <div id="scanner-wrap" style="display:none;margin-bottom:8px;">
         <div class="qr-scan-area">
           <video id="scanner-video" autoplay playsinline muted></video>
           <div class="qr-scan-line"></div>
         </div>
-        <div class="qr-scan-result" id="scan-result">Pek kameraet mot en QR-kode...</div>
-        <p class="scanner-hint">Automatisk skanning — ingen knapp å trykke</p>
-        <p class="scanner-hint" style="color:var(--text-faint);margin-top:2px;">QR-skanning krever HTTPS eller localhost</p>
+        <div class="qr-scan-result" id="scan-result" data-i18n="Pek kameraet mot en QR-kode...">Pek kameraet mot en QR-kode...</div>
+        <p class="scanner-hint" data-i18n="Automatisk skanning — ingen knapp å trykke">Automatisk skanning — ingen knapp å trykke</p>
+        <p class="scanner-hint" style="color:var(--text-faint);margin-top:2px;" data-i18n="QR-skanning krever HTTPS eller localhost">QR-skanning krever HTTPS eller localhost</p>
       </div>
       <div id="scanner-manual-wrap" style="display:none;margin-bottom:8px;">
         <div style="display:flex;gap:6px;align-items:center;">
-          <input id="manual-scan-input" placeholder="Skriv inn Instrument-ID (f.eks. TRMP-001)" style="flex:1;" onkeydown="if(event.key==='Enter')manualScanSubmit()">
-          <button class="btn-sm" onclick="manualScanSubmit()">Legg til</button>
+          <input id="manual-scan-input" data-i18n-placeholder="Skriv inn Instrument-ID (f.eks. TRMP-001)" placeholder="Skriv inn Instrument-ID (f.eks. TRMP-001)" style="flex:1;" onkeydown="if(event.key==='Enter')manualScanSubmit()">
+          <button class="btn-sm" onclick="manualScanSubmit()" data-i18n="Legg til">Legg til</button>
         </div>
       </div>
       <div id="inst-checkboxes" style="max-height:220px;overflow-y:auto;border:0.5px solid var(--border-md);border-radius:var(--radius);"></div>
     </div>
     <div class="modal-footer">
-      <button class="btn" onclick="closePlayerModal()">Avbryt</button>
-      <button class="btn modal-view-btn" style="display:none;" onclick="openPlayerModal(editingId.player)">Rediger</button>
-      <button class="btn btn-primary modal-save-btn" onclick="savePlayer()">Lagre</button>
+      <button class="btn" onclick="closePlayerModal()" data-i18n="Avbryt">Avbryt</button>
+      <button class="btn modal-view-btn" style="display:none;" onclick="openPlayerModal(editingId.player)" data-i18n="Rediger">Rediger</button>
+      <button class="btn btn-primary modal-save-btn" onclick="savePlayer()" data-i18n="Lagre">Lagre</button>
     </div>
   </div>
 </div>
@@ -949,28 +957,28 @@
   <div class="modal">
     <h3 id="service-modal-title">Logg service</h3>
     <div class="form-grid">
-      <div class="field"><label>Innlevert dato *</label><input type="date" id="svc-date"></div>
-      <div class="field"><label>Instrument *</label><select id="svc-inst"></select></div>
-      <div class="field"><label>Verksted (ekstern service)</label>
+      <div class="field"><label data-i18n="Innlevert dato *">Innlevert dato *</label><input type="date" id="svc-date"></div>
+      <div class="field"><label data-i18n="Instrument *">Instrument *</label><select id="svc-inst"></select></div>
+      <div class="field"><label data-i18n="Verksted (ekstern service)">Verksted (ekstern service)</label>
         <select id="svc-workshop">
-          <option value="">— Intern / ingen verksted —</option>
+          <option value="" data-i18n="— Intern / ingen verksted —">— Intern / ingen verksted —</option>
         </select>
       </div>
-      <div class="field"><label>Type</label>
+      <div class="field"><label data-i18n="Type">Type</label>
         <select id="svc-type"><option value="Rutinemessig vedlikehold" data-i18n="Rutinemessig vedlikehold">Rutinemessig vedlikehold</option><option value="Reparasjon" data-i18n="Reparasjon">Reparasjon</option><option value="Dybderens" data-i18n="Dybderens">Dybderens</option><option value="Pute-/filtbytte" data-i18n="Pute-/filtbytte">Pute-/filtbytte</option><option value="Ventilservice" data-i18n="Ventilservice">Ventilservice</option><option value="Annet" data-i18n="Annet">Annet</option></select>
       </div>
-      <div class="field"><label>Ferdig dato</label><input type="date" id="svc-date-finished"></div>
-      <div class="field"><label>Kostnad (kr)</label><input type="number" id="svc-cost" placeholder="0" min="0"></div>
-      <div class="field"><label>Fakturanummer</label><input id="svc-invoice" placeholder="Fakturanr."></div>
-      <div class="field"><label>Utført av</label><input id="svc-by" placeholder="Navn, verksted, osv."></div>
-      <div class="field"><label>Registrert av</label><input id="svc-registered-by" placeholder="Navn" readonly></div>
-      <div class="field"><label>Neste service (valgfritt)</label><input type="date" id="svc-next"></div>
-      <div class="field full"><label>Beskrivelse</label><textarea id="svc-desc" placeholder="Hva ble gjort?"></textarea></div>
+      <div class="field"><label data-i18n="Ferdig dato">Ferdig dato</label><input type="date" id="svc-date-finished"></div>
+      <div class="field"><label data-i18n="Kostnad">Kostnad</label><input type="number" id="svc-cost" placeholder="0" min="0"></div>
+      <div class="field"><label data-i18n="Fakturanummer">Fakturanummer</label><input id="svc-invoice" data-i18n-placeholder="Fakturanr." placeholder="Fakturanr."></div>
+      <div class="field"><label data-i18n="Utført av">Utført av</label><input id="svc-by" data-i18n-placeholder="Navn, verksted, osv." placeholder="Navn, verksted, osv."></div>
+      <div class="field"><label data-i18n="Registrert av">Registrert av</label><input id="svc-registered-by" placeholder="Navn" readonly></div>
+      <div class="field"><label data-i18n="Neste service (valgfritt)">Neste service (valgfritt)</label><input type="date" id="svc-next"></div>
+      <div class="field full"><label data-i18n="Beskrivelse">Beskrivelse</label><textarea id="svc-desc" data-i18n-placeholder="Hva ble gjort?" placeholder="Hva ble gjort?"></textarea></div>
     </div>
     <div class="modal-footer">
-      <button class="btn" onclick="closeModal('service-modal')">Avbryt</button>
-      <button class="btn modal-view-btn" style="display:none;" onclick="openServiceModal(editingId.service)">Rediger</button>
-      <button class="btn btn-primary modal-save-btn" onclick="saveService()">Lagre</button>
+      <button class="btn" onclick="closeModal('service-modal')" data-i18n="Avbryt">Avbryt</button>
+      <button class="btn modal-view-btn" style="display:none;" onclick="openServiceModal(editingId.service)" data-i18n="Rediger">Rediger</button>
+      <button class="btn btn-primary modal-save-btn" onclick="saveService()" data-i18n="Lagre">Lagre</button>
     </div>
   </div>
 </div>
@@ -980,26 +988,26 @@
   <div class="modal">
     <h3 id="acc-modal-title">Legg til vare</h3>
     <div class="form-grid">
-      <div class="field full"><label>Varenavn *</label><input id="acc-name" placeholder="f.eks. Rørblad str. 2,5, Ventilolje"></div>
+      <div class="field full"><label data-i18n="Varenavn *">Varenavn *</label><input id="acc-name" data-i18n-placeholder="f.eks. Rørblad str. 2,5, Ventilolje" placeholder="f.eks. Rørblad str. 2,5, Ventilolje"></div>
       <div class="field">
-        <label>Kategori</label>
-        <input id="acc-cat" list="acc-category-list" placeholder="Velg eller skriv ny kategori">
+        <label data-i18n="Kategori">Kategori</label>
+        <input id="acc-cat" list="acc-category-list" data-i18n-placeholder="Velg eller skriv ny kategori" placeholder="Velg eller skriv ny kategori">
         <datalist id="acc-category-list"></datalist>
       </div>
-      <div class="field"><label>Leverandør</label>
+      <div class="field"><label data-i18n="Leverandør">Leverandør</label>
         <select id="acc-supplier-id">
-          <option value="">— Ingen leverandør —</option>
+          <option value="" data-i18n="— Ingen leverandør —">— Ingen leverandør —</option>
         </select>
       </div>
-      <div class="field"><label>Pris per enhet (kr)</label><input type="number" id="acc-price" min="0" step="0.01" placeholder="0"></div>
-      <div class="field"><label>Fakturanummer</label><input id="acc-invoice" placeholder="Fakturanr."></div>
-      <div class="field"><label>Antall på lager</label><input type="number" id="acc-stock" min="0" value="0"></div>
-      <div class="field"><label>Minimumsgrense (varsel)</label><input type="number" id="acc-min" min="0" value="2"></div>
+      <div class="field"><label data-i18n="Pris per enhet">Pris per enhet</label><input type="number" id="acc-price" min="0" step="0.01" placeholder="0"></div>
+      <div class="field"><label data-i18n="Fakturanummer">Fakturanummer</label><input id="acc-invoice" data-i18n-placeholder="Fakturanr." placeholder="Fakturanr."></div>
+      <div class="field"><label data-i18n="Antall på lager">Antall på lager</label><input type="number" id="acc-stock" min="0" value="0"></div>
+      <div class="field"><label data-i18n="Minimumsgrense (varsel)">Minimumsgrense (varsel)</label><input type="number" id="acc-min" min="0" value="2"></div>
       <div class="field full">
-        <label>Strekkode</label>
+        <label data-i18n="Strekkode">Strekkode</label>
         <div style="display:flex;gap:6px;align-items:center;">
-          <input id="acc-barcode" placeholder="Skann eller skriv inn strekkode" style="flex:1;">
-          <button class="btn-sm" onclick="toggleBarcodeScanner()" id="barcode-toggle-btn" style="font-size:11px;padding:3px 10px;white-space:nowrap;">📷 Skann</button>
+          <input id="acc-barcode" data-i18n-placeholder="Skann eller skriv inn strekkode" placeholder="Skann eller skriv inn strekkode" style="flex:1;">
+          <button class="btn-sm" onclick="toggleBarcodeScanner()" id="barcode-toggle-btn" style="font-size:11px;padding:3px 10px;white-space:nowrap;" data-i18n="📷 Skann">📷 Skann</button>
         </div>
       </div>
       <div class="field full" id="barcode-scanner-wrap" style="display:none;">
@@ -1007,16 +1015,16 @@
           <video id="barcode-video" autoplay playsinline muted></video>
           <div class="qr-scan-line"></div>
         </div>
-        <div class="qr-scan-result" id="barcode-scan-result">Pek kameraet mot strekkoden...</div>
-        <p class="scanner-hint">Støtter EAN-13, EAN-8, UPC, Code 128, QR m.fl.</p>
+        <div class="qr-scan-result" id="barcode-scan-result" data-i18n="Pek kameraet mot strekkoden...">Pek kameraet mot strekkoden...</div>
+        <p class="scanner-hint" data-i18n="Støtter EAN-13, EAN-8, UPC, Code 128, QR m.fl.">Støtter EAN-13, EAN-8, UPC, Code 128, QR m.fl.</p>
       </div>
-      <div class="field full"><label>Merknader</label><textarea id="acc-notes" placeholder="Størrelse, spesifikasjoner, osv."></textarea></div>
-      <div class="field"><label>Registrert av</label><input id="acc-registered-by" placeholder="Navn" readonly></div>
+      <div class="field full"><label data-i18n="Merknader">Merknader</label><textarea id="acc-notes" data-i18n-placeholder="Størrelse, spesifikasjoner, osv." placeholder="Størrelse, spesifikasjoner, osv."></textarea></div>
+      <div class="field"><label data-i18n="Registrert av">Registrert av</label><input id="acc-registered-by" placeholder="Navn" readonly></div>
     </div>
     <div class="modal-footer">
-      <button class="btn" onclick="closeAccModal()">Avbryt</button>
-      <button class="btn modal-view-btn" style="display:none;" onclick="openAccModal(editingId.acc)">Rediger</button>
-      <button class="btn btn-primary modal-save-btn" onclick="saveAccessory()">Lagre</button>
+      <button class="btn" onclick="closeAccModal()" data-i18n="Avbryt">Avbryt</button>
+      <button class="btn modal-view-btn" style="display:none;" onclick="openAccModal(editingId.acc)" data-i18n="Rediger">Rediger</button>
+      <button class="btn btn-primary modal-save-btn" onclick="saveAccessory()" data-i18n="Lagre">Lagre</button>
     </div>
   </div>
 </div>
@@ -1024,11 +1032,11 @@
 <!-- Modal: Juster lager -->
 <div id="acc-adjust-modal" class="modal-overlay">
   <div class="modal" style="max-width:320px;">
-    <h3 id="adj-title">Juster lager</h3>
-    <div class="field"><label>Antall på lager</label><input type="number" id="adj-stock" min="0"></div>
+    <h3 id="adj-title" data-i18n="Juster lager">Juster lager</h3>
+    <div class="field"><label data-i18n="Antall på lager">Antall på lager</label><input type="number" id="adj-stock" min="0"></div>
     <div class="modal-footer">
-      <button class="btn" onclick="closeModal('acc-adjust-modal')">Avbryt</button>
-      <button class="btn btn-primary" onclick="adjustStock()">Oppdater</button>
+      <button class="btn" onclick="closeModal('acc-adjust-modal')" data-i18n="Avbryt">Avbryt</button>
+      <button class="btn btn-primary" onclick="adjustStock()" data-i18n="Oppdater">Oppdater</button>
     </div>
   </div>
 </div>
@@ -1038,14 +1046,14 @@
   <div class="modal" style="max-width:440px;">
     <h3 id="ws-modal-title">Legg til verksted</h3>
     <div class="form-grid">
-      <div class="field full"><label>Navn *</label><input id="ws-edit-name"></div>
-      <div class="field"><label>Kontakt</label><input id="ws-edit-contact"></div>
-      <div class="field"><label>Adresse</label><input id="ws-edit-address"></div>
-      <div class="field full"><label>Merknader</label><input id="ws-edit-notes"></div>
+      <div class="field full"><label data-i18n="Navn *">Navn *</label><input id="ws-edit-name"></div>
+      <div class="field"><label data-i18n="Kontakt">Kontakt</label><input id="ws-edit-contact"></div>
+      <div class="field"><label data-i18n="Adresse">Adresse</label><input id="ws-edit-address"></div>
+      <div class="field full"><label data-i18n="Merknader">Merknader</label><input id="ws-edit-notes"></div>
     </div>
     <div class="modal-footer">
-      <button class="btn" onclick="closeModal('ws-edit-modal')">Avbryt</button>
-      <button class="btn btn-primary" onclick="saveWorkshopEdit()">Lagre</button>
+      <button class="btn" onclick="closeModal('ws-edit-modal')" data-i18n="Avbryt">Avbryt</button>
+      <button class="btn btn-primary" onclick="saveWorkshopEdit()" data-i18n="Lagre">Lagre</button>
     </div>
   </div>
 </div>
@@ -1055,14 +1063,14 @@
   <div class="modal" style="max-width:440px;">
     <h3 id="sup-modal-title">Legg til leverandør</h3>
     <div class="form-grid">
-      <div class="field full"><label>Navn *</label><input id="sup-edit-name"></div>
-      <div class="field"><label>Kontakt</label><input id="sup-edit-contact"></div>
-      <div class="field"><label>Adresse</label><input id="sup-edit-address"></div>
-      <div class="field full"><label>Merknader</label><input id="sup-edit-notes"></div>
+      <div class="field full"><label data-i18n="Navn *">Navn *</label><input id="sup-edit-name"></div>
+      <div class="field"><label data-i18n="Kontakt">Kontakt</label><input id="sup-edit-contact"></div>
+      <div class="field"><label data-i18n="Adresse">Adresse</label><input id="sup-edit-address"></div>
+      <div class="field full"><label data-i18n="Merknader">Merknader</label><input id="sup-edit-notes"></div>
     </div>
     <div class="modal-footer">
-      <button class="btn" onclick="closeModal('sup-edit-modal')">Avbryt</button>
-      <button class="btn btn-primary" onclick="saveSupplierEdit()">Lagre</button>
+      <button class="btn" onclick="closeModal('sup-edit-modal')" data-i18n="Avbryt">Avbryt</button>
+      <button class="btn btn-primary" onclick="saveSupplierEdit()" data-i18n="Lagre">Lagre</button>
     </div>
   </div>
 </div>
@@ -1070,14 +1078,14 @@
 <!-- Modal: Til henting -->
 <div id="til-henting-modal" class="modal-overlay">
   <div class="modal modal-wide">
-    <h3>Instrumenter til henting</h3>
-    <p style="font-size:12px;color:var(--text-muted);margin-bottom:1rem;">Ferdig servicet eksternt — venter på henting.</p>
+    <h3 data-i18n="Instrumenter til henting">Instrumenter til henting</h3>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:1rem;" data-i18n="Ferdig servicet eksternt — venter på henting.">Ferdig servicet eksternt — venter på henting.</p>
     <div id="til-henting-list"></div>
     <div class="modal-footer" style="justify-content:space-between;margin-top:1rem;">
-      <button class="btn" onclick="closeModal('til-henting-modal')">Lukk</button>
+      <button class="btn" onclick="closeModal('til-henting-modal')" data-i18n="Lukk">Lukk</button>
       <div style="display:flex;gap:8px;">
-        <button class="btn-export" onclick="exportData('til-henting','csv')">Eksporter CSV</button>
-        <button class="btn-export" onclick="exportData('til-henting','xlsx')">Eksporter Excel</button>
+        <button class="btn-export" onclick="exportData('til-henting','csv')" data-i18n="Eksporter CSV">Eksporter CSV</button>
+        <button class="btn-export" onclick="exportData('til-henting','xlsx')" data-i18n="Eksporter Excel">Eksporter Excel</button>
       </div>
     </div>
   </div>
@@ -1086,10 +1094,10 @@
 <!-- Modal: Servicerapport (kostnad per verksted) -->
 <div id="service-report-modal" class="modal-overlay">
   <div class="modal modal-wide">
-    <h3>Rapport — servicekostnad per verksted</h3>
+    <h3 data-i18n="Rapport — servicekostnad per verksted">Rapport — servicekostnad per verksted</h3>
     <div id="service-report-content"></div>
     <div class="modal-footer">
-      <button class="btn" onclick="closeModal('service-report-modal')">Lukk</button>
+      <button class="btn" onclick="closeModal('service-report-modal')" data-i18n="Lukk">Lukk</button>
     </div>
   </div>
 </div>
@@ -1097,10 +1105,10 @@
 <!-- Modal: Tilbehørsrapport (kostnad per kategori) -->
 <div id="acc-report-modal" class="modal-overlay">
   <div class="modal modal-wide">
-    <h3>Rapport — varekostnad per kategori</h3>
+    <h3 data-i18n="Rapport — varekostnad per kategori">Rapport — varekostnad per kategori</h3>
     <div id="acc-report-content"></div>
     <div class="modal-footer">
-      <button class="btn" onclick="closeModal('acc-report-modal')">Lukk</button>
+      <button class="btn" onclick="closeModal('acc-report-modal')" data-i18n="Lukk">Lukk</button>
     </div>
   </div>
 </div>
@@ -1108,21 +1116,21 @@
 <!-- Modal: CSV-import -->
 <div id="import-modal" class="modal-overlay">
   <div class="modal modal-wide">
-    <h3 id="import-modal-title">Importer fra CSV</h3>
+    <h3 id="import-modal-title" data-i18n="Importer fra CSV">Importer fra CSV</h3>
     <div id="import-instructions" style="font-size:12px;color:var(--text-muted);background:var(--surface2);border-radius:var(--radius);padding:10px 14px;margin-bottom:12px;line-height:1.8;"></div>
     <div class="field" style="margin-bottom:10px;">
-      <label>Last opp CSV-fil</label>
+      <label data-i18n="Last opp CSV-fil">Last opp CSV-fil</label>
       <input type="file" id="import-file" accept=".csv,.txt" onchange="handleImportFile(this)">
     </div>
     <div class="field" style="margin-bottom:12px;">
-      <label>… eller lim inn CSV-innhold direkte</label>
+      <label data-i18n="… eller lim inn CSV-innhold direkte">… eller lim inn CSV-innhold direkte</label>
       <textarea id="import-text" rows="6" placeholder="Navn,Kategori,Stand,Serienummer,Kjøpsdato,Merknader&#10;Trompet i Bb,Messingblåser,God,,,"></textarea>
     </div>
-    <button class="btn btn-sm" onclick="previewImport()" style="margin-bottom:12px;">Forhåndsvis</button>
+    <button class="btn btn-sm" onclick="previewImport()" style="margin-bottom:12px;" data-i18n="Forhåndsvis">Forhåndsvis</button>
     <div id="import-preview"></div>
     <div class="modal-footer">
-      <button class="btn" onclick="closeModal('import-modal')">Avbryt</button>
-      <button class="btn btn-primary" id="import-confirm-btn" style="display:none" onclick="confirmImport()">Importer</button>
+      <button class="btn" onclick="closeModal('import-modal')" data-i18n="Avbryt">Avbryt</button>
+      <button class="btn btn-primary" id="import-confirm-btn" style="display:none" onclick="confirmImport()" data-i18n="Importer">Importer</button>
     </div>
   </div>
 </div>
@@ -1130,11 +1138,11 @@
 <!-- Modal: Confirm transfer -->
 <div id="transfer-confirm-modal" class="modal-overlay">
   <div class="modal" style="max-width:400px;">
-    <h3>Endre tildeling?</h3>
+    <h3 data-i18n="Endre tildeling?">Endre tildeling?</h3>
     <p id="transfer-confirm-msg" style="margin-bottom:1.5rem;line-height:1.5;color:var(--text);"></p>
     <div style="display:flex;gap:8px;justify-content:flex-end;">
-      <button class="btn" onclick="cancelTransfer()">Nei</button>
-      <button class="btn btn-primary" onclick="confirmTransfer()">Ja, endre tildeling</button>
+      <button class="btn" onclick="cancelTransfer()" data-i18n="Nei">Nei</button>
+      <button class="btn btn-primary" onclick="confirmTransfer()" data-i18n="Ja, endre tildeling">Ja, endre tildeling</button>
     </div>
   </div>
 </div>
@@ -1145,45 +1153,45 @@
     <h3 id="todo-modal-title">Legg til gjøremål</h3>
     <div class="form-grid">
       <div class="field full">
-        <label>Gjelder (valgfritt)</label>
+        <label data-i18n="Gjelder (valgfritt)">Gjelder (valgfritt)</label>
         <div style="display:flex;gap:12px;align-items:center;margin-bottom:6px;">
-          <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;"><input type="radio" name="todo-type" value="general" onchange="onTodoTypeChange()" checked> Generell</label>
-          <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;"><input type="radio" name="todo-type" value="instrument" onchange="onTodoTypeChange()"> Instrument</label>
-          <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;"><input type="radio" name="todo-type" value="accessory" onchange="onTodoTypeChange()"> Vare</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;"><input type="radio" name="todo-type" value="general" onchange="onTodoTypeChange()" checked> <span data-i18n="Generell">Generell</span></label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;"><input type="radio" name="todo-type" value="instrument" onchange="onTodoTypeChange()"> <span data-i18n="Instrument">Instrument</span></label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;"><input type="radio" name="todo-type" value="accessory" onchange="onTodoTypeChange()"> <span data-i18n="Vare">Vare</span></label>
         </div>
         <div id="todo-item-picker" style="display:none;">
           <div style="display:flex;gap:6px;align-items:center;">
-            <input id="todo-item-search" list="todo-item-datalist" placeholder="Søk etter navn eller ID…" oninput="onTodoItemSearch(this.value)" style="flex:1;">
+            <input id="todo-item-search" list="todo-item-datalist" data-i18n-placeholder="Søk etter navn eller ID…" placeholder="Søk etter navn eller ID…" oninput="onTodoItemSearch(this.value)" style="flex:1;">
             <datalist id="todo-item-datalist"></datalist>
-            <button type="button" class="btn btn-sm" onclick="toggleTodoScanner()" id="todo-scan-btn" title="Skann QR/strekkode">📷 Skann</button>
+            <button type="button" class="btn btn-sm" onclick="toggleTodoScanner()" id="todo-scan-btn" data-i18n="📷 Skann">📷 Skann</button>
           </div>
           <div id="todo-scanner-wrap" style="display:none;margin-top:8px;">
             <div style="position:relative;width:100%;max-width:320px;background:#000;border-radius:8px;overflow:hidden;">
               <video id="todo-scanner-video" autoplay playsinline muted style="width:100%;display:block;max-height:180px;object-fit:cover;"></video>
             </div>
-            <p class="scanner-hint" style="margin-top:4px;">Pek kameraet mot QR-kode eller strekkode</p>
+            <p class="scanner-hint" style="margin-top:4px;" data-i18n="Pek kameraet mot QR-kode eller strekkode">Pek kameraet mot QR-kode eller strekkode</p>
           </div>
         </div>
         <div id="todo-item-found" style="display:none;margin-top:6px;padding:8px 12px;background:var(--surface2);border-radius:8px;font-size:13px;align-items:center;gap:6px;"></div>
       </div>
       <div class="field full">
-        <label>Beskrivelse / oppgave *</label>
-        <textarea id="todo-note" placeholder="Hva må gjøres?"></textarea>
+        <label data-i18n="Beskrivelse / oppgave *">Beskrivelse / oppgave *</label>
+        <textarea id="todo-note" data-i18n-placeholder="Hva må gjøres?" placeholder="Hva må gjøres?"></textarea>
       </div>
       <div class="field">
-        <label>Registrert av (valgfritt)</label>
-        <input id="todo-created-by" placeholder="Navn">
+        <label data-i18n="Registrert av (valgfritt)">Registrert av (valgfritt)</label>
+        <input id="todo-created-by" data-i18n-placeholder="Navn" placeholder="Navn">
       </div>
       <div class="field">
-        <label>Ansvarlig (valgfritt)</label>
-        <input id="todo-edit-assigned-to" placeholder="Navn på den som har oppgaven">
+        <label data-i18n="Ansvarlig (valgfritt)">Ansvarlig (valgfritt)</label>
+        <input id="todo-edit-assigned-to" data-i18n-placeholder="Navn på den som har oppgaven" placeholder="Navn på den som har oppgaven">
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-service" id="todo-modal-done-btn" style="display:none;margin-right:auto;" onclick="closeTodoModal();openTodoDoneModal(editingTodoId)">Kvitter ut</button>
-      <button class="btn" onclick="closeTodoModal()">Avbryt</button>
-      <button class="btn modal-view-btn" style="display:none;" onclick="openTodoModal(editingTodoId)">Rediger</button>
-      <button class="btn btn-primary modal-save-btn" onclick="saveTodo()">Lagre</button>
+      <button class="btn btn-service" id="todo-modal-done-btn" style="display:none;margin-right:auto;" onclick="closeTodoModal();openTodoDoneModal(editingTodoId)" data-i18n="Kvitter ut">Kvitter ut</button>
+      <button class="btn" onclick="closeTodoModal()" data-i18n="Avbryt">Avbryt</button>
+      <button class="btn modal-view-btn" style="display:none;" onclick="openTodoModal(editingTodoId)" data-i18n="Rediger">Rediger</button>
+      <button class="btn btn-primary modal-save-btn" onclick="saveTodo()" data-i18n="Lagre">Lagre</button>
     </div>
   </div>
 </div>
@@ -1191,20 +1199,20 @@
 <!-- Modal: Gjøremål - Kvitter ut -->
 <div id="todo-done-modal" class="modal-overlay">
   <div class="modal" style="max-width:400px;">
-    <h3>Kvitter ut gjøremål</h3>
+    <h3 data-i18n="Kvitter ut gjøremål">Kvitter ut gjøremål</h3>
     <div class="form-grid">
       <div class="field">
-        <label>Fullført dato</label>
+        <label data-i18n="Fullført dato">Fullført dato</label>
         <input type="date" id="todo-done-date">
       </div>
       <div class="field">
-        <label>Fullført av</label>
-        <input id="todo-done-by" placeholder="Navn">
+        <label data-i18n="Fullført av">Fullført av</label>
+        <input id="todo-done-by" data-i18n-placeholder="Navn" placeholder="Navn">
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn" onclick="closeModal('todo-done-modal')">Avbryt</button>
-      <button class="btn btn-primary" onclick="markTodoDone()">Kvitter ut</button>
+      <button class="btn" onclick="closeModal('todo-done-modal')" data-i18n="Avbryt">Avbryt</button>
+      <button class="btn btn-primary" onclick="markTodoDone()" data-i18n="Kvitter ut">Kvitter ut</button>
     </div>
   </div>
 </div>
@@ -1212,16 +1220,16 @@
 <!-- Modal: Gjøremål - Under arbeid -->
 <div id="todo-start-modal" class="modal-overlay">
   <div class="modal" style="max-width:400px;">
-    <h3>Sett under arbeid</h3>
+    <h3 data-i18n="Sett under arbeid">Sett under arbeid</h3>
     <div class="form-grid">
       <div class="field full">
-        <label>Ansvarlig</label>
-        <input id="todo-assigned-to" placeholder="Navn på den som tar på seg oppgaven">
+        <label data-i18n="Ansvarlig">Ansvarlig</label>
+        <input id="todo-assigned-to" data-i18n-placeholder="Navn på den som tar på seg oppgaven" placeholder="Navn på den som tar på seg oppgaven">
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn" onclick="closeModal('todo-start-modal')">Avbryt</button>
-      <button class="btn btn-primary" onclick="markTodoInProgress()">Sett under arbeid</button>
+      <button class="btn" onclick="closeModal('todo-start-modal')" data-i18n="Avbryt">Avbryt</button>
+      <button class="btn btn-primary" onclick="markTodoInProgress()" data-i18n="Sett under arbeid">Sett under arbeid</button>
     </div>
   </div>
 </div>
@@ -1231,38 +1239,38 @@
   <div class="modal" style="max-width:540px;">
     <h3 id="user-modal-title">Ny bruker</h3>
     <div class="form-grid">
-      <div class="field"><label>Brukernavn *</label><input id="user-username" placeholder="Brukernavn (unikt)"></div>
-      <div class="field"><label>Visningsnavn</label><input id="user-display-name" placeholder="Fullt navn"></div>
-      <div class="field"><label id="user-password-label">Passord *</label><input id="user-password" type="password" placeholder="Minst 6 tegn"></div>
+      <div class="field"><label data-i18n="Brukernavn *">Brukernavn *</label><input id="user-username" data-i18n-placeholder="Brukernavn (unikt)" placeholder="Brukernavn (unikt)"></div>
+      <div class="field"><label data-i18n="Visningsnavn">Visningsnavn</label><input id="user-display-name" data-i18n-placeholder="Fullt navn" placeholder="Fullt navn"></div>
+      <div class="field"><label id="user-password-label" data-i18n="Passord *">Passord *</label><input id="user-password" type="password" data-i18n-placeholder="Minst 6 tegn" placeholder="Minst 6 tegn"></div>
       <div class="field">
-        <label>Rolle</label>
+        <label data-i18n="Rolle">Rolle</label>
         <select id="user-role" onchange="onUserRoleChange()">
-          <option value="user">Bruker</option>
-          <option value="admin">Administrator</option>
+          <option value="user" data-i18n="Bruker">Bruker</option>
+          <option value="admin" data-i18n="Administrator">Administrator</option>
         </select>
       </div>
       <div class="field">
-        <label>Tving passordbytte ved neste innlogging</label>
+        <label data-i18n="Tving passordbytte ved neste innlogging">Tving passordbytte ved neste innlogging</label>
         <input type="checkbox" id="user-force-pw" style="width:auto;margin-top:4px;">
       </div>
       <div class="field">
-        <label>Deaktiver bruker (kan ikke logge inn)</label>
+        <label data-i18n="Deaktiver bruker (kan ikke logge inn)">Deaktiver bruker (kan ikke logge inn)</label>
         <input type="checkbox" id="user-disabled" style="width:auto;margin-top:4px;">
       </div>
       <div class="field" id="user-created-by-wrap" style="display:none;">
-        <label>Opprettet av</label>
+        <label data-i18n="Opprettet av">Opprettet av</label>
         <input id="user-created-by" readonly>
       </div>
     </div>
     <div style="margin-top:16px;">
-      <div style="font-size:13px;font-weight:600;color:var(--text-muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px;">Rettigheter</div>
+      <div style="font-size:13px;font-weight:600;color:var(--text-muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px;" data-i18n="Rettigheter">Rettigheter</div>
       <div id="user-perms-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;font-size:13px;"></div>
     </div>
     <div id="user-modal-error" style="color:#ef4444;font-size:13px;margin-top:10px;display:none;"></div>
     <div class="modal-footer">
-      <button class="btn btn-danger" id="user-delete-btn" style="margin-right:auto;display:none;" onclick="deleteUser()">Slett bruker</button>
-      <button class="btn" onclick="closeModal('user-modal')">Avbryt</button>
-      <button class="btn btn-primary" onclick="saveUser()">Lagre</button>
+      <button class="btn btn-danger" id="user-delete-btn" style="margin-right:auto;display:none;" onclick="deleteUser()" data-i18n="Slett bruker">Slett bruker</button>
+      <button class="btn" onclick="closeModal('user-modal')" data-i18n="Avbryt">Avbryt</button>
+      <button class="btn btn-primary" onclick="saveUser()" data-i18n="Lagre">Lagre</button>
     </div>
   </div>
 </div>
@@ -1270,25 +1278,25 @@
 <!-- Modal: Endre passord -->
 <div id="change-password-modal" class="modal-overlay">
   <div class="modal" style="max-width:400px;">
-    <h3>Endre passord</h3>
+    <h3 data-i18n="Endre passord">Endre passord</h3>
     <div class="form-grid">
       <div class="field full" id="current-pw-field">
-        <label>Nåværende passord</label>
-        <input id="change-pw-current" type="password" placeholder="Nåværende passord">
+        <label data-i18n="Nåværende passord">Nåværende passord</label>
+        <input id="change-pw-current" type="password" data-i18n-placeholder="Nåværende passord" placeholder="Nåværende passord">
       </div>
       <div class="field full">
-        <label>Nytt passord</label>
-        <input id="change-pw-new" type="password" placeholder="Minst 6 tegn">
+        <label data-i18n="Nytt passord">Nytt passord</label>
+        <input id="change-pw-new" type="password" data-i18n-placeholder="Minst 6 tegn" placeholder="Minst 6 tegn">
       </div>
       <div class="field full">
-        <label>Gjenta nytt passord</label>
-        <input id="change-pw-repeat" type="password" placeholder="Gjenta nytt passord">
+        <label data-i18n="Gjenta nytt passord">Gjenta nytt passord</label>
+        <input id="change-pw-repeat" type="password" data-i18n-placeholder="Gjenta nytt passord" placeholder="Gjenta nytt passord">
       </div>
       <div class="field full"><span id="change-pw-error" style="color:#ef4444;font-size:13px;"></span></div>
     </div>
     <div class="modal-footer">
-      <button class="btn" onclick="closeModal('change-password-modal')" id="change-pw-cancel">Avbryt</button>
-      <button class="btn btn-primary" onclick="doChangePassword()">Lagre passord</button>
+      <button class="btn" onclick="closeModal('change-password-modal')" id="change-pw-cancel" data-i18n="Avbryt">Avbryt</button>
+      <button class="btn btn-primary" onclick="doChangePassword()" data-i18n="Lagre passord">Lagre passord</button>
     </div>
   </div>
 </div>
@@ -1507,6 +1515,79 @@ const EN = {
   'Instrument mangler ID': 'Instrument missing ID',
   'Innstillinger lagret!': 'Settings saved!',
   'Valuta': 'Currency',
+  // App name
+  'Korpsinventar': 'Band Inventory',
+  // Modal labels
+  'Navn *': 'Name *', 'Fullt navn *': 'Full name *', 'Varenavn *': 'Item name *',
+  'Innlevert dato *': 'Submitted date *', 'Instrument *': 'Instrument *',
+  'Serienummer (valgfritt)': 'Serial number (optional)',
+  'Kjøpsdato': 'Purchase date', 'Neste sjekk (dato)': 'Next check (date)',
+  'Ferdig dato': 'Completion date', 'Neste service (valgfritt)': 'Next service (optional)',
+  'Utført av': 'Performed by', 'Kostnad': 'Cost',
+  'Fakturanummer': 'Invoice number',
+  'Verksted (ekstern service)': 'Workshop (external service)',
+  'Tildel instrument(er)': 'Assign instrument(s)',
+  'Pris per enhet': 'Price per unit',
+  'Antall på lager': 'Stock quantity', 'Minimumsgrense (varsel)': 'Minimum level (alert)',
+  'Strekkode': 'Barcode',
+  'Gjelder (valgfritt)': 'Regarding (optional)',
+  'Beskrivelse / oppgave *': 'Description / task *',
+  'Registrert av (valgfritt)': 'Registered by (optional)',
+  'Ansvarlig (valgfritt)': 'Responsible (optional)',
+  'Fullført dato': 'Completion date', 'Fullført av': 'Completed by',
+  'Brukernavn *': 'Username *', 'Visningsnavn': 'Display name',
+  'Tving passordbytte ved neste innlogging': 'Force password change on next login',
+  'Deaktiver bruker (kan ikke logge inn)': 'Disable user (cannot log in)',
+  'Opprettet av': 'Created by', 'Rettigheter': 'Permissions',
+  'Nåværende passord': 'Current password', 'Nytt passord': 'New password',
+  'Gjenta nytt passord': 'Repeat new password',
+  'Last opp CSV-fil': 'Upload CSV file',
+  '… eller lim inn CSV-innhold direkte': '… or paste CSV content directly',
+  'Forhåndsvis': 'Preview', 'Importer': 'Import', 'Importer fra CSV': 'Import from CSV',
+  'Lagre passord': 'Save password', 'Slett bruker': 'Delete user',
+  'Oppdater': 'Update', 'Legg til': 'Add', 'Nei': 'No',
+  // Modal titles and static text
+  'Rapport — servicekostnad per verksted': 'Report — service cost by workshop',
+  'Rapport — varekostnad per kategori': 'Report — item cost by category',
+  'Instrument-ID blir:': 'Instrument ID will be:',
+  // Placeholders
+  'f.eks. Trompet i Bb': 'e.g. Trumpet in Bb',
+  'Produsentens serienr.': "Manufacturer's serial no.",
+  'Oppbevaringssted, osv.': 'Storage location, etc.',
+  'Telefon eller e-post': 'Phone or email',
+  'Navn, verksted, osv.': 'Name, workshop, etc.',
+  'Hva ble gjort?': 'What was done?',
+  'f.eks. Rørblad str. 2,5, Ventilolje': 'e.g. Reed size 2.5, Valve oil',
+  'Velg eller skriv ny kategori': 'Select or enter new category',
+  'Skann eller skriv inn strekkode': 'Scan or enter barcode',
+  'Størrelse, spesifikasjoner, osv.': 'Size, specifications, etc.',
+  'Søk etter navn eller ID…': 'Search by name or ID…',
+  'Hva må gjøres?': 'What needs to be done?',
+  'Navn på den som har oppgaven': 'Name of the person responsible',
+  'Navn på den som tar på seg oppgaven': 'Name of the person taking the task',
+  'Brukernavn (unikt)': 'Username (unique)', 'Minst 6 tegn': 'At least 6 characters',
+  // Scanner hints
+  'Pek kameraet mot en QR-kode...': 'Point the camera at a QR code...',
+  'Automatisk skanning — ingen knapp å trykke': 'Automatic scanning — no button to press',
+  'QR-skanning krever HTTPS eller localhost': 'QR scanning requires HTTPS or localhost',
+  'Skriv inn Instrument-ID (f.eks. TRMP-001)': 'Enter Instrument ID (e.g. TRMP-001)',
+  'Pek kameraet mot strekkoden...': 'Point the camera at the barcode...',
+  'Støtter EAN-13, EAN-8, UPC, Code 128, QR m.fl.': 'Supports EAN-13, EAN-8, UPC, Code 128, QR and more',
+  'Pek kameraet mot QR-kode eller strekkode': 'Point the camera at a QR code or barcode',
+  // Option labels
+  '— Intern / ingen verksted —': '— Internal / no workshop —',
+  '— Ingen leverandør —': '— No supplier —',
+  // Settings labels
+  'Korpsidentitet': 'Band identity',
+  'Korpsens navn': "Band's name",
+  'Logo (vises i sidepanelet og nettleserfanen)': 'Logo (shown in sidebar and browser tab)',
+  'PNG, JPG, SVG — anbefalt kvadratisk format': 'PNG, JPG, SVG — square format recommended',
+  'Fjern logo': 'Remove logo', 'Lagre innstillinger': 'Save settings',
+  // QR modal buttons
+  'Last ned': 'Download', 'Skriv ut': 'Print',
+  // Instrument name
+  'Instrument': 'Instrument', 'Fullt navn': 'Full name', 'Navn': 'Name',
+  'f.eks. Blindern Studenterkameraderi': 'e.g. City Band of Springfield',
   'Ingen data å forhåndsvise': 'No data to preview',
   'Skriv inn en beskrivelse': 'Enter a description',
   'Velg et instrument eller en vare': 'Select an instrument or item',
@@ -3284,7 +3365,7 @@ async function saveSettings() {
   const korpsname = document.getElementById('settings-korpsname').value.trim();
   const img = document.querySelector('#settings-logo-preview img');
   const logo = img ? img.src : '';
-  const currency = document.getElementById('settings-currency').value.trim() || 'kr';
+  const currency = document.getElementById('settings-currency').value || 'kr';
   await api('PUT', '/api/settings', { 'korps-name': korpsname, 'korps-logo': logo, 'currency': currency });
   state.settings['korps-name'] = korpsname;
   state.settings['korps-logo'] = logo;
