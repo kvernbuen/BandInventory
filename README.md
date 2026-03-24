@@ -1,62 +1,63 @@
 # Korpsinventar
 
-Inventarsystem for korps — self-hosted webapplikasjon med Node.js og SQLite, pakket med Docker.
+Inventory management system for brass bands — self-hosted web application built with Node.js and SQLite, packaged with Docker.
 
-## Funksjoner
+## Features
 
-- **Instrumenter** — registrering, tilstandssporing, QR-koder, servicevarsel
-- **Musikanter** — oversikt, instrument-tildeling, QR-skanning
-- **Servicelogg** — logg med status (Under service / Til henting / Ferdig), verksted-kobling, fakturanummer
-- **Tilbehør og lager** — beholdning, minimumsgrenser, leverandørkobling, strekkodeskanning
-- **Gjøremål** — oppgaveliste med status, ansvarlig og kvittering
-- **Rapporter** — servicekostnad per verksted, varekostnad per kategori
-- **Brukerstyring** — roller (Administrator / Bruker), per-bruker rettigheter
-- **Innstillinger** — korpslogo, korpsnavn
-- Eksport til CSV og Excel for alle seksjoner
-- Mørk/lys tema
-- PWA-støtte (kan installeres på mobil)
+- **Instruments** — registration, condition tracking, QR codes, service alerts
+- **Musicians** — overview, instrument assignment, QR scanning
+- **Service log** — log with status (In service / Ready for pickup / Done), workshop linking, invoice numbers
+- **Accessories & stock** — inventory, minimum levels, supplier linking, barcode scanning
+- **To-do list** — task list with status, assignee, and sign-off
+- **Reports** — service cost per workshop, item cost per category
+- **User management** — roles (Administrator / User), per-user permissions
+- **Settings** — corps logo, corps name, currency
+- Export to CSV and Excel for all sections
+- Dark/light theme
+- English/Norwegian language toggle
+- PWA support (installable on mobile)
 
 ---
 
-## Kom i gang
+## Getting started
 
-### Krav
-- [Docker](https://docs.docker.com/get-docker/) og [Docker Compose](https://docs.docker.com/compose/)
-- `openssl` (følger med macOS og Linux; Windows: Git Bash eller WSL)
+### Requirements
+- [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/)
+- `openssl` (included on macOS and Linux; Windows: Git Bash or WSL)
 
-### Start med HTTPS (nødvendig for kamera-/strekkodeskanning)
+### Start with HTTPS (required for camera/barcode scanning)
 
-QR-kode- og strekkodeskanneren krever HTTPS. Kjør disse kommandoene én gang:
+The QR code and barcode scanner require HTTPS. Run these commands once:
 
 ```bash
 cd korpsinventar
 
-# Steg 1: Generer selvsignert SSL-sertifikat
+# Step 1: Generate a self-signed SSL certificate
 bash generate-cert.sh
 
-# Steg 2: Bygg og start
+# Step 2: Build and start
 docker compose up -d
 
-# Appen er nå tilgjengelig på:
+# The app is now available at:
 # https://localhost
 ```
 
-Første gang vil nettleseren advare om sertifikatet (selvsignert). Klikk "Avansert" → "Fortsett til localhost" for å godta det.
+The first time, your browser will warn about the certificate (self-signed). Click "Advanced" → "Proceed to localhost" to accept it.
 
-### Uten HTTPS (enklere, men ingen kameraskanning)
+### Without HTTPS (simpler, but no camera scanning)
 
 ```bash
 docker compose -f docker-compose.simple.yml up -d
 
-# Tilgjengelig på: http://localhost:3000
+# Available at: http://localhost:3000
 ```
 
-### Stopp appen
+### Stop the app
 ```bash
 docker compose down
 ```
 
-### Oppdater til ny versjon
+### Update to a new version
 ```bash
 docker compose down
 docker compose up -d --build
@@ -64,64 +65,64 @@ docker compose up -d --build
 
 ---
 
-## Første innlogging
+## First login
 
-Ved oppstart opprettes en standard adminbruker automatisk:
+A default admin user is created automatically on startup:
 
-| Felt       | Verdi      |
-|------------|------------|
-| Brukernavn | `admin`    |
-| Passord    | `admin123` |
+| Field    | Value      |
+|----------|------------|
+| Username | `admin`    |
+| Password | `admin123` |
 
-**Passordbytte kreves ved første innlogging.** Endre passordet til noe sikkert umiddelbart.
+**A password change is required on first login.** Change it to something secure immediately.
 
-Nye brukere opprettes under **Brukere**-seksjonen (kun synlig for administratorer).
-
----
-
-## Brukerstyring
-
-Applikasjonen har to roller:
-
-| Rolle          | Beskrivelse                                      |
-|----------------|--------------------------------------------------|
-| Administrator  | Full tilgang, inkl. brukere og innstillinger     |
-| Bruker         | Tilgang til daglig bruk (konfigurerbart per felt)|
-
-Rettigheter kan tilpasses per bruker uavhengig av rolle. Tilgjengelige rettigheter:
-
-- Instrumenter: Les / Rediger / Slett
-- Musikanter: Les / Rediger / Slett / Tildel instrument
-- Servicelogg: Les / Rediger / Slett
-- Tilbehør: Les / Rediger / Slett
-- Gjøremål: Les / Rediger / Slett
-- Verksteder: Admin
-- Leverandører: Admin
-- Rapporter: Les
-- Brukere: Admin
+New users are created under the **Users** section (visible to administrators only).
 
 ---
 
-## Konfigurasjon
+## User management
 
-Miljøvariabler:
+The application has two roles:
 
-| Variabel         | Standard                    | Beskrivelse                        |
-|------------------|-----------------------------|------------------------------------|
-| `PORT`           | `3000`                      | Port appen lytter på               |
-| `DB_PATH`        | `/data/korpsinventar.db`    | Sti til SQLite-database            |
-| `SESSION_SECRET` | (intern standard)           | Hemmelighet for sesjonskryptering. Sett denne eksplisitt i produksjon. |
+| Role          | Description                                         |
+|---------------|-----------------------------------------------------|
+| Administrator | Full access, including users and settings           |
+| User          | Access to daily use features (configurable per field)|
 
-### Sett SESSION_SECRET i produksjon
+Permissions can be customised per user regardless of role. Available permissions:
 
-I `docker-compose.yml`:
+- Instruments: Read / Edit / Delete
+- Musicians: Read / Edit / Delete / Assign instrument
+- Service log: Read / Edit / Delete
+- Accessories: Read / Edit / Delete
+- To-do list: Read / Edit / Delete
+- Workshops: Admin
+- Suppliers: Admin
+- Reports: Read
+- Users: Admin
+
+---
+
+## Configuration
+
+Environment variables:
+
+| Variable         | Default                   | Description                                    |
+|------------------|---------------------------|------------------------------------------------|
+| `PORT`           | `3000`                    | Port the app listens on                        |
+| `DB_PATH`        | `/data/korpsinventar.db`  | Path to the SQLite database                    |
+| `SESSION_SECRET` | (internal default)        | Secret for session encryption. Set this explicitly in production. |
+
+### Set SESSION_SECRET in production
+
+In `docker-compose.yml`:
 ```yaml
 environment:
-  - SESSION_SECRET=ditt-lange-tilfeldige-hemmelige-passord
+  - SESSION_SECRET=your-long-random-secret
 ```
 
-### Endre port (f.eks. til 8080)
-I `docker-compose.yml`:
+### Change port (e.g. to 8080)
+In `docker-compose.yml`:
 ```yaml
 ports:
   - "8080:3000"
@@ -129,21 +130,21 @@ ports:
 
 ---
 
-## Sikkerhetskopiering
+## Backup
 
-Databasen ligger i Docker-volumet `korpsinventar-data`. Sesjoner lagres i en separat fil i samme mappe.
+The database is stored in the Docker volume `korpsinventar-data`. Sessions are stored in a separate file in the same directory.
 
 ```bash
-# Kopier database direkte fra container
+# Copy the database directly from the container
 docker cp korpsinventar:/data/korpsinventar.db ./backup.db
 
-# Eller finn volumets plassering på disk
+# Or find the volume location on disk
 docker volume inspect korpsinventar-data
 ```
 
 ---
 
-## Manuell Docker (uten Compose)
+## Manual Docker (without Compose)
 
 ```bash
 docker build -t korpsinventar .
@@ -152,18 +153,18 @@ docker run -d \
   --name korpsinventar \
   -p 3000:3000 \
   -v korpsinventar-data:/data \
-  -e SESSION_SECRET=ditt-hemmelige-passord \
+  -e SESSION_SECRET=your-secret \
   --restart unless-stopped \
   korpsinventar
 ```
 
 ---
 
-## Kjøre lokalt uten Docker
+## Running locally without Docker
 
 ```bash
 npm install
 DB_PATH=./db/korpsinventar.db node server.js
 ```
 
-Krever Node.js 18+.
+Requires Node.js 18+.
