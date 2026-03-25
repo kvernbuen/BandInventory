@@ -432,7 +432,7 @@
     <div class="login-logo">
       <svg viewBox="0 0 28 28" fill="none"><path d="M8 17 Q11 11 14 11 Q17 11 20 17" stroke="white" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="8" cy="17" r="2.2" fill="white"/><circle cx="20" cy="17" r="2.2" fill="white"/></svg>
       <div class="login-logo-name">Korpsinventar</div>
-      <div class="login-logo-sub">v1.3.0</div>
+      <div class="login-logo-sub">v1.4.0</div>
     </div>
     <h2 data-i18n="Logg inn">Logg inn</h2>
     <form onsubmit="doLogin(event)">
@@ -460,7 +460,7 @@
     <div style="min-width:0;">
       <div id="sidebar-korpsname" class="logo-korpsname" style="display:none;"></div>
       <div class="logo-text" data-i18n="Korpsinventar">Korpsinventar</div>
-      <div class="logo-sub">v1.3.0</div>
+      <div class="logo-sub">v1.4.0</div>
     </div>
   </div>
   <nav class="sidebar-nav">
@@ -907,6 +907,15 @@
       <div class="field full"><label data-i18n="Merknader">Merknader</label><textarea id="inst-notes" data-i18n-placeholder="Oppbevaringssted, osv." placeholder="Oppbevaringssted, osv."></textarea></div>
       <div class="field"><label data-i18n="Registrert av">Registrert av</label><input id="inst-registered-by" placeholder="Navn" readonly></div>
     </div>
+    <div class="field" id="inst-player-row" style="margin-top:8px;display:none;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+        <div>
+          <label style="font-size:12px;color:var(--text-muted);font-weight:500;" data-i18n="Tildelt musikant">Tildelt musikant</label>
+          <div id="inst-player-display" style="font-size:14px;margin-top:2px;"></div>
+        </div>
+        <button class="btn-sm inst-player-assign-btn" id="inst-player-assign-btn" onclick="openAssignPlayerFromInstModal()" style="flex-shrink:0;" data-i18n="Tildel / endre">Tildel / endre</button>
+      </div>
+    </div>
     <div class="modal-footer">
       <button class="btn" onclick="closeModal('inst-modal')" data-i18n="Avbryt">Avbryt</button>
       <button class="btn modal-view-btn" style="display:none;" onclick="openInstModal(editingId.inst)" data-i18n="Rediger">Rediger</button>
@@ -966,6 +975,7 @@
           <button class="btn-sm" onclick="manualScanSubmit()" data-i18n="Legg til">Legg til</button>
         </div>
       </div>
+      <input type="text" id="inst-checkboxes-search" oninput="filterInstCheckboxes(this.value)" data-i18n-placeholder="Søk instrument..." placeholder="Søk instrument..." style="margin-bottom:4px;">
       <div id="inst-checkboxes" style="max-height:220px;overflow-y:auto;border:0.5px solid var(--border-md);border-radius:var(--radius);"></div>
     </div>
     <div class="modal-footer">
@@ -1179,6 +1189,18 @@
     <div style="display:flex;gap:8px;justify-content:flex-end;">
       <button class="btn" id="app-confirm-cancel" onclick="_appConfirmResolve(false)"></button>
       <button class="btn" id="app-confirm-ok" onclick="_appConfirmResolve(true)"></button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Tildel musikant til instrument -->
+<div id="assign-player-modal" class="modal-overlay">
+  <div class="modal" style="max-width:400px;">
+    <h3 id="assign-player-title" data-i18n="Tildel musikant">Tildel musikant</h3>
+    <input type="text" id="assign-player-search" oninput="filterAssignPlayerList(this.value)" data-i18n-placeholder="Søk musikant..." placeholder="Søk musikant..." style="margin-bottom:8px;">
+    <div id="assign-player-list" style="max-height:260px;overflow-y:auto;border:0.5px solid var(--border-md);border-radius:var(--radius);"></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('assign-player-modal')" data-i18n="Avbryt">Avbryt</button>
     </div>
   </div>
 </div>
@@ -1441,6 +1463,8 @@ const EN = {
   'Serviceoppføring': 'Service entry',
   'Legg til musiker': 'Add musician', 'Rediger musiker': 'Edit musician', 'Musiker': 'Musician',
   'Søk musikant': 'Search musician', 'Navn på musikant...': 'Musician name...',
+  'Tildel musikant': 'Assign musician', 'Fjern tildeling?': 'Remove assignment?', 'Tildel / endre': 'Assign / change', 'Tildelt musikant': 'Assigned musician', '— Ingen —': '— None —',
+  'Søk instrument...': 'Search instrument...', 'Tildel': 'Assign',
   'Legg til vare': 'Add item', 'Rediger vare': 'Edit item',
   'Legg til gjøremål': 'Add task', 'Rediger gjøremål': 'Edit task', 'Gjøremål': 'Task',
   'Rediger verksted': 'Edit workshop', 'Legg til verksted': 'Add workshop',
@@ -2193,8 +2217,42 @@ function openInstModal(id, viewOnly=false) {
   document.getElementById('inst-notes').value = inst?.notes || '';
   document.getElementById('inst-registered-by').value = inst?.registered_by || (!inst ? (state.currentUser?.displayName || state.currentUser?.username || '') : '');
   document.getElementById('id-preview-wrap').style.display = 'none';
+  // Tildelt musikant
+  const playerRow = document.getElementById('inst-player-row');
+  if (hasPerm('players_assign')) {
+    playerRow.style.display = '';
+    document.getElementById('inst-player-assign-btn').disabled = viewOnly;
+    if (id) {
+      refreshInstModalPlayer();
+    } else {
+      _instModalPendingPlayer = null;
+      document.getElementById('inst-player-display').textContent = t('— Ingen —');
+    }
+    applyTranslations(playerRow);
+  } else {
+    playerRow.style.display = 'none';
+  }
   openModal('inst-modal');
   setModalViewMode('inst-modal', viewOnly);
+}
+function refreshInstModalPlayer() {
+  const instId = editingId.inst;
+  if (!instId) return;
+  const player = state.players.find(p => (p.instruments || []).includes(instId));
+  const el = document.getElementById('inst-player-display');
+  if (el) el.textContent = player ? player.name + (player.section ? ' · ' + t(player.section) : '') : t('— Ingen —');
+}
+function openAssignPlayerFromInstModal() {
+  if (editingId.inst) {
+    openAssignPlayerModal(editingId.inst);
+  } else {
+    // New instrument — pending mode: just pick a player, assign after save
+    _assignInstId = '__pending__';
+    document.getElementById('assign-player-title').textContent = t('Tildel musikant');
+    document.getElementById('assign-player-search').value = '';
+    renderAssignPlayerList('');
+    openModal('assign-player-modal');
+  }
 }
 async function saveInstrument() {
   const name = document.getElementById('inst-name').value.trim();
@@ -2211,8 +2269,17 @@ async function saveInstrument() {
     next_check: document.getElementById('inst-next-check').value || null,
     notes: document.getElementById('inst-notes').value.trim(),
     registered_by: document.getElementById('inst-registered-by').value.trim() || null };
-  if (editingId.inst) await api('PUT', '/api/instruments/'+editingId.inst, body);
-  else await api('POST', '/api/instruments', body);
+  if (editingId.inst) {
+    await api('PUT', '/api/instruments/'+editingId.inst, body);
+  } else {
+    const created = await api('POST', '/api/instruments', body);
+    if (_instModalPendingPlayer && created?.id) {
+      const p = _instModalPendingPlayer;
+      const instruments = [...new Set([...(p.instruments || []), created.id])];
+      await api('PUT', '/api/players/' + p.id, { name: p.name, section: p.section, contact: p.contact || '', instruments });
+    }
+    _instModalPendingPlayer = null;
+  }
   closeModal('inst-modal'); toast(t('Lagret!')); await loadAll();
 }
 async function deleteInstrument(id) {
@@ -2223,6 +2290,73 @@ function openServiceForInstrument(instId) {
   openServiceModal();
   // Set the instrument after modal is open and dropdown is populated
   document.getElementById('svc-inst').value = instId;
+}
+
+// --- TILDEL MUSIKANT FRA INSTRUMENTER-VIEW ---
+let _assignInstId = null;
+let _instModalPendingPlayer = null;
+function openAssignPlayerModal(instId) {
+  _assignInstId = instId;
+  const inst = state.instruments.find(i => i.id === instId);
+  document.getElementById('assign-player-title').textContent =
+    t('Tildel musikant') + (inst ? ': ' + inst.name : '');
+  document.getElementById('assign-player-search').value = '';
+  renderAssignPlayerList('');
+  openModal('assign-player-modal');
+}
+function filterAssignPlayerList(val) {
+  renderAssignPlayerList(val.trim().toLowerCase());
+}
+function renderAssignPlayerList(search) {
+  const el = document.getElementById('assign-player-list');
+  const players = search
+    ? state.players.filter(p => p.name.toLowerCase().includes(search))
+    : [...state.players].sort((a, b) => a.name.localeCompare(b.name));
+  if (!players.length) { el.innerHTML = `<p class="empty" style="padding:12px;">${t('Ingen treff')}</p>`; return; }
+  el.innerHTML = players.map(p => {
+    const isAssigned = _assignInstId === '__pending__'
+      ? (_instModalPendingPlayer?.id === p.id)
+      : (p.instruments || []).includes(_assignInstId);
+    return `<div class="inst-picker-item" onclick="quickAssignToPlayer('${p.id}')" style="cursor:pointer;grid-template-columns:auto 1fr auto;">
+      <span style="font-size:13px;color:var(--accent);">${isAssigned ? '✓' : ''}</span>
+      <div><div class="inst-picker-name">${p.name}</div><div class="inst-picker-meta">${t(p.section) || '—'}</div></div>
+    </div>`;
+  }).join('');
+}
+async function quickAssignToPlayer(playerId) {
+  const player = state.players.find(p => p.id === playerId);
+  if (!player || !_assignInstId) return;
+  // Pending mode (new instrument not yet saved) — just store the selection
+  if (_assignInstId === '__pending__') {
+    if (_instModalPendingPlayer?.id === playerId) {
+      _instModalPendingPlayer = null; // deselect
+    } else {
+      _instModalPendingPlayer = player;
+    }
+    const el = document.getElementById('inst-player-display');
+    if (el) el.textContent = _instModalPendingPlayer ? _instModalPendingPlayer.name + (_instModalPendingPlayer.section ? ' · ' + t(_instModalPendingPlayer.section) : '') : t('— Ingen —');
+    closeModal('assign-player-modal');
+    return;
+  }
+  // Already assigned to this player — unassign
+  if ((player.instruments || []).includes(_assignInstId)) {
+    const inst = state.instruments.find(i => i.id === _assignInstId);
+    if (!await appConfirm(t('Fjern tildeling?'), `${inst?.name || ''} — ${player.name}`, t('Ja'))) return;
+    const instruments = (player.instruments || []).filter(id => id !== _assignInstId);
+    await api('PUT', '/api/players/' + playerId, { name: player.name, section: player.section, contact: player.contact || '', instruments });
+    closeModal('assign-player-modal'); toast(t('Lagret!')); await loadAll(); refreshInstModalPlayer(); return;
+  }
+  // Check if assigned to another player first
+  const prevPlayer = state.players.find(p => p.id !== playerId && (p.instruments || []).includes(_assignInstId));
+  if (prevPlayer) {
+    const inst = state.instruments.find(i => i.id === _assignInstId);
+    if (!await appConfirm(t('Endre tildeling?'), `${inst?.name || ''}: ${prevPlayer.name} → ${player.name}`, t('Ja, endre tildeling'))) return;
+    const prevInsts = (prevPlayer.instruments || []).filter(id => id !== _assignInstId);
+    await api('PUT', '/api/players/' + prevPlayer.id, { name: prevPlayer.name, section: prevPlayer.section, contact: prevPlayer.contact || '', instruments: prevInsts });
+  }
+  const instruments = [...new Set([...(player.instruments || []), _assignInstId])];
+  await api('PUT', '/api/players/' + playerId, { name: player.name, section: player.section, contact: player.contact || '', instruments });
+  closeModal('assign-player-modal'); toast(t('Lagret!')); await loadAll(); refreshInstModalPlayer();
 }
 // --- CLICK-OUTSIDE: close details dropdowns ---
 document.addEventListener('click', e => {
@@ -2538,9 +2672,10 @@ function renderInstTable() {
       <td>${condBadge(inst.condition)}</td>
       <td>${checkCell}</td>
       <td style="color:${player?'var(--text)':'var(--text-faint)'};">${player?player.name:t('Ikke tildelt')}</td>
-      <td onclick="event.stopPropagation()"><div style="display:flex;gap:6px;flex-wrap:wrap;">
+      <td onclick="event.stopPropagation()" style="white-space:nowrap;"><div style="display:flex;gap:6px;flex-wrap:nowrap;">
         <button class="btn-sm" onclick="openQrModal('${inst.id}')" title="Vis QR-kode">QR</button>
         ${serviceBtn}
+        ${hasPerm('players_assign')?`<button class="btn-sm" onclick="openAssignPlayerModal('${inst.id}')">${t('Tildel')}</button>`:''}
         <button class="btn-sm" onclick="openInstModal('${inst.id}')">${t('Rediger')}</button>
         ${hasPerm('instruments_delete')?`<button class="btn-sm btn-danger" onclick="deleteInstrument('${inst.id}')">${t('Slett')}</button>`:''}
       </div></td></tr>`;
@@ -2588,8 +2723,19 @@ function openPlayerModal(id, viewOnly=false) {
       });
     });
   }
+  const instSearch = document.getElementById('inst-checkboxes-search');
+  if (instSearch) instSearch.value = '';
   openModal('player-modal');
   setModalViewMode('player-modal', viewOnly);
+}
+function filterInstCheckboxes(val) {
+  const search = val.trim().toLowerCase();
+  document.querySelectorAll('#inst-checkboxes .inst-picker-item').forEach(item => {
+    const name = (item.querySelector('.inst-picker-name')?.textContent || '').toLowerCase();
+    const meta = (item.querySelector('.inst-picker-meta')?.textContent || '').toLowerCase();
+    const id = (item.querySelector('.idbadge')?.textContent || '').toLowerCase();
+    item.style.display = (!search || name.includes(search) || meta.includes(search) || id.includes(search)) ? '' : 'none';
+  });
 }
 function closePlayerModal() { stopScanner(); closeModal('player-modal'); }
 
@@ -2828,7 +2974,7 @@ function renderServiceTable() {
       <td style="white-space:nowrap;">${fmtKr(s.cost)}</td>
       <td style="font-size:12px;color:var(--text-muted);white-space:nowrap;">${s.invoice_no||'—'}</td>
       <td>${nextBadge}</td>
-      <td onclick="event.stopPropagation()"><div style="display:flex;gap:6px;flex-wrap:wrap;">
+      <td onclick="event.stopPropagation()" style="white-space:nowrap;"><div style="display:flex;gap:6px;flex-wrap:nowrap;">
         ${deliverBtn}${pickupBtn}
         <button class="btn-sm" onclick="openServiceModal('${s.id}')">${t('Rediger')}</button>
         ${hasPerm('service_delete')?`<button class="btn-sm btn-danger" onclick="deleteService('${s.id}')">${t('Slett')}</button>`:''}
