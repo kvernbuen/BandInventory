@@ -101,6 +101,10 @@
     .btn-pickup:hover { background: #ddd6fe; }
     [data-theme="dark"] .btn-pickup { background: #2e1065; border-color: #6d28d9; color: #c084fc; }
     [data-theme="dark"] .btn-pickup:hover { background: #3b0764; }
+    .btn-deliver { font-size: 12px; padding: 5px 12px; border-radius: 7px; border: 1px solid #93c5fd; background: #dbeafe; cursor: pointer; color: #1d4ed8; font-family: inherit; }
+    .btn-deliver:hover { background: #bfdbfe; }
+    [data-theme="dark"] .btn-deliver { background: #1e3a5f; border-color: #2563eb; color: #93c5fd; }
+    [data-theme="dark"] .btn-deliver:hover { background: #1e40af; }
 
     /* SECTION HEADER */
     .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; flex-wrap: wrap; gap: 8px; }
@@ -428,7 +432,7 @@
     <div class="login-logo">
       <svg viewBox="0 0 28 28" fill="none"><path d="M8 17 Q11 11 14 11 Q17 11 20 17" stroke="white" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="8" cy="17" r="2.2" fill="white"/><circle cx="20" cy="17" r="2.2" fill="white"/></svg>
       <div class="login-logo-name">Korpsinventar</div>
-      <div class="login-logo-sub">v1.2.4</div>
+      <div class="login-logo-sub">v1.3.0</div>
     </div>
     <h2 data-i18n="Logg inn">Logg inn</h2>
     <form onsubmit="doLogin(event)">
@@ -456,7 +460,7 @@
     <div style="min-width:0;">
       <div id="sidebar-korpsname" class="logo-korpsname" style="display:none;"></div>
       <div class="logo-text" data-i18n="Korpsinventar">Korpsinventar</div>
-      <div class="logo-sub">v1.2.4</div>
+      <div class="logo-sub">v1.3.0</div>
     </div>
   </div>
   <nav class="sidebar-nav">
@@ -652,7 +656,7 @@
           <button class="btn-export" onclick="exportData('service','xlsx')" data-i18n="Eksporter Excel">Eksporter Excel</button>
           <button class="btn" onclick="printSection('service','Servicelogg')" data-i18n="🖨️ Skriv ut">🖨️ Skriv ut</button>
           <button class="btn" onclick="openServiceReport()" data-i18n="📊 Rapport">📊 Rapport</button>
-          <button class="btn" onclick="openTilHentingModal()" data-i18n="📦 Til henting">📦 Til henting</button>
+          <button class="btn" onclick="openTilHentingModal()" data-i18n="📦 Levering / henting">📦 Levering / henting</button>
           <button class="btn btn-primary" onclick="openServiceModal()" data-i18n="+ Logg service">+ Logg service</button>
         </div>
       </div>
@@ -661,6 +665,7 @@
         <details class="multiselect" id="svc-status-multiselect">
           <summary id="svc-status-summary" data-i18n="Status: Alle">Status: Alle</summary>
           <div class="multiselect-options">
+            <label><input type="checkbox" value="til_levering" onchange="toggleSvcFilter(this)"> <span data-i18n="Til levering">Til levering</span></label>
             <label><input type="checkbox" value="under_service" onchange="toggleSvcFilter(this)"> <span data-i18n="Under service">Under service</span></label>
             <label><input type="checkbox" value="til_henting" onchange="toggleSvcFilter(this)"> <span data-i18n="Til henting">Til henting</span></label>
             <label><input type="checkbox" value="ferdig" onchange="toggleSvcFilter(this)"> <span data-i18n="Ferdig">Ferdig</span></label>
@@ -977,14 +982,16 @@
     <h3 id="service-modal-title">Logg service</h3>
     <div class="form-grid">
       <div class="field"><label data-i18n="Innlevert dato *">Innlevert dato *</label><input type="date" id="svc-date"></div>
+      <div class="field" id="svc-player-search-field"><label data-i18n="Søk musikant">Søk musikant</label><input type="text" id="svc-player-search" oninput="onSvcPlayerSearch(this.value)" data-i18n-placeholder="Navn på musikant..." placeholder="Navn på musikant..."></div>
       <div class="field"><label data-i18n="Instrument *">Instrument *</label><select id="svc-inst"></select></div>
       <div class="field"><label data-i18n="Verksted (ekstern service)">Verksted (ekstern service)</label>
-        <select id="svc-workshop">
+        <select id="svc-workshop" onchange="updateSvcStatusSelect()">
           <option value="" data-i18n="— Intern / ingen verksted —">— Intern / ingen verksted —</option>
         </select>
       </div>
       <div class="field" id="svc-status-field" style="display:none;"><label data-i18n="Status">Status</label>
         <select id="svc-status">
+          <option value="til_levering" data-i18n="Til levering">Til levering</option>
           <option value="under_service" data-i18n="Under service">Under service</option>
           <option value="til_henting" data-i18n="Til henting">Til henting</option>
           <option value="ferdig" data-i18n="Ferdig">Ferdig</option>
@@ -993,13 +1000,13 @@
       <div class="field"><label data-i18n="Type">Type</label>
         <select id="svc-type"><option value="Rutinemessig vedlikehold" data-i18n="Rutinemessig vedlikehold">Rutinemessig vedlikehold</option><option value="Reparasjon" data-i18n="Reparasjon">Reparasjon</option><option value="Dybderens" data-i18n="Dybderens">Dybderens</option><option value="Pute-/filtbytte" data-i18n="Pute-/filtbytte">Pute-/filtbytte</option><option value="Ventilservice" data-i18n="Ventilservice">Ventilservice</option><option value="Annet" data-i18n="Annet">Annet</option></select>
       </div>
-      <div class="field"><label data-i18n="Ferdig dato">Ferdig dato</label><input type="date" id="svc-date-finished"></div>
+      <div class="field"><label data-i18n="Ferdig dato">Ferdig dato</label><input type="date" id="svc-date-finished" onchange="updateSvcStatusSelect()"></div>
       <div class="field"><label data-i18n="Kostnad">Kostnad</label><input type="number" id="svc-cost" placeholder="0" min="0"></div>
       <div class="field"><label data-i18n="Fakturanummer">Fakturanummer</label><input id="svc-invoice" data-i18n-placeholder="Fakturanr." placeholder="Fakturanr."></div>
       <div class="field"><label data-i18n="Utført av">Utført av</label><input id="svc-by" data-i18n-placeholder="Navn, verksted, osv." placeholder="Navn, verksted, osv."></div>
       <div class="field"><label data-i18n="Registrert av">Registrert av</label><input id="svc-registered-by" placeholder="Navn" readonly></div>
       <div class="field"><label data-i18n="Neste service (valgfritt)">Neste service (valgfritt)</label><input type="date" id="svc-next"></div>
-      <div class="field full"><label data-i18n="Beskrivelse">Beskrivelse</label><textarea id="svc-desc" data-i18n-placeholder="Hva ble gjort?" placeholder="Hva ble gjort?"></textarea></div>
+      <div class="field full"><label data-i18n="Beskrivelse">Beskrivelse</label><textarea id="svc-desc" data-i18n-placeholder="Hva skal gjøres / ble gjort?" placeholder="Hva skal gjøres / ble gjort?"></textarea></div>
     </div>
     <div class="modal-footer">
       <button class="btn" onclick="closeModal('service-modal')" data-i18n="Avbryt">Avbryt</button>
@@ -1106,12 +1113,13 @@
 <!-- Modal: Til henting -->
 <div id="til-henting-modal" class="modal-overlay">
   <div class="modal modal-wide">
-    <h3 data-i18n="Instrumenter til henting">Instrumenter til henting</h3>
-    <p style="font-size:12px;color:var(--text-muted);margin-bottom:1rem;" data-i18n="Ferdig servicet eksternt — venter på henting.">Ferdig servicet eksternt — venter på henting.</p>
+    <h3 data-i18n="Instrumenter til levering og henting">Instrumenter til levering og henting</h3>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:1rem;" data-i18n="Venter på levering til verksted, eller ferdig servicet og klar for henting.">Venter på levering til verksted, eller ferdig servicet og klar for henting.</p>
     <div id="til-henting-list"></div>
     <div class="modal-footer" style="justify-content:space-between;margin-top:1rem;">
       <button class="btn" onclick="closeModal('til-henting-modal')" data-i18n="Lukk">Lukk</button>
       <div style="display:flex;gap:8px;">
+        <button class="btn" onclick="printTilHentingModal()" data-i18n="🖨️ Skriv ut">🖨️ Skriv ut</button>
         <button class="btn-export" onclick="exportData('til-henting','csv')" data-i18n="Eksporter CSV">Eksporter CSV</button>
         <button class="btn-export" onclick="exportData('til-henting','xlsx')" data-i18n="Eksporter Excel">Eksporter Excel</button>
       </div>
@@ -1159,6 +1167,18 @@
     <div class="modal-footer">
       <button class="btn" onclick="closeModal('import-modal')" data-i18n="Avbryt">Avbryt</button>
       <button class="btn btn-primary" id="import-confirm-btn" style="display:none" onclick="confirmImport()" data-i18n="Importer">Importer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Generic app confirm -->
+<div id="app-confirm-modal" class="modal-overlay">
+  <div class="modal" style="max-width:400px;">
+    <h3 id="app-confirm-title"></h3>
+    <p id="app-confirm-msg" style="margin:0 0 1.5rem;line-height:1.5;color:var(--text);display:none;white-space:pre-line;"></p>
+    <div style="display:flex;gap:8px;justify-content:flex-end;">
+      <button class="btn" id="app-confirm-cancel" onclick="_appConfirmResolve(false)"></button>
+      <button class="btn" id="app-confirm-ok" onclick="_appConfirmResolve(true)"></button>
     </div>
   </div>
 </div>
@@ -1406,20 +1426,21 @@ const EN = {
   'Aktive': 'Active', 'Åpne': 'Open', 'Fullførte': 'Completed', 'Alle': 'All',
   // Condition / status values
   'God': 'Good', 'Akseptabel': 'Acceptable', 'Trenger service': 'Needs service',
-  'Under service': 'In service', 'Til henting': 'Ready for pickup', 'Ferdig': 'Done',
+  'Til levering': 'To be delivered', 'Under service': 'In service', 'Til henting': 'Ready for pickup', 'Ferdig': 'Done',
   'Fullført': 'Completed', 'Under arbeid': 'In progress', 'Åpen': 'Open', 'Åpne': 'Open',
   'Tomt': 'Empty', 'Lavt': 'Low', 'OK': 'OK',
   // Action buttons
   'Rediger': 'Edit', 'Slett': 'Delete', 'Lagre': 'Save', 'Avbryt': 'Cancel',
   'Lukk': 'Close', 'Lager': 'Inventory',
-  '✓ Hentet': '✓ Picked up', 'Gjenåpne': 'Reopen', 'Kvitter ut': 'Complete',
+  '✓ Hentet': '✓ Picked up', '✓ Levert': '✓ Delivered', 'Gjenåpne': 'Reopen', 'Kvitter ut': 'Complete',
   'Sett under arbeid': 'Set in progress', 'Tilbake til åpen': 'Back to open',
-  'Ja, endre tildeling': 'Yes, change assignment',
+  'Ja, endre tildeling': 'Yes, change assignment', 'Ja, registrer': 'Yes, register',
   // Modal titles
   'Legg til instrument': 'Add instrument', 'Rediger instrument': 'Edit instrument',
   'Logg service': 'Log service', 'Rediger serviceoppføring': 'Edit service entry',
   'Serviceoppføring': 'Service entry',
   'Legg til musiker': 'Add musician', 'Rediger musiker': 'Edit musician', 'Musiker': 'Musician',
+  'Søk musikant': 'Search musician', 'Navn på musikant...': 'Musician name...',
   'Legg til vare': 'Add item', 'Rediger vare': 'Edit item',
   'Legg til gjøremål': 'Add task', 'Rediger gjøremål': 'Edit task', 'Gjøremål': 'Task',
   'Rediger verksted': 'Edit workshop', 'Legg til verksted': 'Add workshop',
@@ -1429,6 +1450,10 @@ const EN = {
   'Endre tildeling?': 'Change assignment?', 'Endre passord': 'Change password',
   'Juster lager': 'Adjust inventory',
   'Instrumenter til henting': 'Instruments ready for pickup',
+  'Instrumenter til levering og henting': 'Instruments for delivery and pickup',
+  'Venter på levering til verksted, eller ferdig servicet og klar for henting.': 'Waiting for delivery to workshop, or service completed and ready for pickup.',
+  'Ingen instrumenter venter på levering eller henting.': 'No instruments waiting for delivery or pickup.',
+  '📦 Levering / henting': '📦 Delivery / pickup',
   'QR-kode': 'QR code',
   // Toast messages
   'Lagret!': 'Saved!', 'Slettet': 'Deleted',
@@ -1514,6 +1539,10 @@ const EN = {
   'Slette denne leverandøren?': 'Delete this supplier?',
   'Slett denne brukeren?': 'Delete this user?',
   'Bekreft at instrumentet er hentet?': 'Confirm instrument has been picked up?',
+  'Bekreft at instrumentet er levert til service?': 'Confirm the instrument has been delivered for service?',
+  'Kvittert som levert til service!': 'Confirmed as delivered for service!',
+  'Dette instrumentet har allerede en aktiv service': 'This instrument already has an active service entry',
+  'Vil du registrere en sekundær service på dette instrumentet?': 'Do you want to register a secondary service for this instrument?',
   // Permission labels
   'Instrumenter: Les': 'Instruments: Read', 'Instrumenter: Rediger': 'Instruments: Edit',
   'Instrumenter: Slett': 'Instruments: Delete',
@@ -1574,7 +1603,7 @@ const EN = {
   '… eller lim inn CSV-innhold direkte': '… or paste CSV content directly',
   'Forhåndsvis': 'Preview', 'Importer': 'Import', 'Importer fra CSV': 'Import from CSV',
   'Lagre passord': 'Save password', 'Slett bruker': 'Delete user',
-  'Oppdater': 'Update', 'Legg til': 'Add', 'Nei': 'No',
+  'Oppdater': 'Update', 'Legg til': 'Add', 'Nei': 'No', 'Ja': 'Yes',
   // Modal titles and static text
   'Rapport — servicekostnad per verksted': 'Report — service cost by workshop',
   'Rapport — varekostnad per kategori': 'Report — item cost by category',
@@ -1586,6 +1615,7 @@ const EN = {
   'Telefon eller e-post': 'Phone or email',
   'Navn, verksted, osv.': 'Name, workshop, etc.',
   'Hva ble gjort?': 'What was done?',
+  'Hva skal gjøres / ble gjort?': 'What needs to be / was done?',
   'f.eks. Rørblad str. 2,5, Ventilolje': 'e.g. Reed size 2.5, Valve oil',
   'Velg eller skriv ny kategori': 'Select or enter new category',
   'Velg instrument': 'Select instrument', 'Velg vare': 'Select item',
@@ -1791,16 +1821,46 @@ function navigateTo(sid, addHistory = true) {
   closeMobileMenu();
 }
 document.querySelectorAll('.nav-item[data-section]').forEach(btn => {
-  btn.addEventListener('click', () => navigateTo(btn.dataset.section));
+  btn.addEventListener('click', () => {
+    clearFiltersForSection(btn.dataset.section);
+    navigateTo(btn.dataset.section);
+  });
 });
+function clearFiltersForSection(sid) {
+  if (sid === 'instrumenter') clearInstFilters();
+  else if (sid === 'musikanter') clearPlayerFilters();
+  else if (sid === 'service') clearSvcFilters();
+  else if (sid === 'tilbehor') clearAccFilters();
+  else if (sid === 'gjoremal') clearTodoFilter();
+}
 
 function openModal(id) { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 document.querySelectorAll('.modal-overlay').forEach(o => {
   o.addEventListener('click', e => {
-    if (e.target === o) { stopScanner(); stopBarcodeScanner(); stopTodoScanner(); o.classList.remove('open'); }
+    if (e.target === o) {
+      stopScanner(); stopBarcodeScanner(); stopTodoScanner();
+      o.classList.remove('open');
+      if (o.id === 'app-confirm-modal' && _appConfirmResolve) _appConfirmResolve(false);
+    }
   });
 });
+
+let _appConfirmResolve = null;
+function appConfirm(title, message = '', confirmLabel = '', isDanger = false) {
+  return new Promise(resolve => {
+    document.getElementById('app-confirm-title').textContent = title;
+    const msgEl = document.getElementById('app-confirm-msg');
+    if (message) { msgEl.textContent = message; msgEl.style.display = ''; }
+    else { msgEl.style.display = 'none'; }
+    document.getElementById('app-confirm-cancel').textContent = t('Avbryt');
+    const okBtn = document.getElementById('app-confirm-ok');
+    okBtn.textContent = confirmLabel || t('Ja');
+    okBtn.className = 'btn ' + (isDanger ? 'btn-danger' : 'btn-primary');
+    _appConfirmResolve = val => { closeModal('app-confirm-modal'); _appConfirmResolve = null; resolve(val); };
+    openModal('app-confirm-modal');
+  });
+}
 
 // --- HELPERS ---
 function fmt(n) { return (n||0).toLocaleString('nb-NO', { minimumFractionDigits: 0, maximumFractionDigits: 2 }); }
@@ -1808,6 +1868,7 @@ function cur() { return state.settings['currency'] || 'kr'; }
 function fmtKr(n) { return n ? fmt(n) + ' ' + cur() : '—'; }
 
 function getServiceStatus(s) {
+  if (s.delivered === 0) return { key: 'til_levering', label: t('Til levering'), cls: 'badge-info' };
   if (!s.date_finished) return { key: 'under_service', label: t('Under service'), cls: 'badge-warn' };
   if (s.workshop_id && !s.picked_up) return { key: 'til_henting', label: t('Til henting'), cls: 'badge-purple' };
   return { key: 'ferdig', label: t('Ferdig'), cls: 'badge-ok' };
@@ -1820,6 +1881,40 @@ function condBadge(c) {
 }
 function idbadge(kid) { return kid ? `<span class="idbadge">${kid}</span>` : ''; }
 function exportData(type, format) { window.location.href = `/api/export/${type}/${format}`; }
+
+function printTilHentingModal() {
+  const title = t('Instrumenter til levering og henting');
+  const korpsname = state.settings['korps-name'] || '';
+  const dateStr = new Date().toLocaleDateString();
+  const el = document.getElementById('til-henting-list');
+  if (!el) return;
+  const clone = el.cloneNode(true);
+  clone.querySelectorAll('button').forEach(b => b.remove());
+  const html = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>' + title + '</title><style>'
+    + 'body{font-family:Arial,sans-serif;font-size:12px;color:#000;margin:24px;}'
+    + 'h1{font-size:15px;margin:0 0 2px;font-weight:700;}'
+    + '.meta{font-size:11px;color:#666;margin-bottom:14px;}'
+    + '.th-list-item{border:1px solid #e5e7eb;border-radius:6px;padding:10px 12px;margin-bottom:8px;}'
+    + '.th-list-item-title{font-weight:600;font-size:13px;margin-bottom:4px;display:flex;align-items:center;gap:8px;}'
+    + '.th-list-item-meta{font-size:11px;color:#555;margin-top:2px;}'
+    + '.badge,.idbadge{display:inline-block;font-size:10px;padding:1px 5px;border-radius:4px;background:#e5e7eb;border:1px solid #d1d5db;}'
+    + '.badge-ok{background:#dcfce7;border-color:#bbf7d0;}'
+    + '.badge-warn{background:#fef9c3;border-color:#fde047;}'
+    + '.badge-purple{background:#ede9fe;border-color:#c4b5fd;}'
+    + '.badge-info{background:#dbeafe;border-color:#bfdbfe;}'
+    + '.idbadge{background:#eef2ff;border-color:#c7d2fe;color:#3730a3;font-family:monospace;}'
+    + '@media print{@page{margin:1.5cm;size:A4;}}'
+    + '</style></head><body>'
+    + '<h1>' + title + '</h1>'
+    + '<div class="meta">' + (korpsname ? korpsname + ' · ' : '') + dateStr + '</div>'
+    + clone.innerHTML
+    + '</body></html>';
+  const win = window.open('', '_blank');
+  win.document.write(html);
+  win.document.close();
+  win.focus();
+  win.print();
+}
 
 function printSection(sectionId, titleKey) {
   const title = t(titleKey);
@@ -2121,7 +2216,7 @@ async function saveInstrument() {
   closeModal('inst-modal'); toast(t('Lagret!')); await loadAll();
 }
 async function deleteInstrument(id) {
-  if (!confirm(t('Slette dette instrumentet?'))) return;
+  if (!await appConfirm(t('Slette dette instrumentet?'), '', t('Slett'), true)) return;
   await api('DELETE', '/api/instruments/'+id); toast(t('Slettet')); await loadAll();
 }
 function openServiceForInstrument(instId) {
@@ -2251,7 +2346,7 @@ function syncSortHeaders(tableKey) {
 function setSvcStatusFilter(values) {
   svcStatusFilter.clear();
   values.forEach(v => svcStatusFilter.add(v));
-  const labels = {under_service:t('Under service'), til_henting:t('Til henting'), ferdig:t('Ferdig')};
+  const labels = {til_levering:t('Til levering'), under_service:t('Under service'), til_henting:t('Til henting'), ferdig:t('Ferdig')};
   document.getElementById('svc-status-summary').textContent = svcStatusFilter.size === 0 ? t('Status: Alle') : t('Status') + ': ' + [...svcStatusFilter].map(k => labels[k]||k).join(', ');
   document.getElementById('svc-status-multiselect')?.classList.toggle('filter-active', svcStatusFilter.size > 0);
   document.querySelectorAll('#svc-status-options input[type=checkbox]').forEach(cb => { cb.checked = svcStatusFilter.has(cb.value); });
@@ -2260,7 +2355,7 @@ function setSvcStatusFilter(values) {
 function toggleSvcFilter(cb) {
   if (cb.checked) svcStatusFilter.add(cb.value); else svcStatusFilter.delete(cb.value);
   const ms = document.getElementById('svc-status-multiselect');
-  document.getElementById('svc-status-summary').textContent = svcStatusFilter.size === 0 ? t('Status: Alle') : t('Status') + ': ' + [...svcStatusFilter].map(k => ({under_service:t('Under service'),til_henting:t('Til henting'),ferdig:t('Ferdig')}[k]||k)).join(', ');
+  document.getElementById('svc-status-summary').textContent = svcStatusFilter.size === 0 ? t('Status: Alle') : t('Status') + ': ' + [...svcStatusFilter].map(k => ({til_levering:t('Til levering'),under_service:t('Under service'),til_henting:t('Til henting'),ferdig:t('Ferdig')}[k]||k)).join(', ');
   ms.classList.toggle('filter-active', svcStatusFilter.size > 0);
   renderServiceTable();
 }
@@ -2529,7 +2624,7 @@ async function savePlayer() {
   closeModal('player-modal'); toast(t('Lagret!')); await loadAll();
 }
 async function deletePlayer(id) {
-  if (!confirm(t('Slette denne musikanten?'))) return;
+  if (!await appConfirm(t('Slette denne musikanten?'), '', t('Slett'), true)) return;
   await api('DELETE', '/api/players/'+id); toast(t('Slettet')); await loadAll();
 }
 function renderPlayerTable() {
@@ -2574,9 +2669,16 @@ function openServiceModal(id, viewOnly=false) {
   document.getElementById('svc-date-finished').value = s?.date_finished || '';
   document.getElementById('svc-invoice').value = s?.invoice_no || '';
   document.getElementById('svc-registered-by').value = s?.registered_by || (!s ? (state.currentUser?.displayName || state.currentUser?.username || '') : '');
-  document.getElementById('svc-inst').innerHTML = state.instruments.map(i =>
-    `<option value="${i.id}"${s&&s.inst_id===i.id?' selected':''}>${i.korps_id?i.korps_id+' — ':''}${i.name}</option>`
-  ).join('');
+  const playersByInst = {};
+  state.players.forEach(p => { (p.instruments||[]).forEach(iid => { playersByInst[iid] = p.name; }); });
+  document.getElementById('svc-inst').innerHTML = state.instruments.map(i => {
+    const pName = playersByInst[i.id];
+    return `<option value="${i.id}"${s&&s.inst_id===i.id?' selected':''}>${i.korps_id?i.korps_id+' — ':''}${i.name}${pName?' ('+pName+')':''}</option>`;
+  }).join('');
+  const playerSearchField = document.getElementById('svc-player-search-field');
+  const playerSearchInput = document.getElementById('svc-player-search');
+  playerSearchField.style.display = s ? 'none' : '';
+  playerSearchInput.value = '';
   document.getElementById('svc-workshop').innerHTML =
     '<option value="">— Intern / ingen verksted —</option>' +
     state.workshops.map(w => `<option value="${w.id}"${s&&s.workshop_id===w.id?' selected':''}>${w.name}</option>`).join('');
@@ -2591,6 +2693,36 @@ function openServiceModal(id, viewOnly=false) {
   openModal('service-modal');
   setModalViewMode('service-modal', viewOnly);
 }
+function onSvcPlayerSearch(val) {
+  const search = val.trim().toLowerCase();
+  const playersByInst = {};
+  state.players.forEach(p => { (p.instruments||[]).forEach(iid => { playersByInst[iid] = p.name; }); });
+  const instruments = search
+    ? state.instruments.filter(i => {
+        const pName = (playersByInst[i.id] || '').toLowerCase();
+        return pName.includes(search);
+      })
+    : state.instruments;
+  const currentVal = document.getElementById('svc-inst').value;
+  document.getElementById('svc-inst').innerHTML = instruments.map(i => {
+    const pName = playersByInst[i.id];
+    return `<option value="${i.id}"${i.id===currentVal?' selected':''}>${i.korps_id?i.korps_id+' — ':''}${i.name}${pName?' ('+pName+')':''}</option>`;
+  }).join('');
+}
+function updateSvcStatusSelect() {
+  const statusField = document.getElementById('svc-status-field');
+  if (!statusField || statusField.style.display === 'none') return;
+  const dateVal = document.getElementById('svc-date-finished').value;
+  const workshopVal = document.getElementById('svc-workshop').value;
+  const sel = document.getElementById('svc-status');
+  if (!dateVal) {
+    if (sel.value !== 'til_levering') sel.value = 'under_service';
+  } else if (workshopVal) {
+    if (sel.value === 'under_service' || sel.value === 'til_levering') sel.value = 'til_henting';
+  } else {
+    if (sel.value === 'under_service' || sel.value === 'til_levering') sel.value = 'ferdig';
+  }
+}
 async function saveService() {
   const body = {
     date: document.getElementById('svc-date').value,
@@ -2603,23 +2735,37 @@ async function saveService() {
     date_finished: document.getElementById('svc-date-finished').value || null,
     workshop_id: document.getElementById('svc-workshop').value || null,
     picked_up: 0,
+    delivered: document.getElementById('svc-workshop').value ? 0 : 1,
     invoice_no: document.getElementById('svc-invoice').value.trim() || null,
     registered_by: document.getElementById('svc-registered-by').value.trim() || null
   };
   if (!body.inst_id || !body.date) return;
+  // Warn if instrument already has an active service (new entry only)
+  if (!editingId.service) {
+    const activeService = state.service.find(s => s.inst_id === body.inst_id && getServiceStatus(s).key !== 'ferdig');
+    if (activeService) {
+      const statusLabel = getServiceStatus(activeService).label;
+      const inst = state.instruments.find(i => i.id === body.inst_id);
+      const instName = inst ? (inst.korps_id ? inst.korps_id + ' — ' + inst.name : inst.name) : body.inst_id;
+      if (!await appConfirm(
+        t('Dette instrumentet har allerede en aktiv service'),
+        instName + ' — ' + t('Status') + ': ' + statusLabel + '\n' + t('Vil du registrere en sekundær service på dette instrumentet?'),
+        t('Ja, registrer')
+      )) return;
+    }
+  }
   // Apply status override when editing
   if (editingId.service && document.getElementById('svc-status-field').style.display !== 'none') {
     const sv = document.getElementById('svc-status').value;
     const today = new Date().toISOString().split('T')[0];
-    if (sv === 'under_service') {
-      body.date_finished = null;
-      body.picked_up = 0;
+    if (sv === 'til_levering') {
+      body.delivered = 0; body.date_finished = null; body.picked_up = 0;
+    } else if (sv === 'under_service') {
+      body.delivered = 1; body.date_finished = null; body.picked_up = 0;
     } else if (sv === 'til_henting') {
-      body.date_finished = body.date_finished || today;
-      body.picked_up = 0;
+      body.delivered = 1; body.date_finished = body.date_finished || today; body.picked_up = 0;
     } else { // ferdig
-      body.date_finished = body.date_finished || today;
-      body.picked_up = body.workshop_id ? 1 : 0;
+      body.delivered = 1; body.date_finished = body.date_finished || today; body.picked_up = body.workshop_id ? 1 : 0;
     }
   }
   if (editingId.service) await api('PUT', '/api/service/'+editingId.service, body);
@@ -2627,12 +2773,16 @@ async function saveService() {
   closeModal('service-modal'); toast(t('Lagret!')); await loadAll();
 }
 async function deleteService(id) {
-  if (!confirm(t('Slette denne oppføringen?'))) return;
+  if (!await appConfirm(t('Slette denne oppføringen?'), '', t('Slett'), true)) return;
   await api('DELETE', '/api/service/'+id); toast(t('Slettet')); await loadAll();
 }
 async function pickupService(id) {
-  if (!confirm(t('Bekreft at instrumentet er hentet?'))) return;
+  if (!await appConfirm(t('Bekreft at instrumentet er hentet?'))) return;
   await api('POST', `/api/service/${id}/pickup`); toast(t('Kvittert ut som hentet!')); await loadAll();
+}
+async function deliverService(id) {
+  if (!await appConfirm(t('Bekreft at instrumentet er levert til service?'))) return;
+  await api('POST', `/api/service/${id}/deliver`); toast(t('Kvittert som levert til service!')); await loadAll();
 }
 function renderServiceTable() {
   const tb = document.getElementById('service-table');
@@ -2664,6 +2814,8 @@ function renderServiceTable() {
     const nextBadge = !s.next_due ? '—'
       : s.next_due < today ? `<span class="badge badge-bad">${s.next_due} — ${overdueWord}</span>`
       : `<span class="badge badge-ok">${s.next_due}</span>`;
+    const deliverBtn = status.key === 'til_levering'
+      ? `<button class="btn-deliver" onclick="deliverService('${s.id}')">${t('✓ Levert')}</button>` : '';
     const pickupBtn = status.key === 'til_henting'
       ? `<button class="btn-pickup" onclick="pickupService('${s.id}')">${t('✓ Hentet')}</button>` : '';
     return `<tr class="row-link" onclick="openServiceModal('${s.id}', true)">
@@ -2677,7 +2829,7 @@ function renderServiceTable() {
       <td style="font-size:12px;color:var(--text-muted);white-space:nowrap;">${s.invoice_no||'—'}</td>
       <td>${nextBadge}</td>
       <td onclick="event.stopPropagation()"><div style="display:flex;gap:6px;flex-wrap:wrap;">
-        ${pickupBtn}
+        ${deliverBtn}${pickupBtn}
         <button class="btn-sm" onclick="openServiceModal('${s.id}')">${t('Rediger')}</button>
         ${hasPerm('service_delete')?`<button class="btn-sm btn-danger" onclick="deleteService('${s.id}')">${t('Slett')}</button>`:''}
       </div></td></tr>`;
@@ -2757,7 +2909,7 @@ async function saveWorkshopEdit() {
   await loadAll();
 }
 async function deleteWorkshop(id) {
-  if (!confirm(t('Slette dette verkstedet?'))) return;
+  if (!await appConfirm(t('Slette dette verkstedet?'), '', t('Slett'), true)) return;
   await api('DELETE', '/api/workshops/'+id); toast(t('Slettet')); await loadAll();
 }
 
@@ -2799,38 +2951,71 @@ async function saveSupplierEdit() {
   await loadAll();
 }
 async function deleteSupplier(id) {
-  if (!confirm(t('Slette denne leverandøren?'))) return;
+  if (!await appConfirm(t('Slette denne leverandøren?'), '', t('Slett'), true)) return;
   await api('DELETE', '/api/suppliers/'+id); toast(t('Slettet')); await loadAll();
 }
 
 // --- TIL HENTING MODAL ---
 function openTilHentingModal() {
-  const tilHenting = state.service.filter(s => getServiceStatus(s).key === 'til_henting');
+  const pending = state.service.filter(s => ['til_levering','til_henting'].includes(getServiceStatus(s).key));
   const el = document.getElementById('til-henting-list');
-  if (!tilHenting.length) {
-    el.innerHTML = `<p class="empty" style="padding:1.5rem 0;">${t('Ingen instrumenter venter på henting.')}</p>`;
-  } else {
-    el.innerHTML = tilHenting.map(s => {
+  if (!pending.length) {
+    el.innerHTML = `<p class="empty" style="padding:1.5rem 0;">${t('Ingen instrumenter venter på levering eller henting.')}</p>`;
+    openModal('til-henting-modal');
+    return;
+  }
+  // Group by workshop, sorted by workshop name
+  const wsMap = {};
+  pending.forEach(s => {
+    const key = s.workshop_id || '__none__';
+    if (!wsMap[key]) wsMap[key] = [];
+    wsMap[key].push(s);
+  });
+  const wsOrder = Object.keys(wsMap).sort((a, b) => {
+    const nameA = (a === '__none__' ? '' : state.workshops.find(w => w.id === a)?.name || '').toLowerCase();
+    const nameB = (b === '__none__' ? '' : state.workshops.find(w => w.id === b)?.name || '').toLowerCase();
+    return nameA.localeCompare(nameB);
+  });
+  el.innerHTML = wsOrder.map(wsKey => {
+    const ws = wsKey === '__none__' ? null : state.workshops.find(w => w.id === wsKey);
+    const items = wsMap[wsKey].sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+    const wsHeader = `<div style="font-weight:700;font-size:13px;padding:6px 0 5px;border-bottom:2px solid var(--border-md);margin-bottom:4px;display:flex;align-items:center;gap:10px;">
+      <span>${ws ? ws.name : t('Intern service')}</span>
+      ${ws?.contact ? `<span style="font-weight:400;font-size:12px;color:var(--text-muted);">${ws.contact}</span>` : ''}
+      ${ws?.address ? `<span style="font-weight:400;font-size:12px;color:var(--text-muted);">${ws.address}</span>` : ''}
+    </div>`;
+    const rows = items.map(s => {
+      const status = getServiceStatus(s);
       const inst = state.instruments.find(i => i.id === s.inst_id);
-      const ws = state.workshops.find(w => w.id === s.workshop_id);
+      const actionBtn = status.key === 'til_levering'
+        ? `<button class="btn-deliver" onclick="deliverFromModal('${s.id}')">${t('✓ Levert')}</button>`
+        : `<button class="btn-pickup" onclick="pickupFromModal('${s.id}')">${t('✓ Hentet')}</button>`;
+      const dateLine = status.key === 'til_levering'
+        ? `${t('Innlevert')}: ${s.date}`
+        : `${t('Innlevert')}: ${s.date} &nbsp;·&nbsp; ${t('Ferdig')}: ${s.date_finished}`;
       return `<div class="th-list-item">
         <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
           <div>
-            <div class="th-list-item-title">${inst?.name||t('Ukjent')} ${idbadge(inst?.korps_id)}</div>
-            <div class="th-list-item-meta">${t('Verksted')}: <strong>${ws?.name||'—'}</strong>${ws?.contact?' · '+ws.contact:''}</div>
-            <div class="th-list-item-meta">${t('Innlevert')}: ${s.date} &nbsp;·&nbsp; ${t('Ferdig')}: ${s.date_finished}</div>
+            <div class="th-list-item-title" style="display:flex;align-items:center;gap:8px;">${inst?.name||t('Ukjent')} ${idbadge(inst?.korps_id)} <span class="badge ${status.cls}" style="font-size:11px;">${status.label}</span></div>
+            <div class="th-list-item-meta">${dateLine}</div>
             ${s.desc?`<div class="th-list-item-meta">${s.desc}</div>`:''}
           </div>
-          <button class="btn-pickup" onclick="pickupFromModal('${s.id}')">${t('✓ Hentet')}</button>
+          ${actionBtn}
         </div>
       </div>`;
     }).join('');
-  }
+    return `<div style="margin-bottom:18px;">${wsHeader}${rows}</div>`;
+  }).join('');
   openModal('til-henting-modal');
 }
 async function pickupFromModal(id) {
-  if (!confirm(t('Bekreft at instrumentet er hentet?'))) return;
+  if (!await appConfirm(t('Bekreft at instrumentet er hentet?'))) return;
   await api('POST', `/api/service/${id}/pickup`); toast(t('Kvittert ut som hentet!'));
+  await loadAll(); openTilHentingModal();
+}
+async function deliverFromModal(id) {
+  if (!await appConfirm(t('Bekreft at instrumentet er levert til service?'))) return;
+  await api('POST', `/api/service/${id}/deliver`); toast(t('Kvittert som levert til service!'));
   await loadAll(); openTilHentingModal();
 }
 
@@ -2887,7 +3072,7 @@ async function saveAccessory() {
   closeAccModal(); toast(t('Lagret!')); await loadAll();
 }
 async function deleteAccessory(id) {
-  if (!confirm(t('Slette denne varen?'))) return;
+  if (!await appConfirm(t('Slette denne varen?'), '', t('Slett'), true)) return;
   await api('DELETE', '/api/accessories/'+id); toast(t('Slettet')); await loadAll();
 }
 function openAdjust(id) {
@@ -3613,7 +3798,7 @@ function renderTodos() {
     let refSub = t('Generell');
     if (td.type === 'instrument' && td.ref_id) {
       const i = state.instruments.find(x => x.id === td.ref_id);
-      refLabel = i ? `<span class="badge badge-gray">${t('Instrumenter')}</span> <span style="font-size:12px;">${i.name}${i.korps_id?' '+idbadge(i.korps_id):''}</span>` : `<span class="badge badge-gray">${t('Instrumenter')}</span>`;
+      refLabel = i ? `<span class="badge badge-info">${t('Instrumenter')}</span> <span style="font-size:12px;">${i.name}${i.korps_id?' '+idbadge(i.korps_id):''}</span>` : `<span class="badge badge-info">${t('Instrumenter')}</span>`;
       refSub = i ? `${i.name}${i.korps_id?' ('+i.korps_id+')':''}` : t('Instrumenter');
     } else if (td.type === 'accessory' && td.ref_id) {
       const a = state.accessories.find(x => x.id === td.ref_id);
@@ -3840,7 +4025,7 @@ async function saveTodo() {
 }
 
 async function deleteTodo(id) {
-  if (!confirm(t('Slette dette gjøremålet?'))) return;
+  if (!await appConfirm(t('Slette dette gjøremålet?'), '', t('Slett'), true)) return;
   await api('DELETE', '/api/todos/' + id);
   toast(t('Slettet'));
   await loadAll();
@@ -4024,7 +4209,7 @@ async function saveUser() {
   }
 }
 async function deleteUser(id) {
-  if (!confirm(t('Slett denne brukeren?'))) return;
+  if (!await appConfirm(t('Slett denne brukeren?'), '', t('Slett'), true)) return;
   try {
     await api('DELETE', `/api/users/${id}`);
     closeModal('user-modal');

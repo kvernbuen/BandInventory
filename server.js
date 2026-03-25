@@ -88,6 +88,7 @@ try { db.exec('ALTER TABLE instruments ADD COLUMN purchase_price REAL'); } catch
 try { db.exec('ALTER TABLE players ADD COLUMN registered_by TEXT'); } catch(e) {}
 try { db.exec('ALTER TABLE service ADD COLUMN registered_by TEXT'); } catch(e) {}
 try { db.exec('ALTER TABLE accessories ADD COLUMN registered_by TEXT'); } catch(e) {}
+try { db.exec('ALTER TABLE service ADD COLUMN delivered INTEGER DEFAULT 1'); } catch(e) {}
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS instruments (
@@ -276,17 +277,17 @@ app.get('/api/service', requirePerm('service_read'), (_req, res) => {
 });
 
 app.post('/api/service', requirePerm('service_write'), (req, res) => {
-  const { date, inst_id, type, cost, by_whom, desc, next_due, date_finished, workshop_id, invoice_no, registered_by } = req.body;
+  const { date, inst_id, type, cost, by_whom, desc, next_due, date_finished, workshop_id, invoice_no, registered_by, delivered } = req.body;
   const id = uid();
-  db.prepare('INSERT INTO service (id,date,inst_id,type,cost,by_whom,desc,next_due,date_finished,workshop_id,picked_up,invoice_no,registered_by) VALUES (?,?,?,?,?,?,?,?,?,?,0,?,?)')
-    .run(id, date, inst_id, type, cost, by_whom||null, desc||null, next_due||null, date_finished||null, workshop_id||null, invoice_no||null, registered_by||null);
+  db.prepare('INSERT INTO service (id,date,inst_id,type,cost,by_whom,desc,next_due,date_finished,workshop_id,picked_up,invoice_no,registered_by,delivered) VALUES (?,?,?,?,?,?,?,?,?,?,0,?,?,?)')
+    .run(id, date, inst_id, type, cost, by_whom||null, desc||null, next_due||null, date_finished||null, workshop_id||null, invoice_no||null, registered_by||null, delivered??0);
   res.json({ id });
 });
 
 app.put('/api/service/:id', requirePerm('service_write'), (req, res) => {
-  const { date, inst_id, type, cost, by_whom, desc, next_due, date_finished, workshop_id, picked_up, invoice_no, registered_by } = req.body;
-  db.prepare('UPDATE service SET date=?,inst_id=?,type=?,cost=?,by_whom=?,desc=?,next_due=?,date_finished=?,workshop_id=?,picked_up=?,invoice_no=?,registered_by=? WHERE id=?')
-    .run(date, inst_id, type, cost, by_whom||null, desc||null, next_due||null, date_finished||null, workshop_id||null, picked_up??0, invoice_no||null, registered_by||null, req.params.id);
+  const { date, inst_id, type, cost, by_whom, desc, next_due, date_finished, workshop_id, picked_up, invoice_no, registered_by, delivered } = req.body;
+  db.prepare('UPDATE service SET date=?,inst_id=?,type=?,cost=?,by_whom=?,desc=?,next_due=?,date_finished=?,workshop_id=?,picked_up=?,invoice_no=?,registered_by=?,delivered=? WHERE id=?')
+    .run(date, inst_id, type, cost, by_whom||null, desc||null, next_due||null, date_finished||null, workshop_id||null, picked_up??0, invoice_no||null, registered_by||null, delivered??1, req.params.id);
   res.json({ ok: true });
 });
 
@@ -297,6 +298,11 @@ app.delete('/api/service/:id', requirePerm('service_delete'), (req, res) => {
 
 app.post('/api/service/:id/pickup', requirePerm('service_write'), (req, res) => {
   db.prepare('UPDATE service SET picked_up=1 WHERE id=?').run(req.params.id);
+  res.json({ ok: true });
+});
+
+app.post('/api/service/:id/deliver', requirePerm('service_write'), (req, res) => {
+  db.prepare('UPDATE service SET delivered=1 WHERE id=?').run(req.params.id);
   res.json({ ok: true });
 });
 
@@ -602,7 +608,7 @@ app.get('/api/export/:type/:format', requireAuth, async (req, res) => {
     service.forEach(s => {
       const inst = instruments.find(i => i.id === s.inst_id);
       const ws = workshops.find(w => w.id === s.workshop_id);
-      const status = !s.date_finished ? 'Under service' : (s.workshop_id && !s.picked_up) ? 'Til henting' : 'Ferdig';
+      const status = s.delivered === 0 ? 'Til levering' : !s.date_finished ? 'Under service' : (s.workshop_id && !s.picked_up) ? 'Til henting' : 'Ferdig';
       rows.push([s.date, s.date_finished || '', inst?.korps_id || '', inst?.name || '', s.type, s.desc || '', s.by_whom || '', ws?.name || '', status, s.cost || 0, s.invoice_no || '', s.next_due || '']);
     });
 
@@ -620,16 +626,17 @@ app.get('/api/export/:type/:format', requireAuth, async (req, res) => {
     });
 
   } else if (type === 'til-henting') {
-    sheetName = 'Til henting';
-    const service = db.prepare("SELECT * FROM service WHERE date_finished IS NOT NULL AND workshop_id IS NOT NULL AND picked_up=0 ORDER BY date_finished").all();
+    sheetName = 'Levering og henting';
+    const service = db.prepare("SELECT * FROM service WHERE (delivered=0) OR (delivered=1 AND date_finished IS NOT NULL AND workshop_id IS NOT NULL AND picked_up=0) ORDER BY date").all();
     const instruments = db.prepare('SELECT * FROM instruments').all();
     const workshops = db.prepare('SELECT * FROM workshops').all();
 
-    rows.push(['Innlevert dato', 'Ferdig dato', 'Instrument-ID', 'Instrument', 'Type', 'Beskrivelse', 'Verksted', 'Kostnad (kr)']);
+    rows.push(['Status', 'Innlevert dato', 'Ferdig dato', 'Instrument-ID', 'Instrument', 'Type', 'Beskrivelse', 'Verksted', 'Kostnad (kr)']);
     service.forEach(s => {
       const inst = instruments.find(i => i.id === s.inst_id);
       const ws = workshops.find(w => w.id === s.workshop_id);
-      rows.push([s.date, s.date_finished, inst?.korps_id || '', inst?.name || '', s.type, s.desc || '', ws?.name || '', s.cost || 0]);
+      const status = s.delivered === 0 ? 'Til levering' : 'Til henting';
+      rows.push([status, s.date, s.date_finished || '', inst?.korps_id || '', inst?.name || '', s.type, s.desc || '', ws?.name || '', s.cost || 0]);
     });
 
   } else if (type === 'rapport-service') {
