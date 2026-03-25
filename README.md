@@ -1,6 +1,6 @@
 # Korpsinventar
 
-Inventory management system for brass bands — self-hosted web application built with Node.js and SQLite, packaged with Docker.
+Inventory management system for marching bands and other bands — self-hosted web application built with Node.js and SQLite, packaged with Docker.
 
 ## Features
 
