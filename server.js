@@ -83,6 +83,8 @@ try { db.exec('ALTER TABLE users ADD COLUMN disabled INTEGER DEFAULT 0'); } catc
 try { db.exec('ALTER TABLE users ADD COLUMN created_by TEXT'); } catch(e) {}
 try { db.exec("ALTER TABLE users ADD COLUMN language TEXT DEFAULT 'en'"); } catch(e) {}
 try { db.exec('ALTER TABLE instruments ADD COLUMN registered_by TEXT'); } catch(e) {}
+try { db.exec('ALTER TABLE instruments ADD COLUMN supplier_id TEXT'); } catch(e) {}
+try { db.exec('ALTER TABLE instruments ADD COLUMN purchase_price REAL'); } catch(e) {}
 try { db.exec('ALTER TABLE players ADD COLUMN registered_by TEXT'); } catch(e) {}
 try { db.exec('ALTER TABLE service ADD COLUMN registered_by TEXT'); } catch(e) {}
 try { db.exec('ALTER TABLE accessories ADD COLUMN registered_by TEXT'); } catch(e) {}
@@ -208,17 +210,17 @@ app.get('/api/instruments', requirePerm('instruments_read'), (_req, res) => {
 });
 
 app.post('/api/instruments', requirePerm('instruments_write'), (req, res) => {
-  const { name, category, condition, serial, purchase, notes, korps_id, next_check, registered_by } = req.body;
+  const { name, category, condition, serial, purchase, notes, korps_id, next_check, registered_by, supplier_id, purchase_price } = req.body;
   const id = uid();
-  db.prepare('INSERT INTO instruments (id,name,category,condition,serial,purchase,notes,korps_id,next_check,registered_by) VALUES (?,?,?,?,?,?,?,?,?,?)')
-    .run(id, name, category, condition, serial, purchase, notes, korps_id||null, next_check||null, registered_by||null);
+  db.prepare('INSERT INTO instruments (id,name,category,condition,serial,purchase,notes,korps_id,next_check,registered_by,supplier_id,purchase_price) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)')
+    .run(id, name, category, condition, serial, purchase, notes, korps_id||null, next_check||null, registered_by||null, supplier_id||null, purchase_price||null);
   res.json({ id });
 });
 
 app.put('/api/instruments/:id', requirePerm('instruments_write'), (req, res) => {
-  const { name, category, condition, serial, purchase, notes, korps_id, next_check, registered_by } = req.body;
-  db.prepare('UPDATE instruments SET name=?,category=?,condition=?,serial=?,purchase=?,notes=?,korps_id=?,next_check=?,registered_by=? WHERE id=?')
-    .run(name, category, condition, serial, purchase, notes, korps_id||null, next_check||null, registered_by||null, req.params.id);
+  const { name, category, condition, serial, purchase, notes, korps_id, next_check, registered_by, supplier_id, purchase_price } = req.body;
+  db.prepare('UPDATE instruments SET name=?,category=?,condition=?,serial=?,purchase=?,notes=?,korps_id=?,next_check=?,registered_by=?,supplier_id=?,purchase_price=? WHERE id=?')
+    .run(name, category, condition, serial, purchase, notes, korps_id||null, next_check||null, registered_by||null, supplier_id||null, purchase_price||null, req.params.id);
   res.json({ ok: true });
 });
 

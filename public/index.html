@@ -428,7 +428,7 @@
     <div class="login-logo">
       <svg viewBox="0 0 28 28" fill="none"><path d="M8 17 Q11 11 14 11 Q17 11 20 17" stroke="white" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="8" cy="17" r="2.2" fill="white"/><circle cx="20" cy="17" r="2.2" fill="white"/></svg>
       <div class="login-logo-name">Korpsinventar</div>
-      <div class="login-logo-sub">v1.2.3</div>
+      <div class="login-logo-sub">v1.2.4</div>
     </div>
     <h2 data-i18n="Logg inn">Logg inn</h2>
     <form onsubmit="doLogin(event)">
@@ -456,7 +456,7 @@
     <div style="min-width:0;">
       <div id="sidebar-korpsname" class="logo-korpsname" style="display:none;"></div>
       <div class="logo-text" data-i18n="Korpsinventar">Korpsinventar</div>
-      <div class="logo-sub">v1.2.3</div>
+      <div class="logo-sub">v1.2.4</div>
     </div>
   </div>
   <nav class="sidebar-nav">
@@ -892,6 +892,12 @@
       </div>
       <div class="field"><label data-i18n="Serienummer (valgfritt)">Serienummer (valgfritt)</label><input id="inst-serial" data-i18n-placeholder="Produsentens serienr." placeholder="Produsentens serienr."></div>
       <div class="field"><label data-i18n="Kjøpsdato">Kjøpsdato</label><input type="date" id="inst-purchase"></div>
+      <div class="field"><label data-i18n="Leverandør">Leverandør</label>
+        <select id="inst-supplier-id">
+          <option value="" data-i18n="— Ingen leverandør —">— Ingen leverandør —</option>
+        </select>
+      </div>
+      <div class="field"><label data-i18n="Innkjøpspris">Innkjøpspris</label><input type="number" id="inst-price" min="0" step="0.01" placeholder="0"></div>
       <div class="field"><label data-i18n="Neste sjekk (dato)">Neste sjekk (dato)</label><input type="date" id="inst-next-check"></div>
       <div class="field full"><label data-i18n="Merknader">Merknader</label><textarea id="inst-notes" data-i18n-placeholder="Oppbevaringssted, osv." placeholder="Oppbevaringssted, osv."></textarea></div>
       <div class="field"><label data-i18n="Registrert av">Registrert av</label><input id="inst-registered-by" placeholder="Navn" readonly></div>
@@ -1061,7 +1067,7 @@
   </div>
 </div>
 
-<!-- Modal: Verksted (add/edit) -->
+<!-- Modal: Verksted (add/edit/view) -->
 <div id="ws-edit-modal" class="modal-overlay">
   <div class="modal" style="max-width:440px;">
     <h3 id="ws-modal-title">Legg til verksted</h3>
@@ -1073,12 +1079,13 @@
     </div>
     <div class="modal-footer">
       <button class="btn" onclick="closeModal('ws-edit-modal')" data-i18n="Avbryt">Avbryt</button>
-      <button class="btn btn-primary" onclick="saveWorkshopEdit()" data-i18n="Lagre">Lagre</button>
+      <button class="btn modal-view-btn" style="display:none;" onclick="openWorkshopModal(editingId.ws)" data-i18n="Rediger">Rediger</button>
+      <button class="btn btn-primary modal-save-btn" onclick="saveWorkshopEdit()" data-i18n="Lagre">Lagre</button>
     </div>
   </div>
 </div>
 
-<!-- Modal: Leverandør (add/edit) -->
+<!-- Modal: Leverandør (add/edit/view) -->
 <div id="sup-edit-modal" class="modal-overlay">
   <div class="modal" style="max-width:440px;">
     <h3 id="sup-modal-title">Legg til leverandør</h3>
@@ -1090,7 +1097,8 @@
     </div>
     <div class="modal-footer">
       <button class="btn" onclick="closeModal('sup-edit-modal')" data-i18n="Avbryt">Avbryt</button>
-      <button class="btn btn-primary" onclick="saveSupplierEdit()" data-i18n="Lagre">Lagre</button>
+      <button class="btn modal-view-btn" style="display:none;" onclick="openSupplierModal(editingId.sup)" data-i18n="Rediger">Rediger</button>
+      <button class="btn btn-primary modal-save-btn" onclick="saveSupplierEdit()" data-i18n="Lagre">Lagre</button>
     </div>
   </div>
 </div>
@@ -1542,7 +1550,7 @@ const EN = {
   'Navn *': 'Name *', 'Fullt navn *': 'Full name *', 'Varenavn *': 'Item name *',
   'Innlevert dato *': 'Submitted date *', 'Instrument *': 'Instrument *',
   'Serienummer (valgfritt)': 'Serial number (optional)',
-  'Kjøpsdato': 'Purchase date', 'Neste sjekk (dato)': 'Next check (date)',
+  'Kjøpsdato': 'Purchase date', 'Innkjøpspris': 'Purchase price', 'Neste sjekk (dato)': 'Next check (date)',
   'Ferdig dato': 'Completion date', 'Neste service (valgfritt)': 'Next service (optional)',
   'Utført av': 'Performed by', 'Kostnad': 'Cost',
   'Fakturanummer': 'Invoice number',
@@ -2082,6 +2090,10 @@ function openInstModal(id, viewOnly=false) {
   document.getElementById('inst-cond').value = inst?.condition || 'God';
   document.getElementById('inst-serial').value = inst?.serial || '';
   document.getElementById('inst-purchase').value = inst?.purchase || '';
+  document.getElementById('inst-supplier-id').innerHTML =
+    `<option value="">${t('— Ingen leverandør —')}</option>` +
+    state.suppliers.map(s => `<option value="${s.id}"${inst&&inst.supplier_id===s.id?' selected':''}>${s.name}</option>`).join('');
+  document.getElementById('inst-price').value = inst?.purchase_price || '';
   document.getElementById('inst-next-check').value = inst?.next_check || '';
   document.getElementById('inst-notes').value = inst?.notes || '';
   document.getElementById('inst-registered-by').value = inst?.registered_by || (!inst ? (state.currentUser?.displayName || state.currentUser?.username || '') : '');
@@ -2099,6 +2111,8 @@ async function saveInstrument() {
     condition: document.getElementById('inst-cond').value,
     serial: document.getElementById('inst-serial').value.trim(),
     purchase: document.getElementById('inst-purchase').value,
+    supplier_id: document.getElementById('inst-supplier-id').value || null,
+    purchase_price: parseFloat(document.getElementById('inst-price').value) || null,
     next_check: document.getElementById('inst-next-check').value || null,
     notes: document.getElementById('inst-notes').value.trim(),
     registered_by: document.getElementById('inst-registered-by').value.trim() || null };
@@ -2706,27 +2720,28 @@ function openServiceReport() {
 }
 
 // --- WORKSHOPS ---
-function openWorkshopModal(id) {
+function openWorkshopModal(id, viewOnly=false) {
   editingId.ws = id || null;
   const w = id ? state.workshops.find(x => x.id === id) : null;
-  document.getElementById('ws-modal-title').textContent = w ? t('Rediger verksted') : t('Legg til verksted');
+  document.getElementById('ws-modal-title').textContent = viewOnly ? t('Verksted') : (w ? t('Rediger verksted') : t('Legg til verksted'));
   document.getElementById('ws-edit-name').value = w?.name || '';
   document.getElementById('ws-edit-contact').value = w?.contact || '';
   document.getElementById('ws-edit-address').value = w?.address || '';
   document.getElementById('ws-edit-notes').value = w?.notes || '';
   openModal('ws-edit-modal');
+  setModalViewMode('ws-edit-modal', viewOnly);
 }
 function renderVerkstederTable() {
   const tb = document.getElementById('workshops-table');
   if (!tb) return;
   const list = applySort('workshops', state.workshops);
   if (!list.length) { tb.innerHTML = `<tr><td colspan="5" class="empty">${t('Ingen verksteder registrert ennå')}</td></tr>`; syncSortHeaders('workshops'); return; }
-  tb.innerHTML = list.map(w => `<tr>
+  tb.innerHTML = list.map(w => `<tr class="row-link" onclick="openWorkshopModal('${w.id}', true)">
     <td><strong style="font-weight:600">${w.name}</strong></td>
     <td style="font-size:13px;color:var(--text-muted);">${w.contact||'—'}</td>
     <td style="font-size:13px;color:var(--text-muted);">${w.address||'—'}</td>
     <td style="font-size:13px;color:var(--text-muted);">${w.notes||'—'}</td>
-    <td><div style="display:flex;gap:6px;">
+    <td onclick="event.stopPropagation()"><div style="display:flex;gap:6px;">
       <button class="btn-sm" onclick="openWorkshopModal('${w.id}')">${t('Rediger')}</button>
       <button class="btn-sm btn-danger" onclick="deleteWorkshop('${w.id}')">${t('Slett')}</button>
     </div></td></tr>`).join('');
@@ -2747,27 +2762,28 @@ async function deleteWorkshop(id) {
 }
 
 // --- SUPPLIERS ---
-function openSupplierModal(id) {
+function openSupplierModal(id, viewOnly=false) {
   editingId.sup = id || null;
   const s = id ? state.suppliers.find(x => x.id === id) : null;
-  document.getElementById('sup-modal-title').textContent = s ? t('Rediger leverandør') : t('Legg til leverandør');
+  document.getElementById('sup-modal-title').textContent = viewOnly ? t('Leverandør') : (s ? t('Rediger leverandør') : t('Legg til leverandør'));
   document.getElementById('sup-edit-name').value = s?.name || '';
   document.getElementById('sup-edit-contact').value = s?.contact || '';
   document.getElementById('sup-edit-address').value = s?.address || '';
   document.getElementById('sup-edit-notes').value = s?.notes || '';
   openModal('sup-edit-modal');
+  setModalViewMode('sup-edit-modal', viewOnly);
 }
 function renderLeverandorerTable() {
   const tb = document.getElementById('suppliers-table');
   if (!tb) return;
   const list = applySort('suppliers', state.suppliers);
   if (!list.length) { tb.innerHTML = `<tr><td colspan="5" class="empty">${t('Ingen leverandører registrert ennå')}</td></tr>`; syncSortHeaders('suppliers'); return; }
-  tb.innerHTML = list.map(s => `<tr>
+  tb.innerHTML = list.map(s => `<tr class="row-link" onclick="openSupplierModal('${s.id}', true)">
     <td><strong style="font-weight:600">${s.name}</strong></td>
     <td style="font-size:13px;color:var(--text-muted);">${s.contact||'—'}</td>
     <td style="font-size:13px;color:var(--text-muted);">${s.address||'—'}</td>
     <td style="font-size:13px;color:var(--text-muted);">${s.notes||'—'}</td>
-    <td><div style="display:flex;gap:6px;">
+    <td onclick="event.stopPropagation()"><div style="display:flex;gap:6px;">
       <button class="btn-sm" onclick="openSupplierModal('${s.id}')">${t('Rediger')}</button>
       <button class="btn-sm btn-danger" onclick="deleteSupplier('${s.id}')">${t('Slett')}</button>
     </div></td></tr>`).join('');
@@ -3038,8 +3054,8 @@ function renderDashboard() {
   const alertHtml = [
     ...tilHentingItems.map(s => { const i=state.instruments.find(x=>x.id===s.inst_id); const ws=state.workshops.find(w=>w.id===s.workshop_id); return mkAlertItem('purple', iconSvg.truck, `${i?.name||t('Ukjent')} ${t('klar til henting')}`, `${ws?.name||t('Ukjent verksted')}${s.date_finished?' · '+doneLabel+' '+s.date_finished:''}`, "navigateTo('service');setSvcStatusFilter(['under_service','til_henting'])"); }),
     ...overdue.map(s => { const i=state.instruments.find(x=>x.id===s.inst_id); return mkAlertItem('red', iconSvg.warn, t('Service forfalt'), `${i?.name||t('Ukjent')}${i?.korps_id?' ('+i.korps_id+')':''} — ${fristLabel} ${s.next_due}`, "navigateTo('service');setSvcStatusFilter(['under_service','til_henting'])"); }),
-    ...checkDueItems.map(i => mkAlertItem('amber', iconSvg.check, `${t('Sjekk forfalt:')} ${i.name}`, `${i.korps_id?' ('+i.korps_id+') ':''}${t('Neste sjekk:')} ${i.next_check}`)),
-    ...lowAccItems.map(a => mkAlertItem('amber', iconSvg.cart, `${a.stock===0?t('Tomt lager'):t('Lavt lager')}: ${a.name}`, `${a.stock} ${leftLabel2} ${a.min_level}`)),
+    ...checkDueItems.map(i => mkAlertItem('amber', iconSvg.check, `${t('Sjekk forfalt:')} ${i.name}`, `${i.korps_id?' ('+i.korps_id+') ':''}${t('Neste sjekk:')} ${i.next_check}`, `navigateTo('instrumenter');openInstModal('${i.id}', true)`)),
+    ...lowAccItems.map(a => mkAlertItem('amber', iconSvg.cart, `${a.stock===0?t('Tomt lager'):t('Lavt lager')}: ${a.name}`, `${a.stock} ${leftLabel2} ${a.min_level}`, `navigateTo('tilbehor');openAccModal('${a.id}', true)`)),
     activeTodoCount > 0 ? mkAlertItem('indigo', iconSvg.todo, `${activeTodoCount} ${t('aktive gjøremål')}`, todoAlertSub, "navigateTo('gjoremal')") : ''
   ].join('');
 
