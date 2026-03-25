@@ -89,6 +89,9 @@
     .btn-danger { color: #dc2626; border-color: #fca5a5; background: transparent; }
     .btn-danger:hover { background: #fef2f2; }
     [data-theme="dark"] .btn-danger { color: #f87171; border-color: #7f1d1d; }
+    .btn-clear-filter { font-size: 12px; padding: 5px 12px; border-radius: 7px; border: 1px solid var(--border-md); background: transparent; color: var(--text-muted); cursor: pointer; font-family: inherit; font-weight: 500; transition: all 0.15s; }
+    .btn-clear-filter:hover { background: #fef2f2; color: #dc2626; border-color: #fca5a5; }
+    [data-theme="dark"] .btn-clear-filter:hover { background: rgba(239,68,68,0.1); color: #f87171; border-color: #7f1d1d; }
     [data-theme="dark"] .btn-danger:hover { background: #450a0a; }
     .btn-service { font-size: 12px; padding: 5px 12px; border-radius: 7px; border: 1px solid #c4b5fd; background: #ede9fe; cursor: pointer; color: #5b21b6; font-family: inherit; }
     .btn-service:hover { background: #ddd6fe; }
@@ -425,7 +428,7 @@
     <div class="login-logo">
       <svg viewBox="0 0 28 28" fill="none"><path d="M8 17 Q11 11 14 11 Q17 11 20 17" stroke="white" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="8" cy="17" r="2.2" fill="white"/><circle cx="20" cy="17" r="2.2" fill="white"/></svg>
       <div class="login-logo-name">Korpsinventar</div>
-      <div class="login-logo-sub">v1.2.2</div>
+      <div class="login-logo-sub">v1.2.3</div>
     </div>
     <h2 data-i18n="Logg inn">Logg inn</h2>
     <form onsubmit="doLogin(event)">
@@ -453,7 +456,7 @@
     <div style="min-width:0;">
       <div id="sidebar-korpsname" class="logo-korpsname" style="display:none;"></div>
       <div class="logo-text" data-i18n="Korpsinventar">Korpsinventar</div>
-      <div class="logo-sub">v1.2.2</div>
+      <div class="logo-sub">v1.2.3</div>
     </div>
   </div>
   <nav class="sidebar-nav">
@@ -573,6 +576,7 @@
         <div class="section-header-actions">
           <button class="btn-export" onclick="exportData('instruments','csv')" data-i18n="Eksporter CSV">Eksporter CSV</button>
           <button class="btn-export" onclick="exportData('instruments','xlsx')" data-i18n="Eksporter Excel">Eksporter Excel</button>
+          <button class="btn" onclick="printSection('instrumenter','Instrumenter')" data-i18n="🖨️ Skriv ut">🖨️ Skriv ut</button>
           <button class="btn" onclick="openImportModal('instruments')" data-i18n="↑ Importer CSV">↑ Importer CSV</button>
           <button class="btn btn-primary" id="btn-add-inst" onclick="openInstModal()" data-i18n="+ Legg til instrument">+ Legg til instrument</button>
         </div>
@@ -598,6 +602,7 @@
             <label><input type="checkbox" value="ikke_tildelt" onchange="toggleInstPlayerFilter(this)"> <span data-i18n="Ikke tildelt">Ikke tildelt</span></label>
           </div>
         </details>
+        <button id="btn-clear-inst-filters" class="btn btn-clear-filter" onclick="clearInstFilters()" style="display:none;" data-i18n="× Fjern filter">× Fjern filter</button>
       </div>
       <div class="card">
         <div class="table-wrap">
@@ -616,6 +621,7 @@
         <div class="section-header-actions">
           <button class="btn-export" onclick="exportData('players','csv')" data-i18n="Eksporter CSV">Eksporter CSV</button>
           <button class="btn-export" onclick="exportData('players','xlsx')" data-i18n="Eksporter Excel">Eksporter Excel</button>
+          <button class="btn" onclick="printSection('musikanter','Musikanter')" data-i18n="🖨️ Skriv ut">🖨️ Skriv ut</button>
           <button class="btn btn-primary" id="btn-add-player" onclick="openPlayerModal()" data-i18n="+ Legg til musiker">+ Legg til musiker</button>
         </div>
       </div>
@@ -625,6 +631,7 @@
           <summary id="player-section-summary" data-i18n="Seksjon: Alle">Seksjon: Alle</summary>
           <div class="multiselect-options" id="player-section-options"></div>
         </details>
+        <button id="btn-clear-player-filters" class="btn btn-clear-filter" onclick="clearPlayerFilters()" style="display:none;" data-i18n="× Fjern filter">× Fjern filter</button>
       </div>
       <div class="card">
         <div class="table-wrap">
@@ -643,6 +650,7 @@
         <div class="section-header-actions">
           <button class="btn-export" onclick="exportData('service','csv')" data-i18n="Eksporter CSV">Eksporter CSV</button>
           <button class="btn-export" onclick="exportData('service','xlsx')" data-i18n="Eksporter Excel">Eksporter Excel</button>
+          <button class="btn" onclick="printSection('service','Servicelogg')" data-i18n="🖨️ Skriv ut">🖨️ Skriv ut</button>
           <button class="btn" onclick="openServiceReport()" data-i18n="📊 Rapport">📊 Rapport</button>
           <button class="btn" onclick="openTilHentingModal()" data-i18n="📦 Til henting">📦 Til henting</button>
           <button class="btn btn-primary" onclick="openServiceModal()" data-i18n="+ Logg service">+ Logg service</button>
@@ -674,6 +682,7 @@
           <div class="multiselect-options" id="svc-workshop-options"></div>
         </details>
         <input type="date" id="svc-date-search" class="filter-date-input" title="Filtrer på innlevert dato" onchange="onSvcDateSearch(this)">
+        <button id="btn-clear-svc-filters" class="btn btn-clear-filter" onclick="clearSvcFilters()" style="display:none;" data-i18n="× Fjern filter">× Fjern filter</button>
       </div>
       <div class="card">
         <div class="table-wrap">
@@ -692,6 +701,7 @@
         <div class="section-header-actions">
           <button class="btn-export" onclick="exportData('accessories','csv')" data-i18n="Eksporter CSV">Eksporter CSV</button>
           <button class="btn-export" onclick="exportData('accessories','xlsx')" data-i18n="Eksporter Excel">Eksporter Excel</button>
+          <button class="btn" onclick="printSection('tilbehor','Tilbehør og lager')" data-i18n="🖨️ Skriv ut">🖨️ Skriv ut</button>
           <button class="btn" onclick="openAccReport()" data-i18n="📊 Rapport">📊 Rapport</button>
           <button class="btn" onclick="openImportModal('accessories')" data-i18n="↑ Importer CSV">↑ Importer CSV</button>
           <button class="btn btn-primary" id="btn-add-acc" onclick="openAccModal()" data-i18n="+ Legg til vare">+ Legg til vare</button>
@@ -715,6 +725,7 @@
           <summary id="acc-supplier-summary" data-i18n="Leverandør: Alle">Leverandør: Alle</summary>
           <div class="multiselect-options" id="acc-supplier-options"></div>
         </details>
+        <button id="btn-clear-acc-filters" class="btn btn-clear-filter" onclick="clearAccFilters()" style="display:none;" data-i18n="× Fjern filter">× Fjern filter</button>
       </div>
       <div id="acc-alerts"></div>
       <div class="card">
@@ -732,6 +743,7 @@
       <div class="section-header">
         <h2 data-i18n="Gjøremål">Gjøremål</h2>
         <div class="section-header-actions">
+          <button class="btn" onclick="printSection('gjoremal','Gjøremål')" data-i18n="🖨️ Skriv ut">🖨️ Skriv ut</button>
           <button class="btn btn-primary" id="btn-add-todo" onclick="openTodoModal()" data-i18n="+ Legg til gjøremål">+ Legg til gjøremål</button>
         </div>
       </div>
@@ -742,6 +754,7 @@
         <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;color:var(--text-muted);white-space:nowrap;"><input type="radio" name="todo-filter" value="in_progress" onchange="setTodoFilter('in_progress')"> <span data-i18n="Under arbeid">Under arbeid</span></label>
         <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;color:var(--text-muted);white-space:nowrap;"><input type="radio" name="todo-filter" value="done" onchange="setTodoFilter('done')"> <span data-i18n="Fullførte">Fullførte</span></label>
         <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;color:var(--text-muted);white-space:nowrap;"><input type="radio" name="todo-filter" value="all" onchange="setTodoFilter('all')"> <span data-i18n="Alle">Alle</span></label>
+        <button id="btn-clear-todo-filter" class="btn btn-clear-filter" onclick="clearTodoFilter()" style="display:none;" data-i18n="× Fjern filter">× Fjern filter</button>
       </div>
       <div class="card">
         <div id="todos-table"></div>
@@ -964,6 +977,13 @@
           <option value="" data-i18n="— Intern / ingen verksted —">— Intern / ingen verksted —</option>
         </select>
       </div>
+      <div class="field" id="svc-status-field" style="display:none;"><label data-i18n="Status">Status</label>
+        <select id="svc-status">
+          <option value="under_service" data-i18n="Under service">Under service</option>
+          <option value="til_henting" data-i18n="Til henting">Til henting</option>
+          <option value="ferdig" data-i18n="Ferdig">Ferdig</option>
+        </select>
+      </div>
       <div class="field"><label data-i18n="Type">Type</label>
         <select id="svc-type"><option value="Rutinemessig vedlikehold" data-i18n="Rutinemessig vedlikehold">Rutinemessig vedlikehold</option><option value="Reparasjon" data-i18n="Reparasjon">Reparasjon</option><option value="Dybderens" data-i18n="Dybderens">Dybderens</option><option value="Pute-/filtbytte" data-i18n="Pute-/filtbytte">Pute-/filtbytte</option><option value="Ventilservice" data-i18n="Ventilservice">Ventilservice</option><option value="Annet" data-i18n="Annet">Annet</option></select>
       </div>
@@ -1161,8 +1181,9 @@
         </div>
         <div id="todo-item-picker" style="display:none;">
           <div style="display:flex;gap:6px;align-items:center;">
-            <input id="todo-item-search" list="todo-item-datalist" data-i18n-placeholder="Søk etter navn eller ID…" placeholder="Søk etter navn eller ID…" oninput="onTodoItemSearch(this.value)" style="flex:1;">
-            <datalist id="todo-item-datalist"></datalist>
+            <select id="todo-item-select" onchange="onTodoItemSelect(this)" style="flex:1;">
+              <option value="">— Velg —</option>
+            </select>
             <button type="button" class="btn btn-sm" onclick="toggleTodoScanner()" id="todo-scan-btn" data-i18n="📷 Skann">📷 Skann</button>
           </div>
           <div id="todo-scanner-wrap" style="display:none;margin-top:8px;">
@@ -1356,7 +1377,7 @@ const EN = {
   '+ Logg service': '+ Log service', '+ Legg til vare': '+ Add item',
   '+ Legg til gjøremål': '+ Add task', '+ Legg til verksted': '+ Add workshop',
   '+ Legg til leverandør': '+ Add supplier', '+ Ny bruker': '+ New user',
-  '📊 Rapport': '📊 Report', '📦 Til henting': '📦 Ready for pickup',
+  '📊 Rapport': '📊 Report', '📦 Til henting': '📦 Ready for pickup', '🖨️ Skriv ut': '🖨️ Print',
   'Forhåndsvis': 'Preview', 'Importer': 'Import',
   // Table headers
   'Instrument': 'Instrument', 'Instrument-ID': 'Instrument ID', 'Navn': 'Name', 'Kategori': 'Category',
@@ -1559,6 +1580,7 @@ const EN = {
   'Hva ble gjort?': 'What was done?',
   'f.eks. Rørblad str. 2,5, Ventilolje': 'e.g. Reed size 2.5, Valve oil',
   'Velg eller skriv ny kategori': 'Select or enter new category',
+  'Velg instrument': 'Select instrument', 'Velg vare': 'Select item',
   'Skann eller skriv inn strekkode': 'Scan or enter barcode',
   'Størrelse, spesifikasjoner, osv.': 'Size, specifications, etc.',
   'Søk etter navn eller ID…': 'Search by name or ID…',
@@ -1584,7 +1606,7 @@ const EN = {
   'PNG, JPG, SVG — anbefalt kvadratisk format': 'PNG, JPG, SVG — square format recommended',
   'Fjern logo': 'Remove logo', 'Lagre innstillinger': 'Save settings',
   // QR modal buttons
-  'Last ned': 'Download', 'Skriv ut': 'Print',
+  'Last ned': 'Download', 'Skriv ut': 'Print', '× Fjern filter': '× Clear filter',
   // Instrument name
   'Instrument': 'Instrument', 'Fullt navn': 'Full name', 'Navn': 'Name',
   'f.eks. Blindern Studenterkameraderi': 'e.g. City Band of Springfield',
@@ -1790,6 +1812,65 @@ function condBadge(c) {
 }
 function idbadge(kid) { return kid ? `<span class="idbadge">${kid}</span>` : ''; }
 function exportData(type, format) { window.location.href = `/api/export/${type}/${format}`; }
+
+function printSection(sectionId, titleKey) {
+  const title = t(titleKey);
+  const korpsname = state.settings['korps-name'] || '';
+  const dateStr = new Date().toLocaleDateString();
+  let printContent = '';
+
+  if (sectionId === 'gjoremal') {
+    const el = document.getElementById('todos-table');
+    if (!el) return;
+    const clone = el.cloneNode(true);
+    clone.querySelectorAll('button').forEach(b => b.remove());
+    clone.querySelectorAll('[onclick]').forEach(el => el.removeAttribute('onclick'));
+    clone.style.cssText = '';
+    printContent = clone.outerHTML;
+  } else {
+    const section = document.getElementById(sectionId);
+    const tableEl = section && section.querySelector('table');
+    if (!tableEl) return;
+    const clone = tableEl.cloneNode(true);
+    // Remove last column (Handlinger / actions)
+    clone.querySelectorAll('tr').forEach(tr => {
+      if (tr.children.length > 0) tr.children[tr.children.length - 1].remove();
+    });
+    clone.querySelectorAll('button').forEach(b => b.remove());
+    printContent = clone.outerHTML;
+  }
+
+  const html = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>' + title + '</title><style>'
+    + 'body{font-family:Arial,sans-serif;font-size:12px;color:#000;margin:24px;}'
+    + 'h1{font-size:15px;margin:0 0 2px;font-weight:700;}'
+    + '.meta{font-size:11px;color:#666;margin-bottom:14px;}'
+    + 'table{border-collapse:collapse;width:100%;}'
+    + 'th,td{border:1px solid #bbb;padding:5px 8px;text-align:left;vertical-align:top;}'
+    + 'th{background:#f3f4f6;font-weight:600;font-size:11px;}'
+    + '.badge,.idbadge{display:inline-block;font-size:10px;padding:1px 5px;border-radius:4px;background:#e5e7eb;border:1px solid #d1d5db;}'
+    + '.badge-ok{background:#dcfce7;border-color:#bbf7d0;}'
+    + '.badge-warn{background:#fef9c3;border-color:#fde047;}'
+    + '.badge-bad{background:#fee2e2;border-color:#fecaca;}'
+    + '.badge-purple{background:#ede9fe;border-color:#c4b5fd;}'
+    + '.badge-info{background:#dbeafe;border-color:#bfdbfe;}'
+    + '.badge-gray{background:#f3f4f6;border-color:#e5e7eb;}'
+    + '.todo-row{border-bottom:1px solid #e5e7eb;padding:8px 0;}'
+    + '.todo-row-top{display:flex;justify-content:space-between;margin-bottom:3px;}'
+    + '.todo-row-note{font-weight:600;margin:2px 0 4px;}'
+    + '.activity-time{font-size:11px;color:#888;}'
+    + '@media print{@page{margin:1.5cm;size:A4;}}'
+    + '</style></head><body>'
+    + '<h1>' + title + '</h1>'
+    + '<div class="meta">' + (korpsname ? korpsname + ' · ' : '') + dateStr + '</div>'
+    + printContent
+    + '</body></html>';
+
+  const win = window.open('', '_blank');
+  win.document.write(html);
+  win.document.close();
+  win.focus();
+  win.print();
+}
 
 // --- QR CODE GENERATOR (self-contained, no CDN) ---
 const QRGen = (() => {
@@ -2261,9 +2342,57 @@ function onSvcDateSearch(inp) {
   renderServiceTable();
 }
 
+function clearInstFilters() {
+  instCondFilter.clear(); instCatFilter.clear(); instPlayerFilter.clear();
+  document.querySelectorAll('#inst-cond-multiselect input[type=checkbox],#inst-cat-options input[type=checkbox],#inst-player-multiselect input[type=checkbox]').forEach(cb => cb.checked = false);
+  document.getElementById('inst-cond-summary').textContent = t('Stand: Alle');
+  document.getElementById('inst-cond-multiselect').classList.remove('filter-active');
+  document.getElementById('inst-cat-summary').textContent = t('Kategori: Alle');
+  document.getElementById('inst-cat-multiselect').classList.remove('filter-active');
+  document.getElementById('inst-player-summary').textContent = t('Tildelt: Alle');
+  document.getElementById('inst-player-multiselect').classList.remove('filter-active');
+  renderInstTable();
+}
+function clearPlayerFilters() {
+  playerSectionFilter.clear();
+  document.querySelectorAll('#player-section-options input[type=checkbox]').forEach(cb => cb.checked = false);
+  document.getElementById('player-section-summary').textContent = t('Seksjon: Alle');
+  document.getElementById('player-section-multiselect').classList.remove('filter-active');
+  renderPlayerTable();
+}
+function clearSvcFilters() {
+  svcStatusFilter.clear(); svcTypeFilter.clear(); svcWorkshopFilter.clear(); svcDateSearch = '';
+  document.querySelectorAll('#svc-status-multiselect input[type=checkbox],#svc-type-multiselect input[type=checkbox],#svc-workshop-options input[type=checkbox]').forEach(cb => cb.checked = false);
+  document.getElementById('svc-status-summary').textContent = t('Status: Alle');
+  document.getElementById('svc-status-multiselect').classList.remove('filter-active');
+  document.getElementById('svc-type-summary').textContent = t('Type: Alle');
+  document.getElementById('svc-type-multiselect').classList.remove('filter-active');
+  document.getElementById('svc-workshop-summary').textContent = t('Verksted: Alle');
+  document.getElementById('svc-workshop-multiselect').classList.remove('filter-active');
+  const di = document.getElementById('svc-date-search'); if (di) { di.value = ''; di.classList.remove('filter-active'); }
+  renderServiceTable();
+}
+function clearAccFilters() {
+  accStatusFilter.clear(); accCatFilter.clear(); accSupplierFilter.clear();
+  document.querySelectorAll('#acc-status-multiselect input[type=checkbox],#acc-cat-options input[type=checkbox],#acc-supplier-options input[type=checkbox]').forEach(cb => cb.checked = false);
+  document.getElementById('acc-status-summary').textContent = t('Status: Alle');
+  document.getElementById('acc-status-multiselect').classList.remove('filter-active');
+  document.getElementById('acc-cat-summary').textContent = t('Kategori: Alle');
+  document.getElementById('acc-cat-multiselect').classList.remove('filter-active');
+  document.getElementById('acc-supplier-summary').textContent = t('Leverandør: Alle');
+  document.getElementById('acc-supplier-multiselect').classList.remove('filter-active');
+  renderAccessories();
+}
+function clearTodoFilter() {
+  todoFilter = 'active';
+  const rb = document.querySelector('input[name="todo-filter"][value="active"]'); if (rb) rb.checked = true;
+  renderTodos();
+}
 
 function renderInstTable() {
   const tb = document.getElementById('inst-table');
+  const cbInst = document.getElementById('btn-clear-inst-filters');
+  if (cbInst) cbInst.style.display = (instCondFilter.size > 0 || instCatFilter.size > 0 || instPlayerFilter.size > 0) ? '' : 'none';
   // Populate dynamic category options
   const cats = [...new Set(state.instruments.map(i => i.category).filter(Boolean))].sort();
   populateDynOptions('inst-cat-options', cats, instCatFilter, 'toggleInstCatFilter');
@@ -2391,6 +2520,8 @@ async function deletePlayer(id) {
 }
 function renderPlayerTable() {
   const tb = document.getElementById('player-table');
+  const cbPl = document.getElementById('btn-clear-player-filters');
+  if (cbPl) cbPl.style.display = playerSectionFilter.size > 0 ? '' : 'none';
   // Populate dynamic section options
   const sections = [...new Set(state.players.map(p => p.section).filter(Boolean))].sort();
   populateDynOptions('player-section-options', sections, playerSectionFilter, 'togglePlayerSectionFilter');
@@ -2435,6 +2566,14 @@ function openServiceModal(id, viewOnly=false) {
   document.getElementById('svc-workshop').innerHTML =
     '<option value="">— Intern / ingen verksted —</option>' +
     state.workshops.map(w => `<option value="${w.id}"${s&&s.workshop_id===w.id?' selected':''}>${w.name}</option>`).join('');
+  const svcStatusField = document.getElementById('svc-status-field');
+  const svcStatusSel = document.getElementById('svc-status');
+  if (s) {
+    svcStatusField.style.display = '';
+    svcStatusSel.value = getServiceStatus(s).key;
+  } else {
+    svcStatusField.style.display = 'none';
+  }
   openModal('service-modal');
   setModalViewMode('service-modal', viewOnly);
 }
@@ -2449,10 +2588,26 @@ async function saveService() {
     next_due: document.getElementById('svc-next').value || null,
     date_finished: document.getElementById('svc-date-finished').value || null,
     workshop_id: document.getElementById('svc-workshop').value || null,
+    picked_up: 0,
     invoice_no: document.getElementById('svc-invoice').value.trim() || null,
     registered_by: document.getElementById('svc-registered-by').value.trim() || null
   };
   if (!body.inst_id || !body.date) return;
+  // Apply status override when editing
+  if (editingId.service && document.getElementById('svc-status-field').style.display !== 'none') {
+    const sv = document.getElementById('svc-status').value;
+    const today = new Date().toISOString().split('T')[0];
+    if (sv === 'under_service') {
+      body.date_finished = null;
+      body.picked_up = 0;
+    } else if (sv === 'til_henting') {
+      body.date_finished = body.date_finished || today;
+      body.picked_up = 0;
+    } else { // ferdig
+      body.date_finished = body.date_finished || today;
+      body.picked_up = body.workshop_id ? 1 : 0;
+    }
+  }
   if (editingId.service) await api('PUT', '/api/service/'+editingId.service, body);
   else await api('POST', '/api/service', body);
   closeModal('service-modal'); toast(t('Lagret!')); await loadAll();
@@ -2467,6 +2622,8 @@ async function pickupService(id) {
 }
 function renderServiceTable() {
   const tb = document.getElementById('service-table');
+  const cbSvc = document.getElementById('btn-clear-svc-filters');
+  if (cbSvc) cbSvc.style.display = (svcStatusFilter.size > 0 || svcTypeFilter.size > 0 || svcWorkshopFilter.size > 0 || svcDateSearch) ? '' : 'none';
   // Populate dynamic workshop options
   const wsNames = ['Intern service', ...state.workshops.map(w => w.name)];
   populateDynOptions('svc-workshop-options', wsNames, svcWorkshopFilter, 'toggleSvcWorkshopFilter');
@@ -2732,6 +2889,8 @@ async function adjustStock() {
 }
 function renderAccessories() {
   const tb = document.getElementById('acc-table');
+  const cbAcc = document.getElementById('btn-clear-acc-filters');
+  if (cbAcc) cbAcc.style.display = (accStatusFilter.size > 0 || accCatFilter.size > 0 || accSupplierFilter.size > 0) ? '' : 'none';
   const alerts = document.getElementById('acc-alerts');
   const low = state.accessories.filter(a => a.stock <= a.min_level);
   alerts.innerHTML = low.map(a => `<div class="alert-box">${t('Lavt lager')}: <strong>${a.name}</strong> — ${a.stock} ${t('stk igjen (minimum:')} ${a.min_level})</div>`).join('');
@@ -2843,7 +3002,7 @@ function renderDashboard() {
       <div class="metric-top">${mkIcon('red','<path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>')}${needsService>0?mkTrend('trend-bad',t('Krever tiltak')):''}</div>
       <div class="metric-value"${needsService>0?' style="color:#dc2626;"':''}>${needsService}</div><div class="metric-label">${t('Trenger service')}</div>
     </div>
-    <div class="metric-card" onclick="navigateTo('service')" style="cursor:pointer;">
+    <div class="metric-card" onclick="navigateTo('service');setSvcStatusFilter(['til_henting']);" style="cursor:pointer;">
       <div class="metric-top">${mkIcon('purple','<path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/><path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3z"/><path d="M14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1v-5a1 1 0 00-.293-.707l-2-2A1 1 0 0015 7h-1z"/>')}${tilHenting>0?mkTrend('trend-warn',t('Hent snarest')):''}</div>
       <div class="metric-value"${tilHenting>0?' style="color:#7c3aed;"':''}>${tilHenting}</div><div class="metric-label">${t('Til henting')}</div>
     </div>
@@ -3406,6 +3565,8 @@ function setTodoFilter(val) {
 function renderTodos() {
   const tb = document.getElementById('todos-table');
   if (!tb) return;
+  const cbTodo = document.getElementById('btn-clear-todo-filter');
+  if (cbTodo) cbTodo.style.display = todoFilter !== 'active' ? '' : 'none';
   let list = state.todos;
   if (todoFilter === 'active') list = list.filter(t => !t.done);
   else if (todoFilter === 'open') list = list.filter(t => !t.done && !t.in_progress);
@@ -3503,10 +3664,10 @@ function openTodoModal(id, viewOnly=false) {
       : state.accessories.find(a => a.id === todo.ref_id);
     if (item) {
       todoSelectedItem = { type: todo.type, id: todo.ref_id };
+      document.getElementById('todo-item-select').value = item.id;
       const label = todo.type === 'instrument'
         ? `${item.name}${item.korps_id ? ' (' + item.korps_id + ')' : ''}`
         : item.name;
-      document.getElementById('todo-item-search').value = label;
       showTodoItemFound(label, todo.type, item.id);
     }
   }
@@ -3524,35 +3685,27 @@ function onTodoTypeChange() {
   const type = document.querySelector('input[name="todo-type"]:checked')?.value || 'general';
   const picker = document.getElementById('todo-item-picker');
   picker.style.display = type === 'general' ? 'none' : '';
-  const dl = document.getElementById('todo-item-datalist');
+  const sel = document.getElementById('todo-item-select');
   if (type === 'instrument') {
-    dl.innerHTML = state.instruments.map(i => `<option value="${i.name}${i.korps_id?' ('+i.korps_id+')':''}">`).join('');
+    sel.innerHTML = `<option value="">— ${t('Velg instrument')} —</option>` +
+      state.instruments.map(i => `<option value="${i.id}">${i.korps_id ? i.korps_id + ' — ' : ''}${i.name}</option>`).join('');
   } else if (type === 'accessory') {
-    dl.innerHTML = state.accessories.map(a => `<option value="${a.name}">`).join('');
+    sel.innerHTML = `<option value="">— ${t('Velg vare')} —</option>` +
+      state.accessories.map(a => `<option value="${a.id}">${a.name}</option>`).join('');
   }
   // Clear selection when type changes
   todoSelectedItem = null;
-  document.getElementById('todo-item-search').value = '';
   document.getElementById('todo-item-found').style.display = 'none';
   if (type === 'general') stopTodoScanner();
 }
 
-function onTodoItemSearch(val) {
-  if (!val.trim()) { todoSelectedItem = null; document.getElementById('todo-item-found').style.display = 'none'; return; }
+function onTodoItemSelect(sel) {
+  const id = sel.value;
+  if (!id) { todoSelectedItem = null; document.getElementById('todo-item-found').style.display = 'none'; return; }
   const type = document.querySelector('input[name="todo-type"]:checked')?.value || 'instrument';
-  const q = val.trim().toLowerCase();
-  let found = null;
-  if (type === 'instrument') {
-    found = state.instruments.find(i =>
-      i.name.toLowerCase() === q ||
-      (i.korps_id && i.name.toLowerCase() + ' (' + i.korps_id.toLowerCase() + ')' === q) ||
-      (i.korps_id && i.korps_id.toLowerCase() === q)
-    );
-    if (!found) found = state.instruments.find(i => i.name.toLowerCase().startsWith(q));
-  } else {
-    found = state.accessories.find(a => a.name.toLowerCase() === q);
-    if (!found) found = state.accessories.find(a => a.name.toLowerCase().startsWith(q));
-  }
+  const found = type === 'instrument'
+    ? state.instruments.find(i => i.id === id)
+    : state.accessories.find(a => a.id === id);
   if (found) {
     todoSelectedItem = { type, id: found.id };
     const label = type === 'instrument' ? `${found.name}${found.korps_id?' ('+found.korps_id+')':''}` : found.name;
@@ -3577,9 +3730,9 @@ function todoResolveScanCode(code) {
   if (inst) {
     document.querySelector('input[name="todo-type"][value="instrument"]').checked = true;
     onTodoTypeChange();
-    const label = `${inst.name}${inst.korps_id?' ('+inst.korps_id+')':''}`;
     todoSelectedItem = { type: 'instrument', id: inst.id };
-    document.getElementById('todo-item-search').value = label;
+    document.getElementById('todo-item-select').value = inst.id;
+    const label = `${inst.name}${inst.korps_id?' ('+inst.korps_id+')':''}`;
     showTodoItemFound(label, 'instrument', inst.id);
     stopTodoScanner();
     return;
@@ -3590,7 +3743,7 @@ function todoResolveScanCode(code) {
     document.querySelector('input[name="todo-type"][value="accessory"]').checked = true;
     onTodoTypeChange();
     todoSelectedItem = { type: 'accessory', id: acc.id };
-    document.getElementById('todo-item-search').value = acc.name;
+    document.getElementById('todo-item-select').value = acc.id;
     showTodoItemFound(acc.name, 'accessory', acc.id);
     stopTodoScanner();
     return;

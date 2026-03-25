@@ -282,9 +282,9 @@ app.post('/api/service', requirePerm('service_write'), (req, res) => {
 });
 
 app.put('/api/service/:id', requirePerm('service_write'), (req, res) => {
-  const { date, inst_id, type, cost, by_whom, desc, next_due, date_finished, workshop_id, invoice_no, registered_by } = req.body;
-  db.prepare('UPDATE service SET date=?,inst_id=?,type=?,cost=?,by_whom=?,desc=?,next_due=?,date_finished=?,workshop_id=?,invoice_no=?,registered_by=? WHERE id=?')
-    .run(date, inst_id, type, cost, by_whom||null, desc||null, next_due||null, date_finished||null, workshop_id||null, invoice_no||null, registered_by||null, req.params.id);
+  const { date, inst_id, type, cost, by_whom, desc, next_due, date_finished, workshop_id, picked_up, invoice_no, registered_by } = req.body;
+  db.prepare('UPDATE service SET date=?,inst_id=?,type=?,cost=?,by_whom=?,desc=?,next_due=?,date_finished=?,workshop_id=?,picked_up=?,invoice_no=?,registered_by=? WHERE id=?')
+    .run(date, inst_id, type, cost, by_whom||null, desc||null, next_due||null, date_finished||null, workshop_id||null, picked_up??0, invoice_no||null, registered_by||null, req.params.id);
   res.json({ ok: true });
 });
 
