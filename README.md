@@ -1,21 +1,23 @@
-# Korpsinventar
+# BandInventory
 
 Inventory management system for marching bands and other bands — self-hosted web application built with Node.js and SQLite, packaged with Docker.
 
+> Displayed as **Korpsinventar** when the Norwegian language is selected.
+
 ## Features
 
-- **Instruments** — registration, condition tracking, QR codes, service alerts
+- **Instruments** — registration, condition tracking, QR codes, barcode scanning, service alerts, musician assignment
 - **Musicians** — overview, instrument assignment, QR scanning
-- **Service log** — log with status (In service / Ready for pickup / Done), workshop linking, invoice numbers
+- **Service log** — status tracking (To be delivered / In service / Ready for pickup / Done), workshop linking, invoice numbers, delivery/pickup overview
 - **Accessories & stock** — inventory, minimum levels, supplier linking, barcode scanning
 - **To-do list** — task list with status, assignee, and sign-off
 - **Reports** — service cost per workshop, item cost per category
 - **User management** — roles (Administrator / User), per-user permissions
-- **Settings** — corps logo, corps name, currency
+- **Settings** — band logo, band name, currency
 - Export to CSV and Excel for all sections
 - Dark/light theme
 - English/Norwegian language toggle
-- PWA support (installable on mobile)
+- Mobile-friendly, PWA support (installable on mobile)
 
 ---
 
@@ -30,7 +32,7 @@ Inventory management system for marching bands and other bands — self-hosted w
 The QR code and barcode scanner require HTTPS. Run these commands once:
 
 ```bash
-cd korpsinventar
+cd bandinventory
 
 # Step 1: Generate a self-signed SSL certificate
 bash generate-cert.sh
@@ -84,9 +86,9 @@ New users are created under the **Users** section (visible to administrators onl
 
 The application has two roles:
 
-| Role          | Description                                         |
-|---------------|-----------------------------------------------------|
-| Administrator | Full access, including users and settings           |
+| Role          | Description                                          |
+|---------------|------------------------------------------------------|
+| Administrator | Full access, including users and settings            |
 | User          | Access to daily use features (configurable per field)|
 
 Permissions can be customised per user regardless of role. Available permissions:
@@ -107,11 +109,11 @@ Permissions can be customised per user regardless of role. Available permissions
 
 Environment variables:
 
-| Variable         | Default                   | Description                                    |
-|------------------|---------------------------|------------------------------------------------|
-| `PORT`           | `3000`                    | Port the app listens on                        |
-| `DB_PATH`        | `/data/korpsinventar.db`  | Path to the SQLite database                    |
-| `SESSION_SECRET` | (internal default)        | Secret for session encryption. Set this explicitly in production. |
+| Variable         | Default                  | Description                                                       |
+|------------------|--------------------------|-------------------------------------------------------------------|
+| `PORT`           | `3000`                   | Port the app listens on                                           |
+| `DB_PATH`        | `/data/bandinventory.db` | Path to the SQLite database                                       |
+| `SESSION_SECRET` | (internal default)       | Secret for session encryption. Set this explicitly in production. |
 
 ### Set SESSION_SECRET in production
 
@@ -132,14 +134,37 @@ ports:
 
 ## Backup
 
-The database is stored in the Docker volume `korpsinventar-data`. Sessions are stored in a separate file in the same directory.
+The database is stored in the Docker volume `bandinventory-data`. Sessions are stored in a separate file in the same directory.
 
 ```bash
 # Copy the database directly from the container
-docker cp korpsinventar:/data/korpsinventar.db ./backup.db
+docker cp bandinventory:/data/bandinventory.db ./backup.db
 
 # Or find the volume location on disk
-docker volume inspect korpsinventar-data
+docker volume inspect bandinventory-data
+```
+
+---
+
+## Migrating from Korpsinventar
+
+If you are upgrading from a previous version where the project was named **Korpsinventar**, your existing Docker volume is named `korpsinventar-data` and your database file is `korpsinventar.db`. To keep your data, set the environment variable explicitly in `docker-compose.yml`:
+
+```yaml
+environment:
+  - DB_PATH=/data/korpsinventar.db
+volumes:
+  - korpsinventar-data:/data
+```
+
+Or rename the volume before starting:
+```bash
+# Create new volume and copy data
+docker volume create bandinventory-data
+docker run --rm \
+  -v korpsinventar-data:/from \
+  -v bandinventory-data:/to \
+  alpine sh -c "cp -a /from/. /to/"
 ```
 
 ---
@@ -147,15 +172,15 @@ docker volume inspect korpsinventar-data
 ## Manual Docker (without Compose)
 
 ```bash
-docker build -t korpsinventar .
-docker volume create korpsinventar-data
+docker build -t bandinventory .
+docker volume create bandinventory-data
 docker run -d \
-  --name korpsinventar \
+  --name bandinventory \
   -p 3000:3000 \
-  -v korpsinventar-data:/data \
+  -v bandinventory-data:/data \
   -e SESSION_SECRET=your-secret \
   --restart unless-stopped \
-  korpsinventar
+  bandinventory
 ```
 
 ---
@@ -164,7 +189,7 @@ docker run -d \
 
 ```bash
 npm install
-DB_PATH=./db/korpsinventar.db node server.js
+DB_PATH=./db/bandinventory.db node server.js
 ```
 
 Requires Node.js 18+.
