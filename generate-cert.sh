@@ -9,7 +9,7 @@ mkdir -p "$CERT_DIR"
 openssl req -x509 -newkey rsa:2048 -nodes -days 3650 \
   -keyout "$CERT_DIR/key.pem" \
   -out "$CERT_DIR/cert.pem" \
-  -subj "/CN=korpsinventar" \
+  -subj "/CN=bandinventory" \
   -addext "subjectAltName=IP:127.0.0.1,DNS:localhost"
 
 echo ""

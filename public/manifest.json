@@ -1,7 +1,7 @@
 {
-  "name": "Korpsinventar",
-  "short_name": "Inventar",
-  "description": "Inventarsystem for korps",
+  "name": "BandInventory",
+  "short_name": "BandInventory",
+  "description": "Band instrument inventory system",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait-primary",

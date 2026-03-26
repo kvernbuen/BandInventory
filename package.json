@@ -1,7 +1,7 @@
 {
-  "name": "korpsinventar",
+  "name": "bandinventory",
   "version": "1.0.0",
-  "description": "Inventarsystem for korps",
+  "description": "Band instrument inventory system",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"

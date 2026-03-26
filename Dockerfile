@@ -21,7 +21,7 @@ COPY . .
 
 RUN mkdir -p /data
 
-ENV DB_PATH=/data/korpsinventar.db
+ENV DB_PATH=/data/bandinventory.db
 ENV PORT=3000
 
 EXPOSE 3000

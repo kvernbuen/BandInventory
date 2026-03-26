@@ -1,4 +1,4 @@
-const CACHE = 'korpsinventar-v1';
+const CACHE = 'bandinventory-v1';
 const SHELL = ['/'];
 
 self.addEventListener('install', e => {

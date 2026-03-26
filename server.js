@@ -8,7 +8,7 @@ const SQLiteStore = require('connect-sqlite3')(session);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const DB_PATH = process.env.DB_PATH || path.join(__dirname, 'db', 'korpsinventar.db');
+const DB_PATH = process.env.DB_PATH || path.join(__dirname, 'db', 'bandinventory.db');
 
 app.use(express.json());
 
@@ -689,7 +689,7 @@ app.get('/api/export/:type/:format', requireAuth, async (req, res) => {
     return res.status(400).json({ error: 'Ukjent type' });
   }
 
-  const filename = `korpsinventar_${type}_${today}`;
+  const filename = `bandinventory_${type}_${today}`;
 
   if (format === 'csv') {
     const csv = rows.map(r => r.map(v => {
@@ -760,4 +760,4 @@ app.post('/api/export/report', requireAuth, async (req, res) => {
   res.send(buf);
 });
 
-app.listen(PORT, () => console.log(`Korpsinventar kjører på port ${PORT}`));
+app.listen(PORT, () => console.log(`BandInventory running on port ${PORT}`));
