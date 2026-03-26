@@ -2312,7 +2312,10 @@ function filterAssignPlayerList(val) {
 function renderAssignPlayerList(search) {
   const el = document.getElementById('assign-player-list');
   const players = search
-    ? state.players.filter(p => p.name.toLowerCase().includes(search))
+    ? state.players.filter(p => {
+        if (p.name.toLowerCase().includes(search)) return true;
+        return (p.section || '').toLowerCase().includes(search) || t(p.section || '').toLowerCase().includes(search);
+      })
     : [...state.players].sort((a, b) => a.name.localeCompare(b.name));
   if (!players.length) { el.innerHTML = `<p class="empty" style="padding:12px;">${t('Ingen treff')}</p>`; return; }
   el.innerHTML = players.map(p => {
