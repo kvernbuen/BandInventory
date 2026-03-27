@@ -465,7 +465,7 @@
     <div class="login-logo">
       <svg viewBox="0 0 28 28" fill="none"><path d="M8 17 Q11 11 14 11 Q17 11 20 17" stroke="white" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="8" cy="17" r="2.2" fill="white"/><circle cx="20" cy="17" r="2.2" fill="white"/></svg>
       <div class="login-logo-name" data-i18n="Korpsinventar">Korpsinventar</div>
-      <div class="login-logo-sub">v1.4.1</div>
+      <div class="login-logo-sub">v1.5.0</div>
     </div>
     <h2 data-i18n="Logg inn">Logg inn</h2>
     <form onsubmit="doLogin(event)">
@@ -493,7 +493,7 @@
     <div style="min-width:0;">
       <div id="sidebar-korpsname" class="logo-korpsname" style="display:none;"></div>
       <div class="logo-text" data-i18n="Korpsinventar">Korpsinventar</div>
-      <div class="logo-sub">v1.4.1</div>
+      <div class="logo-sub">v1.5.0</div>
     </div>
   </div>
   <nav class="sidebar-nav">
@@ -614,7 +614,7 @@
           <button class="btn-export" onclick="exportData('instruments','csv')" data-i18n="Eksporter CSV">Eksporter CSV</button>
           <button class="btn-export" onclick="exportData('instruments','xlsx')" data-i18n="Eksporter Excel">Eksporter Excel</button>
           <button class="btn" onclick="printSection('instrumenter','Instrumenter')" data-i18n="🖨️ Skriv ut">🖨️ Skriv ut</button>
-          <button class="btn" onclick="openImportModal('instruments')" data-i18n="↑ Importer CSV">↑ Importer CSV</button>
+          <button class="btn" onclick="openImportModal('instruments')" data-i18n="↑ Importer">↑ Importer</button>
           <button class="btn btn-primary" id="btn-add-inst" onclick="openInstModal()" data-i18n="+ Legg til instrument">+ Legg til instrument</button>
         </div>
       </div>
@@ -741,7 +741,7 @@
           <button class="btn-export" onclick="exportData('accessories','xlsx')" data-i18n="Eksporter Excel">Eksporter Excel</button>
           <button class="btn" onclick="printSection('tilbehor','Tilbehør og lager')" data-i18n="🖨️ Skriv ut">🖨️ Skriv ut</button>
           <button class="btn" onclick="openAccReport()" data-i18n="📊 Rapport">📊 Rapport</button>
-          <button class="btn" onclick="openImportModal('accessories')" data-i18n="↑ Importer CSV">↑ Importer CSV</button>
+          <button class="btn" onclick="openImportModal('accessories')" data-i18n="↑ Importer">↑ Importer</button>
           <button class="btn btn-primary" id="btn-add-acc" onclick="openAccModal()" data-i18n="+ Legg til vare">+ Legg til vare</button>
         </div>
       </div>
@@ -944,6 +944,8 @@
           <option value="Trenger service" data-i18n="Trenger service">Trenger service</option>
         </select>
       </div>
+      <div class="field"><label data-i18n="Modell">Modell</label><input id="inst-model" data-i18n-placeholder="Modellnummer" placeholder="Modellnummer"></div>
+      <div class="field"><label data-i18n="Variant">Variant</label><input id="inst-variant" data-i18n-placeholder="f.eks. Bb, Alto, Tenor" placeholder="f.eks. Bb, Alto, Tenor"></div>
       <div class="field"><label data-i18n="Serienummer (valgfritt)">Serienummer (valgfritt)</label><input id="inst-serial" data-i18n-placeholder="Produsentens serienr." placeholder="Produsentens serienr."></div>
       <div class="field"><label data-i18n="Kjøpsdato">Kjøpsdato</label><input type="date" id="inst-purchase"></div>
       <div class="field"><label data-i18n="Leverandør">Leverandør</label>
@@ -954,6 +956,28 @@
       <div class="field"><label data-i18n="Innkjøpspris">Innkjøpspris</label><input type="number" id="inst-price" min="0" step="0.01" placeholder="0"></div>
       <div class="field"><label data-i18n="Neste sjekk (dato)">Neste sjekk (dato)</label><input type="date" id="inst-next-check"></div>
       <div class="field full"><label data-i18n="Merknader">Merknader</label><textarea id="inst-notes" data-i18n-placeholder="Oppbevaringssted, osv." placeholder="Oppbevaringssted, osv."></textarea></div>
+      <div class="field"><label data-i18n="Kassert">Kassert</label>
+        <select id="inst-scrapped" onchange="onInstScrappedChange()">
+          <option value="Nei" data-i18n="Nei">Nei</option>
+          <option value="Ja" data-i18n="Ja">Ja</option>
+        </select>
+      </div>
+      <div id="inst-scrapped-details" class="field full" style="display:none;background:rgba(220,38,38,0.06);border:1px solid rgba(220,38,38,0.22);border-radius:var(--radius);padding:12px 14px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="field" style="margin:0;">
+            <label data-i18n="Kassert av">Kassert av</label>
+            <input id="inst-scrapped-by" data-i18n-placeholder="Navn" placeholder="Navn">
+          </div>
+          <div class="field" style="margin:0;">
+            <label data-i18n="Dato kassert">Dato kassert</label>
+            <input type="date" id="inst-scrapped-date" readonly>
+          </div>
+          <div class="field" style="margin:0;grid-column:1/-1;">
+            <label data-i18n="Kassert kommentar">Kassert kommentar</label>
+            <textarea id="inst-scrapped-notes" data-i18n-placeholder="Årsak til kassering, tilstand, osv." placeholder="Årsak til kassering, tilstand, osv." rows="2"></textarea>
+          </div>
+        </div>
+      </div>
       <div class="field"><label data-i18n="Registrert av">Registrert av</label><input id="inst-registered-by" placeholder="Navn" readonly></div>
     </div>
     <div class="field" id="inst-player-row" style="margin-top:8px;display:none;">
@@ -1213,9 +1237,28 @@
   <div class="modal modal-wide">
     <h3 id="import-modal-title" data-i18n="Importer fra CSV">Importer fra CSV</h3>
     <div id="import-instructions" style="font-size:12px;color:var(--text-muted);background:var(--surface2);border-radius:var(--radius);padding:10px 14px;margin-bottom:12px;line-height:1.8;"></div>
+    <div id="import-inst-options" style="display:none;background:var(--surface2);border-radius:var(--radius);padding:10px 14px;margin-bottom:12px;">
+      <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;font-weight:500;">
+        <input type="checkbox" id="import-use-id" onchange="onImportUseIdChange()">
+        <span data-i18n="Importer Instrument-ID">Importer Instrument-ID</span>
+      </label>
+      <div id="import-dup-options" style="display:none;margin-top:10px;padding-left:24px;border-left:2px solid var(--border-md);">
+        <span style="font-size:12px;color:var(--text-muted);font-weight:500;" data-i18n="Håndtering av duplikater:">Håndtering av duplikater:</span>
+        <div style="display:flex;flex-wrap:wrap;gap:16px;margin-top:6px;">
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;">
+            <input type="radio" name="import-dup-mode" value="manual" checked onchange="onImportDupModeChange()">
+            <span data-i18n="Manuell — stopp og vis duplikater">Manuell — stopp og vis duplikater</span>
+          </label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;">
+            <input type="radio" name="import-dup-mode" value="auto" onchange="onImportDupModeChange()">
+            <span data-i18n="Automatisk — generer ny ID for duplikater">Automatisk — generer ny ID for duplikater</span>
+          </label>
+        </div>
+      </div>
+    </div>
     <div class="field" style="margin-bottom:10px;">
       <label data-i18n="Last opp CSV-fil">Last opp CSV-fil</label>
-      <input type="file" id="import-file" accept=".csv,.txt" onchange="handleImportFile(this)">
+      <input type="file" id="import-file" accept=".csv,.txt,.xlsx,.xls" onchange="handleImportFile(this)">
     </div>
     <div class="field" style="margin-bottom:12px;">
       <label data-i18n="… eller lim inn CSV-innhold direkte">… eller lim inn CSV-innhold direkte</label>
@@ -1474,7 +1517,8 @@ const EN = {
   'Logger inn…': 'Logging in…', 'Feil brukernavn eller passord': 'Invalid username or password',
   // Buttons
   'Eksporter CSV': 'Export CSV', 'Eksporter Excel': 'Export Excel',
-  '↑ Importer CSV': '↑ Import CSV',
+  '↑ Importer': '↑ Import',
+  'Importer Instrument-ID': 'Import Instrument ID',
   '+ Legg til instrument': '+ Add instrument', '+ Legg til musiker': '+ Add musician',
   '+ Logg service': '+ Log service', '+ Legg til vare': '+ Add item',
   '+ Legg til gjøremål': '+ Add task', '+ Legg til verksted': '+ Add workshop',
@@ -1604,6 +1648,10 @@ const EN = {
   'Ingen treff': 'No results', 'Ingen resultater': 'No results',
   'treff': 'results', 'prøv et annet søkeord': 'try another search term',
   'Registrert av': 'Registered by', 'Gjelder': 'Regarding', 'Oppgave': 'Task',
+  'Modell': 'Model', 'Variant': 'Variant',
+  'Kassert': 'Scrapped', 'Kassert av': 'Scrapped by', 'Dato kassert': 'Scrapped date',
+  'Kassert kommentar': 'Scrapped comment',
+  'Årsak til kassering, tilstand, osv.': 'Reason for scrapping, condition, etc.',
   'Dato': 'Date',
   // Confirm dialogs
   'Slette dette instrumentet?': 'Delete this instrument?',
@@ -1725,6 +1773,35 @@ const EN = {
   'Instrument': 'Instrument', 'Fullt navn': 'Full name', 'Navn': 'Name',
   'f.eks. Blindern Studenterkameraderi': 'e.g. City Band of Springfield',
   'Ingen data å forhåndsvise': 'No data to preview',
+  // Import modal — static UI
+  'Håndtering av duplikater:': 'Duplicate handling:',
+  'Manuell — stopp og vis duplikater': 'Manual — stop and show duplicates',
+  'Automatisk — generer ny ID for duplikater': 'Automatic — generate new ID for duplicates',
+  // Import modal — dynamic JS strings
+  'Importerer…': 'Importing…',
+  'Import feilet': 'Import failed',
+  'Leser Excel-fil…': 'Reading Excel file…',
+  'Ingen rader funnet i Excel-filen.': 'No rows found in the Excel file.',
+  'Feil ved lesing av Excel-fil.': 'Error reading Excel file.',
+  'Ingen gyldige rader funnet. Sjekk at filen har minst én datarad (etter overskriftrad).': 'No valid rows found. Check that the file has at least one data row (after the header row).',
+  'Duplikat': 'Duplicate',
+  'Finnes allerede i databasen': 'Already exists in the database',
+  'Dup. i fil': 'Dup. in file',
+  'Samme ID forekommer flere ganger i filen': 'Same ID appears multiple times in the file',
+  'Opprinnelig ID: ': 'Original ID: ',
+  'Endret fra ': 'Changed from ',
+  'Duplikate Instrument-IDer må rettes i CSV-filen før import kan kjøres.': 'Duplicate Instrument IDs must be corrected in the CSV file before import can run.',
+  'rader klar til import:': 'rows ready to import:',
+  // Import config titles
+  'Importer instrumenter fra CSV / Excel': 'Import instruments from CSV / Excel',
+  'Importer tilbehør fra CSV': 'Import accessories from CSV',
+  // Import config instructions
+  '<strong>Støttede formater:</strong> CSV (.csv) og Excel (.xlsx)<br><strong>Kolonner (første rad er overskrift og hoppes over):</strong><br>Instrument-ID (valgfritt), Navn*, Kategori, Stand (God/Akseptabel/Trenger service), Serienummer, Kjøpsdato (ÅÅÅÅ-MM-DD), Merknader<br><em>La Instrument-ID stå tomt for å generere automatisk.</em>':
+    '<strong>Supported formats:</strong> CSV (.csv) and Excel (.xlsx)<br><strong>Columns (first row is header and is skipped):</strong><br>Instrument ID (optional), Name*, Category, Condition (Good/Acceptable/Needs service), Serial number, Purchase date (YYYY-MM-DD), Notes<br><em>Leave Instrument ID blank to generate automatically.</em>',
+  '<strong>Kolonner (første rad er overskrift og hoppes over):</strong><br>Varenavn*, Kategori, Antall på lager, Minimumsgrense, Pris per enhet (kr), Merknader':
+    '<strong>Columns (first row is header and is skipped):</strong><br>Item name*, Category, Stock quantity, Minimum level, Price per unit (kr), Notes',
+  // Import table headers
+  'Serienummer': 'Serial no.', 'Varenavn': 'Item name', 'Antall': 'Qty',
   'Skriv inn en beskrivelse': 'Enter a description',
   'Velg et instrument eller en vare': 'Select an instrument or item',
   'Feil ved lagring': 'Error saving',
@@ -2316,6 +2393,8 @@ function openInstModal(id, viewOnly=false) {
   document.getElementById('inst-name').value = inst?.name || '';
   document.getElementById('inst-cat').value = inst?.category || 'Messingblåser';
   document.getElementById('inst-cond').value = inst?.condition || 'God';
+  document.getElementById('inst-model').value = inst?.model || '';
+  document.getElementById('inst-variant').value = inst?.variant || '';
   document.getElementById('inst-serial').value = inst?.serial || '';
   document.getElementById('inst-purchase').value = inst?.purchase || '';
   document.getElementById('inst-supplier-id').innerHTML =
@@ -2324,6 +2403,12 @@ function openInstModal(id, viewOnly=false) {
   document.getElementById('inst-price').value = inst?.purchase_price || '';
   document.getElementById('inst-next-check').value = inst?.next_check || '';
   document.getElementById('inst-notes').value = inst?.notes || '';
+  const scrappedVal = inst?.scrapped || 'Nei';
+  document.getElementById('inst-scrapped').value = scrappedVal;
+  document.getElementById('inst-scrapped-by').value = inst?.scrapped_by || '';
+  document.getElementById('inst-scrapped-date').value = inst?.scrapped_date || '';
+  document.getElementById('inst-scrapped-notes').value = inst?.scrapped_notes || '';
+  document.getElementById('inst-scrapped-details').style.display = scrappedVal === 'Ja' ? '' : 'none';
   document.getElementById('inst-registered-by').value = inst?.registered_by || (!inst ? (state.currentUser?.displayName || state.currentUser?.username || '') : '');
   _scannedKorpsId = null;
   if (!id) {
@@ -2377,12 +2462,17 @@ async function saveInstrument() {
     : (document.getElementById('id-preview').value.trim() || generateInstrumentId(name));
   const body = { name, category: document.getElementById('inst-cat').value, korps_id,
     condition: document.getElementById('inst-cond').value,
+    model: document.getElementById('inst-model').value.trim() || null,
+    variant: document.getElementById('inst-variant').value.trim() || null,
     serial: document.getElementById('inst-serial').value.trim(),
     purchase: document.getElementById('inst-purchase').value,
     supplier_id: document.getElementById('inst-supplier-id').value || null,
     purchase_price: parseFloat(document.getElementById('inst-price').value) || null,
     next_check: document.getElementById('inst-next-check').value || null,
     notes: document.getElementById('inst-notes').value.trim(),
+    scrapped: document.getElementById('inst-scrapped').value,
+    scrapped_by: document.getElementById('inst-scrapped-by').value.trim() || null,
+    scrapped_notes: document.getElementById('inst-scrapped-notes').value.trim() || null,
     registered_by: document.getElementById('inst-registered-by').value.trim() || null };
   if (editingId.inst) {
     await api('PUT', '/api/instruments/'+editingId.inst, body);
@@ -3814,17 +3904,18 @@ function updateVarslerBadge() {
   if (tbEl) { tbEl.textContent = openTodos; tbEl.style.display = openTodos > 0 ? '' : 'none'; }
 }
 
-// --- CSV IMPORT ---
+// --- CSV / EXCEL IMPORT ---
 let importType = '';
 let importParsedRows = [];
+let _importRawRows = null;
 
 const importConfig = {
   instruments: {
-    title: 'Importer instrumenter fra CSV',
-    instructions: '<strong>Kolonner (første rad er overskrift og hoppes over):</strong><br>Navn*, Kategori, Stand (God/Akseptabel/Trenger service), Serienummer, Kjøpsdato (ÅÅÅÅ-MM-DD), Merknader<br><em>Instrument-ID genereres automatisk.</em>',
-    placeholder: 'Navn,Kategori,Stand,Serienummer,Kjøpsdato,Merknader\nTrompet i Bb,Messingblåser,God,,,\nAltsaxofon,Treblåser,Akseptabel,SN12345,,',
-    headers: ['Navn', 'Kategori', 'Stand', 'Serienummer', 'Kjøpsdato', 'Merknader'],
-    parse: (cols) => ({ name: cols[0], category: cols[1]||'Annet', condition: cols[2]||'God', serial: cols[3]||'', purchase: cols[4]||'', notes: cols[5]||'' })
+    title: 'Importer instrumenter fra CSV / Excel',
+    instructions: '<strong>Støttede formater:</strong> CSV (.csv) og Excel (.xlsx)<br><strong>Kolonner (første rad er overskrift og hoppes over):</strong><br>Instrument-ID (valgfritt), Navn*, Kategori, Stand (God/Akseptabel/Trenger service), Serienummer, Kjøpsdato (ÅÅÅÅ-MM-DD), Merknader<br><em>La Instrument-ID stå tomt for å generere automatisk.</em>',
+    placeholder: 'Instrument-ID,Navn,Kategori,Stand,Serienummer,Kjøpsdato,Merknader\n,Trompet i Bb,Messingblåser,God,,,\nTREBL-005,Altsaxofon,Treblåser,Akseptabel,SN12345,,',
+    headers: ['Instrument-ID', 'Navn', 'Kategori', 'Stand', 'Serienummer', 'Kjøpsdato', 'Merknader'],
+    parse: (cols) => ({ korps_id: cols[0]?.trim()||'', name: cols[1], category: cols[2]||'Annet', condition: cols[3]||'God', serial: cols[4]||'', purchase: cols[5]||'', notes: cols[6]||'' })
   },
   accessories: {
     title: 'Importer tilbehør fra CSV',
@@ -3839,14 +3930,41 @@ function openImportModal(type) {
   importType = type;
   importParsedRows = [];
   const cfg = importConfig[type];
-  document.getElementById('import-modal-title').textContent = cfg.title;
-  document.getElementById('import-instructions').innerHTML = cfg.instructions;
+  document.getElementById('import-modal-title').textContent = t(cfg.title);
+  document.getElementById('import-instructions').innerHTML = t(cfg.instructions);
   document.getElementById('import-text').placeholder = cfg.placeholder;
   document.getElementById('import-text').value = '';
   document.getElementById('import-file').value = '';
+  _importRawRows = null;
   document.getElementById('import-preview').innerHTML = '';
   document.getElementById('import-confirm-btn').style.display = 'none';
+  const instOpts = document.getElementById('import-inst-options');
+  instOpts.style.display = type === 'instruments' ? '' : 'none';
+  document.getElementById('import-use-id').checked = false;
+  document.getElementById('import-dup-options').style.display = 'none';
+  document.querySelector('input[name="import-dup-mode"][value="manual"]').checked = true;
   openModal('import-modal');
+}
+function onInstScrappedChange() {
+  const val = document.getElementById('inst-scrapped').value;
+  const details = document.getElementById('inst-scrapped-details');
+  details.style.display = val === 'Ja' ? '' : 'none';
+  if (val === 'Ja') {
+    if (!document.getElementById('inst-scrapped-by').value)
+      document.getElementById('inst-scrapped-by').value = state.currentUser?.displayName || state.currentUser?.username || '';
+    if (!document.getElementById('inst-scrapped-date').value)
+      document.getElementById('inst-scrapped-date').value = new Date().toISOString().slice(0, 10);
+  }
+}
+function onImportUseIdChange() {
+  const checked = document.getElementById('import-use-id').checked;
+  document.getElementById('import-dup-options').style.display = checked ? '' : 'none';
+  document.getElementById('import-preview').innerHTML = '';
+  document.getElementById('import-confirm-btn').style.display = 'none';
+}
+function onImportDupModeChange() {
+  document.getElementById('import-preview').innerHTML = '';
+  document.getElementById('import-confirm-btn').style.display = 'none';
 }
 
 function parseCSV(text) {
@@ -3869,14 +3987,45 @@ function parseCSV(text) {
 function handleImportFile(input) {
   const file = input.files[0];
   if (!file) return;
+  const name = file.name.toLowerCase();
+  if (name.endsWith('.xlsx') || name.endsWith('.xls')) {
+    handleExcelImportFile(file); return;
+  }
   const reader = new FileReader();
   reader.onload = e => { document.getElementById('import-text').value = e.target.result; };
   reader.readAsText(file, 'UTF-8');
+}
+async function handleExcelImportFile(file) {
+  const previewEl = document.getElementById('import-preview');
+  previewEl.innerHTML = `<p style="color:var(--text-muted);font-size:13px;">${t('Leser Excel-fil…')}</p>`;
+  const reader = new FileReader();
+  reader.onload = async e => {
+    const buf = e.target.result;
+    const bytes = new Uint8Array(buf);
+    let binary = '';
+    for (let i = 0; i < bytes.length; i += 8192)
+      binary += String.fromCharCode.apply(null, bytes.subarray(i, i + 8192));
+    const base64 = btoa(binary);
+    try {
+      const result = await api('POST', '/api/import/parse-excel', { data: base64 });
+      if (!result.rows?.length) {
+        previewEl.innerHTML = `<p class="empty">${t('Ingen rader funnet i Excel-filen.')}</p>`; return;
+      }
+      document.getElementById('import-text').value = '';
+      _importRawRows = result.rows;
+      previewEl.innerHTML = '';
+      previewImport();
+    } catch(e) {
+      previewEl.innerHTML = `<p style="color:#dc2626;font-size:13px;">${t('Feil ved lesing av Excel-fil.')}</p>`;
+    }
+  };
+  reader.readAsArrayBuffer(file);
 }
 
 function generateImportInstIds(rows) {
   const tempTaken = state.instruments.map(i => i.korps_id).filter(Boolean);
   return rows.map(row => {
+    if (row.korps_id) { tempTaken.push(row.korps_id); return row.korps_id; }
     const prefix = nameToPrefix(row.name);
     const nums = tempTaken.filter(k => k && k.startsWith(prefix+'-')).map(k => parseInt(k.split('-')[1])||0);
     const next = (nums.length ? Math.max(...nums) : 0) + 1;
@@ -3887,45 +4036,103 @@ function generateImportInstIds(rows) {
 }
 
 function previewImport() {
-  const text = document.getElementById('import-text').value.trim();
-  if (!text) { toast(t('Ingen data å forhåndsvise')); return; }
   const cfg = importConfig[importType];
-  const rawRows = parseCSV(text);
-  if (!rawRows.length) { document.getElementById('import-preview').innerHTML = '<p class="empty">Ingen gyldige rader funnet. Sjekk at filen har minst én datarad (etter overskriftrad).</p>'; return; }
+  let rawRows;
+  if (_importRawRows) {
+    rawRows = _importRawRows;
+  } else {
+    const text = document.getElementById('import-text').value.trim();
+    if (!text) { toast(t('Ingen data å forhåndsvise')); return; }
+    rawRows = parseCSV(text);
+  }
+  if (!rawRows.length) { document.getElementById('import-preview').innerHTML = `<p class="empty">${t('Ingen gyldige rader funnet. Sjekk at filen har minst én datarad (etter overskriftrad).')}</p>`; return; }
 
   importParsedRows = rawRows.map(cfg.parse).filter(r => r.name);
 
+  let hasDups = false;
   if (importType === 'instruments') {
+    const useId  = document.getElementById('import-use-id')?.checked;
+    const dupMode = document.querySelector('input[name="import-dup-mode"]:checked')?.value || 'manual';
+    const existingIds = new Set(state.instruments.map(i => i.korps_id).filter(Boolean));
+
+    if (!useId) {
+      // Ignore CSV IDs — clear all and auto-generate
+      importParsedRows.forEach(r => { r.korps_id = ''; });
+    } else if (dupMode === 'auto') {
+      // For duplicates: save original ID and clear so generateImportInstIds creates a new one
+      const seenInFile = new Set();
+      importParsedRows.forEach(r => {
+        if (r.korps_id && (existingIds.has(r.korps_id) || seenInFile.has(r.korps_id))) {
+          r._origId = r.korps_id;
+          r.korps_id = '';
+        } else {
+          if (r.korps_id) seenInFile.add(r.korps_id);
+        }
+      });
+    }
+
     const ids = generateImportInstIds(importParsedRows);
     importParsedRows.forEach((r, i) => r.korps_id = ids[i]);
+
+    if (useId && dupMode === 'manual') {
+      // Mark duplicates — block import
+      const seenInFile = new Set();
+      importParsedRows.forEach(r => {
+        r._dupDb   = existingIds.has(r.korps_id);
+        r._dupFile = seenInFile.has(r.korps_id);
+        seenInFile.add(r.korps_id);
+      });
+      hasDups = importParsedRows.some(r => r._dupDb || r._dupFile);
+    }
   }
 
   const hdrs = importType === 'instruments'
-    ? ['ID', 'Navn', 'Kategori', 'Stand', 'Serienummer', 'Kjøpsdato', 'Merknader']
-    : ['Varenavn', 'Kategori', 'Antall', 'Minimum', `Pris (${cur()})`, 'Merknader'];
+    ? [t('Instrument-ID'), t('Navn'), t('Kategori'), t('Stand'), t('Serienummer'), t('Kjøpsdato'), t('Merknader')]
+    : [t('Varenavn'), t('Kategori'), t('Antall'), t('Minimum'), `${t('Pris')} (${cur()})`, t('Merknader')];
 
-  const rowsHtml = importParsedRows.map(r => importType === 'instruments'
-    ? `<tr><td>${idbadge(r.korps_id)}</td><td><strong>${r.name}</strong></td><td>${r.category}</td><td>${condBadge(r.condition)}</td><td style="color:var(--text-muted);font-size:12px;">${r.serial||'—'}</td><td style="color:var(--text-muted);font-size:12px;">${r.purchase||'—'}</td><td style="color:var(--text-muted);font-size:12px;">${r.notes||'—'}</td></tr>`
-    : `<tr><td><strong>${r.name}</strong></td><td>${r.category||'—'}</td><td>${r.stock}</td><td>${r.min_level}</td><td>${r.price?r.price+' kr':'—'}</td><td style="color:var(--text-muted);font-size:12px;">${r.notes||'—'}</td></tr>`
-  ).join('');
+  const rowsHtml = importParsedRows.map(r => {
+    if (importType === 'instruments') {
+      const dupBadge = r._dupDb
+        ? ` <span class="badge badge-warn" title="${t('Finnes allerede i databasen')}">${t('Duplikat')}</span>`
+        : r._dupFile
+        ? ` <span class="badge badge-warn" title="${t('Samme ID forekommer flere ganger i filen')}">${t('Dup. i fil')}</span>`
+        : r._origId
+        ? ` <span class="badge badge-info" title="${t('Opprinnelig ID: ')}${r._origId}">${t('Endret fra ')}${r._origId}</span>`
+        : '';
+      const rowStyle = (r._dupDb || r._dupFile) ? ' style="background:rgba(220,38,38,0.07);"'
+        : r._origId ? ' style="background:rgba(79,70,229,0.05);"' : '';
+      return `<tr${rowStyle}><td>${idbadge(r.korps_id)}${dupBadge}</td><td><strong>${r.name}</strong></td><td>${r.category}</td><td>${condBadge(r.condition)}</td><td style="color:var(--text-muted);font-size:12px;">${r.serial||'—'}</td><td style="color:var(--text-muted);font-size:12px;">${r.purchase||'—'}</td><td style="color:var(--text-muted);font-size:12px;">${r.notes||'—'}</td></tr>`;
+    }
+    return `<tr><td><strong>${r.name}</strong></td><td>${r.category||'—'}</td><td>${r.stock}</td><td>${r.min_level}</td><td>${r.price?r.price+' kr':'—'}</td><td style="color:var(--text-muted);font-size:12px;">${r.notes||'—'}</td></tr>`;
+  }).join('');
+
+  const dupWarning = hasDups
+    ? `<p style="color:#dc2626;font-weight:600;margin-top:10px;font-size:13px;">⚠ ${t('Duplikate Instrument-IDer må rettes i CSV-filen før import kan kjøres.')}</p>`
+    : '';
 
   document.getElementById('import-preview').innerHTML = `
-    <p style="font-size:13px;font-weight:600;margin-bottom:8px;">${importParsedRows.length} rader klar til import:</p>
+    <p style="font-size:13px;font-weight:600;margin-bottom:8px;">${importParsedRows.length} ${t('rader klar til import:')}</p>
     <div class="table-wrap" style="max-height:260px;overflow-y:auto;border:1px solid var(--border);border-radius:var(--radius);">
       <table><thead><tr>${hdrs.map(h=>`<th>${h}</th>`).join('')}</tr></thead>
       <tbody>${rowsHtml}</tbody></table>
-    </div>`;
+    </div>${dupWarning}`;
 
-  document.getElementById('import-confirm-btn').style.display = importParsedRows.length ? '' : 'none';
+  document.getElementById('import-confirm-btn').style.display = (importParsedRows.length && !hasDups) ? '' : 'none';
 }
 
 async function confirmImport() {
   if (!importParsedRows.length) return;
   const btn = document.getElementById('import-confirm-btn');
-  btn.textContent = 'Importerer…'; btn.disabled = true;
+  btn.textContent = t('Importerer…'); btn.disabled = true;
   const endpoint = importType === 'instruments' ? '/api/import/instruments' : '/api/import/accessories';
-  const result = await api('POST', endpoint, { rows: importParsedRows });
-  btn.textContent = 'Importer'; btn.disabled = false;
+  let result;
+  try {
+    result = await api('POST', endpoint, { rows: importParsedRows });
+  } catch(e) {
+    btn.textContent = t('Importer'); btn.disabled = false;
+    toast(t('Import feilet')); return;
+  }
+  btn.textContent = t('Importer'); btn.disabled = false;
   closeModal('import-modal');
   toast(`${result.imported} ${t(importType === 'instruments' ? 'instrumenter importert' : 'varer importert')}!`);
   await loadAll();

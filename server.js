@@ -87,6 +87,12 @@ try { db.exec('ALTER TABLE instruments ADD COLUMN supplier_id TEXT'); } catch(e)
 try { db.exec('ALTER TABLE instruments ADD COLUMN purchase_price REAL'); } catch(e) {}
 try { db.exec('ALTER TABLE players ADD COLUMN registered_by TEXT'); } catch(e) {}
 try { db.exec('ALTER TABLE service ADD COLUMN registered_by TEXT'); } catch(e) {}
+try { db.exec('ALTER TABLE instruments ADD COLUMN model TEXT'); } catch(e) {}
+try { db.exec('ALTER TABLE instruments ADD COLUMN variant TEXT'); } catch(e) {}
+try { db.exec("ALTER TABLE instruments ADD COLUMN scrapped TEXT NOT NULL DEFAULT 'Nei'"); } catch(e) {}
+try { db.exec('ALTER TABLE instruments ADD COLUMN scrapped_by TEXT'); } catch(e) {}
+try { db.exec('ALTER TABLE instruments ADD COLUMN scrapped_date TEXT'); } catch(e) {}
+try { db.exec('ALTER TABLE instruments ADD COLUMN scrapped_notes TEXT'); } catch(e) {}
 try { db.exec('ALTER TABLE accessories ADD COLUMN registered_by TEXT'); } catch(e) {}
 try { db.exec('ALTER TABLE service ADD COLUMN delivered INTEGER DEFAULT 1'); } catch(e) {}
 
@@ -211,17 +217,23 @@ app.get('/api/instruments', requirePerm('instruments_read'), (_req, res) => {
 });
 
 app.post('/api/instruments', requirePerm('instruments_write'), (req, res) => {
-  const { name, category, condition, serial, purchase, notes, korps_id, next_check, registered_by, supplier_id, purchase_price } = req.body;
+  const { name, category, condition, serial, purchase, notes, korps_id, next_check, registered_by, supplier_id, purchase_price, model, variant, scrapped, scrapped_by, scrapped_notes } = req.body;
   const id = uid();
-  db.prepare('INSERT INTO instruments (id,name,category,condition,serial,purchase,notes,korps_id,next_check,registered_by,supplier_id,purchase_price) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)')
-    .run(id, name, category, condition, serial, purchase, notes, korps_id||null, next_check||null, registered_by||null, supplier_id||null, purchase_price||null);
+  const isScrapped = scrapped === 'Ja';
+  const scrapped_date = isScrapped ? new Date().toISOString().slice(0, 10) : null;
+  db.prepare('INSERT INTO instruments (id,name,category,condition,serial,purchase,notes,korps_id,next_check,registered_by,supplier_id,purchase_price,model,variant,scrapped,scrapped_by,scrapped_date,scrapped_notes) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)')
+    .run(id, name, category, condition, serial, purchase, notes, korps_id||null, next_check||null, registered_by||null, supplier_id||null, purchase_price||null, model||null, variant||null, isScrapped?'Ja':'Nei', isScrapped?(scrapped_by||null):null, scrapped_date, isScrapped?(scrapped_notes||null):null);
   res.json({ id });
 });
 
 app.put('/api/instruments/:id', requirePerm('instruments_write'), (req, res) => {
-  const { name, category, condition, serial, purchase, notes, korps_id, next_check, registered_by, supplier_id, purchase_price } = req.body;
-  db.prepare('UPDATE instruments SET name=?,category=?,condition=?,serial=?,purchase=?,notes=?,korps_id=?,next_check=?,registered_by=?,supplier_id=?,purchase_price=? WHERE id=?')
-    .run(name, category, condition, serial, purchase, notes, korps_id||null, next_check||null, registered_by||null, supplier_id||null, purchase_price||null, req.params.id);
+  const { name, category, condition, serial, purchase, notes, korps_id, next_check, registered_by, supplier_id, purchase_price, model, variant, scrapped, scrapped_by, scrapped_notes } = req.body;
+  const isScrapped = scrapped === 'Ja';
+  // Only set scrapped_date when first marked as kassert — never overwrite
+  const existing = db.prepare('SELECT scrapped_date FROM instruments WHERE id=?').get(req.params.id);
+  const scrapped_date = isScrapped ? (existing?.scrapped_date || new Date().toISOString().slice(0, 10)) : null;
+  db.prepare('UPDATE instruments SET name=?,category=?,condition=?,serial=?,purchase=?,notes=?,korps_id=?,next_check=?,registered_by=?,supplier_id=?,purchase_price=?,model=?,variant=?,scrapped=?,scrapped_by=?,scrapped_date=?,scrapped_notes=? WHERE id=?')
+    .run(name, category, condition, serial, purchase, notes, korps_id||null, next_check||null, registered_by||null, supplier_id||null, purchase_price||null, model||null, variant||null, isScrapped?'Ja':'Nei', isScrapped?(scrapped_by||null):null, scrapped_date, isScrapped?(scrapped_notes||null):null, req.params.id);
   res.json({ ok: true });
 });
 
@@ -719,16 +731,42 @@ app.get('/api/export/:type/:format', requireAuth, async (req, res) => {
 });
 
 // --- IMPORT ---
+app.post('/api/import/parse-excel', requireAuth, async (req, res) => {
+  try {
+    const { data } = req.body;
+    if (!data) return res.status(400).json({ error: 'Ingen data' });
+    const buf = Buffer.from(data, 'base64');
+    const wb = new ExcelJS.Workbook();
+    await wb.xlsx.load(buf);
+    const ws = wb.worksheets[0];
+    if (!ws) return res.json({ rows: [] });
+    const rows = [];
+    ws.eachRow((row, rowNum) => {
+      if (rowNum === 1) return; // skip header
+      const vals = [];
+      row.eachCell({ includeEmpty: true }, (cell, col) => {
+        vals[col - 1] = cell.text != null ? String(cell.text) : '';
+      });
+      rows.push(vals);
+    });
+    res.json({ rows });
+  } catch(e) {
+    res.status(400).json({ error: 'Kunne ikke lese Excel-fil: ' + e.message });
+  }
+});
+
 app.post('/api/import/instruments', requirePerm('instruments_write'), (req, res) => {
   const { rows } = req.body;
-  const ins = db.prepare('INSERT INTO instruments VALUES (?,?,?,?,?,?,?,?)');
-  let imported = 0;
+  const ins = db.prepare('INSERT INTO instruments (id,name,category,condition,serial,purchase,notes,korps_id) VALUES (?,?,?,?,?,?,?,?)');
+  let imported = 0, skipped = 0;
   for (const r of (rows || [])) {
     if (!r.name) continue;
-    ins.run(uid(), r.name, r.category || 'Annet', r.condition || 'God', r.serial || null, r.purchase || null, r.notes || null, r.korps_id || null);
-    imported++;
+    try {
+      ins.run(uid(), r.name, r.category || 'Annet', r.condition || 'God', r.serial || null, r.purchase || null, r.notes || null, r.korps_id || null);
+      imported++;
+    } catch(e) { skipped++; }
   }
-  res.json({ imported });
+  res.json({ imported, skipped });
 });
 
 app.post('/api/import/accessories', requirePerm('accessories_write'), (req, res) => {
